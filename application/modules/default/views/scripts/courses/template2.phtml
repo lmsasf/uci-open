@@ -1,0 +1,333 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/frontend/js/testimonials.js')
+;
+$ads_actives = $this->ads;
+
+$ads = json_encode($ads_actives)
+?>
+<div class="span12" id="content">
+	<div class="tabbable tabs-left" style="margin-left: 4%;">
+		<div class="tab-content">
+			<ul class="nav nav-tabs" id="myTabs">
+				<li class="active"><a href="#info" data-toggle="tab"><b>Information</b></a></li>
+				<?php foreach ($this->Joins as $join): ?>
+					<?php if ($join->idType == 5):?>
+					<li><a href="#type_Header_<?php echo $this->escape( $join->id ) ?>" data-toggle="tab"><b><?php echo $this->escape($join->ocwTitle) ?></b></a></li>
+					<?php endif;?>
+				<?php endforeach;?>
+			</ul>
+			<div class="tab-pane active" id="info">
+				<h1><?php echo $this->escape($this->Course[0]['ocwTitle'] . ' (' . $this->Course[0]['lanName'] . ')')?></h1>
+				<div class="" style="margin:0px;">
+					<div id="sidec" class="span8" style="margin-top: 10px;">
+						<h2>Course Information</h2>
+						<div class="clearfix">
+							<div class="" style="margin-top: 5px;">
+								<?php if(!empty($this->Course[0]['ocwDescription'])) {?>
+									<div><?php echo removeHtmlAttribute($this->Course[0]['ocwDescription'])?></div>
+
+								<?php } ?>
+								<div class="clearfix" style="margin-top: 10px; padding: 5px;">
+								    <blockquote class="pull-right">
+									    <?php
+									    	$dsu = array();
+									    	if($this->Course[0]['depName'] != '') { array_push($dsu, $this->Course[0]['depName'] . ' Dept.');}
+									    	if($this->Course[0]['schName'] != '') { array_push($dsu, $this->Course[0]['schName'] . ' Sch.');}
+									    	if($this->Course[0]['uniName'] != '') { array_push($dsu, $this->Course[0]['uniName']);}
+									    	echo $this->escape( implode(' | ', $dsu) );
+									    ?>
+									    <br />
+										<small><?php echo empty($this->Course[0]['ocwKeywords'])? '': '<strong>Keywords: </strong>'. $this->Course[0]['ocwKeywords'] ?></small>
+								    </blockquote>
+								    <div style="text-align: right; clear:both;" class="pull-right">
+								    	<a href="javascript:void(0)" title="Share on Facebook" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),'Share on Facebook','width=626,height=436');return false;"><img alt="Share on Facebook" src="/frontend/img/social/facebook-btn.png"></a>
+								    	<a href="javascript:void(0)" title="Share on Twitter" onclick="window.open('http://twitter.com/?status=<?php echo $this->escape($this->Course[0]['ocwTitle'] . ' (' . $this->Course[0]['lanName'] . ')') ?> --> '+encodeURIComponent('<?php echo $this->shortUrl?>'),'Share on Twitter','width=626,height=500')"><img alt="Share on Twitter" src="/frontend/img/social/twitter-btn.png"></a>
+								    </div>
+							    </div>
+
+							    <div id="download" class="clearfix">
+							    	<div class="pull-right">
+							    		<div class="btn-group dropup" >
+							    		 	<a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">
+											<i class="icon-download icon-white"></i> Download <?php echo $this->downloadSize != false ? ' '. $this->downloadSize .' ' : ''?>
+											<span class="caret"></span>
+											</a>
+										    <ul class="dropdown-menu">
+										    	<li><a title="recommended for simple uses" href="/download/<?php echo $this->Course[0]['ocwTitleEncode']?>.zip">Zip format</a></li>
+										    	<li><a title="recommended for importing the download into a learning management system" href="/download/<?php echo $this->Course[0]['ocwTitleEncode']?>.imscc">Imscc format</a></li>
+										    </ul>
+									    </div>
+							    	</div>
+							    </div>
+							</div>
+						</div>
+						<div style="height: 20px;"></div>
+                        <?php if ($this->books) { ?>
+                            <div style="border-top: solid; border-bottom: solid; border-width: 1px; font-size: 12px; font-weight: bold">
+                                The book(s) listed below are provided only as a service to learners who are looking for further exploration of this topic by
+                                the listed professor or speaker. Unless otherwise stated, they are not licensed under a Creative Commons license.
+                            </div>
+                            <br>
+                            <div class="well well-small">
+                                <?php if ($this->books->bookPrincipal == 1) { ?>
+                                    <div class="span5" style="margin-left: 0%; margin-bottom: 1%;">
+                                        <dt>Books used in this class: <?php
+                                            $count = count($this->Authors);
+                                            ?>
+                                        </dt>
+                                    </div>
+                                    <div class="row" style="margin-left:0%; margin-bottom: 1%; display: table-caption;">
+                                        <!-- Imagen de libros -->
+                                        <div class="span2" style="margin: 1% 2%; ">
+                                            <?php if($this->books->bookImageURL) { ?>
+                                                <img src="<?php echo $this->books->bookImageURL ?>" class="img-polaroid">
+                                            <?php } else { ?>
+                                                <img src="/backend/images/not-available.jpg" class="img-polaroid">
+                                            <?php } ?>
+                                        </div>
+                                        <div class="span4" style="margin-top: 1%;">
+                                            <dt>Title:</dt>
+                                        </div>
+                                        <div class="span4" style="margin-left: 7%;">
+                                            <?php if($this->books->bookUrl){?>
+                                            <a href="<?php echo $this->books->bookUrl;?>"><?php echo $this->books->bookName; ?>
+                                                <?php }else{
+                                                    echo $this->books->bookName; ?>
+                                                <?php }?>
+                                            </a>
+                                        </div>
+                                        <div class="span4" >
+                                            <dt>Author:</dt>
+                                        </div>
+                                        <div class="span4" style="margin-left: 7%;">
+                                            <a href="#"> <?php echo $this->books->bookAuthor ?> </a>
+                                        </div>
+                                        <div class="span4" >
+                                            <dt>ISBN:</dt>
+                                        </div>
+                                        <div class="span4" style="margin-left: 7%;">
+                                            <a href="#"> <?php echo $this->books->bookISBN ?> </a>
+                                        </div>
+                                    </div>
+                                <?php }
+                                if($this->count_other){
+                                    ?>
+                                    <div class="span5" style="margin-left: 0%; margin-bottom: 1%;">
+                                        <dt>More books:</dt>
+                                    </div>
+                                    <div class="row" style="margin-left:0%; margin-bottom: 1%;">
+										<?php
+										foreach ($this->other as $otherbooks ) {
+										?>
+											<div class="span4" style="margin-top: 1%;">
+												<dt>Title:</dt>
+											</div>
+											<div class="span4" style="margin-left: 7%;">
+												<?php if($otherbooks['bookUrl']){?>
+												<a href="<?php echo $otherbooks['bookUrl'];?>"><?php echo $otherbooks['bookName']; ?>
+													<?php }else{
+														echo $otherbooks['bookName']; ?>
+													<?php }?>
+												</a>
+											</div>
+											<div class="span4" >
+												<dt>Author:</dt>
+											</div>
+											<div class="span4" style="margin-left: 7%;">
+												<a href="#"> <?php echo $otherbooks['bookAuthor'] ?> </a>
+											</div>
+											<div class="span4" >
+												<dt>ISBN:</dt>
+											</div>
+											<div class="span4" style="margin-left: 7%; margin-bottom: 1%;">
+												<a href="#"> <?php echo $otherbooks['bookISBN'] ?> </a>
+											</div>
+										<?php
+										}
+										?>
+                                    </div>
+                                <?php
+                                }
+                                ?>
+                            </div>
+                        <?php } ?>						
+						<div class="clearfix testimbox" style="margin-top: 30px;">
+							<?php if($this->pastTestimonials->count() > 0): ?>
+							<?php $this->pasttestimonials()->render($this->pastTestimonials)?>
+							<?php endif; ?>
+						</div>
+					</div>
+					<div id="sider" class="span3" style="margin-top: 10px;">
+						<?php if(!empty($this->Course[0]['thumbnail'])) {?>
+						<div class="well well-small" style="text-align: center;">
+							<img src="<?php echo $this->Course[0]['thumbnail']?>" class="img-polaroid">
+						</div>
+						<?php } ?>
+						<?php
+						$count = count($this->Authors);
+						if( $count > 0 ) {?>
+							<?php foreach ($this->Authors as $author ) { ?>
+							<div class="well well-small">
+								<dl>
+									<dt>Author:</dt>
+										<?php if(!is_null($author['perUrlPersonal']) || !empty($author['perUrlPersonal'])): ?>
+											<dd><a href="<?php echo $author['perUrlPersonal'] ?>" target="_blank"> <?php echo $this->escape( $author['Author'] )?></a></dd>
+										<?php else: ?>
+											<dd><?php echo $this->escape( $author['Author'] )?></dd>
+										<?php endif;?>
+									<?php if(!is_null($author['pedTitle']) || !empty($author['pedTitle'])):?>
+									<dt>Title:</dt>
+											<dd><?php echo $this->escape($author['pedTitle']) ?></dd>
+									<?php endif;?>
+									<?php if(!is_null($author['authorDepartment']) || !empty($author['authorDepartment'])):?>
+									<dt>Department:</dt>
+										<dd><?php echo $author['authorDepartment'] ?></dd>
+									<?php endif;?>
+								</dl>
+							</div>
+						    <?php } ?>
+						<?php } ?>
+						<?php if(!empty( $this->Course[0]['ocwLicense'] )) {?>
+						<div class="well well-small">
+							<?php echo $this->Course[0]['ocwLicense'] ?>
+						</div>
+						<?php } ?>
+						<!-- Provide Testimonial Button -->
+						<a class="btn btn-primary btn-block" href="javascript:postTestimonial('<?php echo $this->Course[0]['ocwTitleEncode'] ?>')">Provide a Testimonial</a>
+						<div style="height: 20px"></div>
+						
+						<?php if($this->count_ads > 0){?>
+						<div class="promobox" id="content_right" style="margin-top: 10px;margin-left: 0;margin-right: 0;">
+							<div class="well well-small" style="text-align: center;">
+								<div id="imgAMostrar1" class="img-polaroid"></div>
+							</div>
+						</div>	
+						<?php }?>
+
+					</div>
+				</div>
+			</div>
+			<?php
+				foreach ($this->Headers as $key=>$join): ?>
+				<?php if ($join->idType == 5):?>
+				<div class="tab-pane" id="type_Header_<?php echo $this->escape( $join->id ) ?>">
+					<h1><?php echo $this->escape( $join->ocwTitle ) ?></h1>
+					<?php
+
+					foreach ($this->Joins as $k=>$v){
+
+						if($key < $k ){
+							$external = '';
+							if($v->idType == 5 ) { // otro header
+								break;
+							} else {
+								$titleEncode = is_null($v->ocwTitleEncode) ? codificar_titulo($v->ocwTitle) : $v->ocwTitleEncode;
+								$target = '';
+								switch ($v->idType) {
+									case 1: // courses
+										$target='/courses/'.$titleEncode.'.html';
+										break;
+									case 2: // files
+										$external = 'target="_blank"';
+										$target = $v->ocwUrlFile;
+										break;
+									case 3: // lectures
+										$target='/lectures/'.$titleEncode.'.html';
+										break;
+									case 4: // Collections
+										$target='/collections/'.$titleEncode.'.html';
+										break;
+									case 6: // Conferences
+										$target='/conferences/'.$titleEncode.'.html';
+										break;
+									default:
+										;
+										break;
+								}
+								if($v->idType == 7 ){ // es un Label
+									echo '<dl><dd>'.$v->ocwDescription .'</dd></dl>';
+								} else {
+									echo '<dl><dd><a href="'. $target . '" '. $external.' >'. $this->escape( $v->ocwTitle ) . ' ('. $v->lanName . ') </a></dd></dl>';
+								}
+							}
+						}
+					}
+					?>
+					<p></p>
+				</div>
+				<?php endif;?>
+			<?php endforeach;?>
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		upPromotions();
+	});
+
+    function array_rand(input, num_req) {
+        var indexes = [];
+        var ticks = num_req || 1;
+        var checkDuplicate = function(input, value) {
+            var exist = false,
+                index = 0,
+                il = input.length;
+            while (index < il) {
+                if (input[index] === value) {
+                    exist = true;
+                    break;
+                }
+                index++;
+            }
+            return exist;
+        };
+
+        if (Object.prototype.toString.call(input) === '[object Array]' && ticks <= input.length) {
+            while (true) {
+                var rand = Math.floor((Math.random() * input.length));
+                if (indexes.length === ticks) {
+                    break;
+                }
+                if (!checkDuplicate(indexes, rand)) {
+                    indexes.push(rand);
+                }
+            }
+        } else {
+            indexes = null;
+        }
+
+        var id_random = ((ticks == 1) ? indexes.join() : indexes);
+
+        var publish = new Array();
+
+        for(var i in input) {
+            if(i == id_random[0]){
+                publish.push(input[i])
+            }
+            else if(i == id_random[1]){
+                publish.push(input[i])
+            }
+        }
+
+        $('#imgAMostrar1').html('<a href="'+ publish[0]['adsRedirectURL'] +'"><img src="'+ publish[0]['adsImageURL'] +' " style="border: 0px;"></a>');
+        $('#imgAMostrar2').html('<a href="'+ publish[1]['adsRedirectURL'] +'"><img src="'+ publish[1]['adsImageURL'] +' " style="border: 0px;"></a>');
+
+    }
+
+    function upPromotions(){
+        var json = <?php echo $ads; ?>;
+        var count = JSON.parse(json);
+        if(count){
+            var cantElementos = Object.keys(count).length;
+            var arr = $.map(count, function(el) { return el; });
+
+            if(cantElementos > 1){
+                array_rand(arr,2);
+            }else{
+                $('#imgAMostrar1').html('<a href="'+ count[0]['adsRedirectURL'] +'"><img src="'+ count[0]['adsImageURL'] +' " style="border: 0px;"></a>');
+            }
+        }
+    }
+</script>

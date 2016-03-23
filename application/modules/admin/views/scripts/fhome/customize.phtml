@@ -1,0 +1,180 @@
+<link rel="stylesheet" type="text/css" href="/backend/css/codemirror.css">
+<script type="text/javascript" src="/backend/js/codemirror/codemirror.js"></script>
+<script type="text/javascript" src="/backend/js/codemirror/css.js"></script>
+<script type="text/javascript" src="/backend/js/codemirror/jquery.base64.min.js"></script>
+<!--script type="text/javascript" src="https://cdn.rawgit.com/codemirror/CodeMirror/master/mode/php/php.js"></script-->
+
+<div class="topHeader" style="top: 0;">
+    <div class="titleArea">
+        <div class="wrapper">
+            <div class="TopPageTitle">
+                <!-- <h5>Degree</h5>
+	            <span><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></span>-->
+                <div class="bc">
+                    <ul id="breadcrumbs" class="breadcrumbs">
+                        <li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+                        <li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'fhome', 'action'=>'index') )?>">Home Design list</a></li>
+                        <li class="current"><a href="javascript:void(0)">Customize design</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- CONTENIDO -->
+<div id="content">
+    <div class="wrapper">
+        <div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+        <div id="mensajes"></div>
+
+        <div class="widgets">
+            <div class="oneTwo">
+                <!-- Validation form -->
+                <form id="validate" class="form" method="post" action="" onsubmit="return false;">
+                    <input type="hidden" name="id" id="id" value="<?php echo is_null($this->id) && $this->accion ==='add' ? '' : $this->customs->id ?>" />
+                    <input type="hidden" name="accion" id="accion" value="<?php echo $this->accion ?>" />
+                    <input type="hidden" name="secTemplate" id="secTemplate" value="5" />
+                    <fieldset>
+                        <div class="widget">
+                            <div class="title"><h6>Details</h6></div>
+                            <div class="formRow">
+                                <label for="stylefile">File:<span class="req">*</span></label>
+                                <div class="formRight">
+                                    <input type="text" class="" name="secCustomfile" id="secCustomfile" value="home.html" disabled/>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <!-- css file text area -->
+                            <div class="formRow">
+                                <label for="editor">HTML File:<span class="req">*</span></label>
+                                <div class="formRight" id="mirrowEditor">
+		                            <textarea id="editor"><?php echo file_get_contents("./frontend/home.html",true); ?></textarea>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <iframe id="result"></iframe>
+                            <!-- fin-->
+
+                            <div class="formSubmit">
+                                <input type="button" value="Restore Original" class="greenB" style="margin-left: 5px;" onclick="restore()" />
+                                <input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancel()" />
+                                <input type="button" value="Save" class="blueB" onclick="save()" />
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+
+function save(){
+
+    var code = document.getElementById("editor").value;
+    //var data_url = "data:text/html;charset=utf-8;base64," + $.base64.encode(code);
+    //document.getElementById("result").src = data_url;
+
+    if (jQuery('#validate').validationEngine('validate') ) {
+        var data = new Array();
+        $('#validate input[type="text"], #validate input[type="hidden"]').each(function(index, value){
+            if($(this).attr('name') !=='' && $(this).val() !==''){
+                data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+            }
+        });
+
+        var id = $('#id').val();
+        var accion = $('#accion').val();
+        var archivo= $('#secCustomfile').val();
+        var editor = $('#editor').val();
+
+        $.ajax( {
+            url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'fhome', 'action'=> 'savedesign'))?>",
+            data: { data: data, id: id, accion: accion, filez: archivo, editor: editor} ,
+            async: false,
+            beforeSend: function(objeto){},
+            complete: function(objeto, exito) { },
+            dataType: "json",
+            global: true,
+            cache:false,
+            ifModified: false,
+            processData:true,
+            success: function(datos)
+            {
+                $('#id').val(datos.id);
+
+                $(".loader").show();
+                window.setTimeout(function() {
+                    $(".loader").hide();
+                    displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'fhome', 'action'=>'index'))?>' );
+                }, 2000);
+            },
+            error: function(request, status, error)
+            {
+                var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+                displayMessage( 'error', mensaje, 'Error', '' );
+            },
+            timeout: 20000,
+            type: "POST"
+        } );
+    } else {
+        return false;
+    }
+}
+
+function cancel(){
+    document.location.href='<?php echo $this->url(array('module'=>'admin','controller'=>'fhome', 'action'=>'index'))?>';
+}
+
+function restore(){
+    id = $('#id').val();
+    $.ajax( {
+        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'fhome', 'action'=> 'restorefile'))?>",
+        data: {id: id } ,
+        async: false,
+        beforeSend: function(objeto){},
+        complete: function(objeto, exito) { },
+        dataType: "json",
+        global: true,
+        cache:false,
+        ifModified: false,
+        processData:true,
+        success: function(datos)
+        {
+            if(datos) {
+                $(".loader").show();
+                window.setTimeout(function () {
+                    $(".loader").hide();
+                    displayMessage('success', 'File successfully restored. reloading... please wait...', 'Success', '');
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 3000);
+                }, 2000);
+            }
+        },
+        error: function(request, status, error)
+        {
+            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+            displayMessage( 'error', mensaje, 'Error', '' );
+        },
+        timeout: 20000,
+        type: "POST"
+    } );
+}
+
+var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+    extraKeys: {"Ctrl-Space": "autocomplete"},
+    lineNumbers: true,
+    mode:  "css"
+});
+
+function updateTextArea() {
+    editor.save();
+}
+
+editor.on('change', updateTextArea);
+
+</script>

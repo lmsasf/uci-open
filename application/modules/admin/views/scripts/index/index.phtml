@@ -1,0 +1,118 @@
+<style>
+.ui-dialog form {text-align: left;}
+form.dialog > .searchDrop {float: right; width: 70%; padding-top: 5px;}
+form.dialog > div.row { float: right;width: 70%; padding-top: 5px;}
+form.dialog > div.row input{margin: 0px;display: inline;}
+.ui-dialog form label { cursor: pointer; float: left; margin: 9px 0 0 10px;}
+
+/*.controlB ul li {
+    background: url("<?php //echo $this->baseUrl()?>/backend/images/backgrounds/subNavBg.jpg") repeat-x scroll 0 0 transparent;     
+    border: 1px solid #D5D5D5;
+    box-shadow: 0 0 0 1px #FFFFFF inset;
+    display: inline-block;
+    margin: 11px 5px 0;
+    width: 108px;
+}*/
+.controlB ul{ margin-top:30px; }
+.controlB ul li { background:#4B4B4B; border: 1px solid #D5D5D5; box-shadow: 0 0 0 1px #FFFFFF inset; display: inline-block; margin-left:30px; text-align: center; margin-bottom:5%; v-align: center; width: 200px; height:170px; -moz-border-radius: 5%; -webkit-border-radius: 5%; border-radius: 5%;}
+.controlB ul li:hover { opacity:0.6; }
+.controlB ul li a span { font-size:14pt; display: block;  margin-top: 10px;}
+.controlB ul li a {	margin-top:30px; color: #E1E0E0; font-weight: bold; white-space: nowrap;}
+.controlB ul li a:hover { color: #E1E0E0; font-weight: bold; white-space: nowrap;}
+#f1 { display: none; width:222px; position: absolute; z-index: 10000; left:65%;}
+#f1 a{ color: #E1E0E0; font-weight: bold; white-space: nowrap;width:222px;}
+#f1 ul li{ background: url("<?php echo $this->baseUrl()?>/backend/images/backgrounds/navBg.jpg")  scroll 100% 0 transparent; color: #E1E0E0; font-weight: bold; white-space: nowrap; width:222px; padding-left: 10px;}
+#f1 ul li a span{font-size:8pt;}
+.widget { background: none; border: 0px; clear: both; margin-top: 10px;}
+
+</style>
+<div class="titleArea">
+        <div class="wrapper">
+            <div class="pageTitle">
+				<br>
+                <h5>Dashboard</h5>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+<div class="wrapper" >
+
+<div class="widget">                                
+           <div class="controlB">
+			<ul>	
+				<li>
+					<a title="OCW" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'ocw', 'action'=>'index'))?>">
+						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/ocw.png">
+						<span>OCW</span>
+					</a>
+				</li>
+				<li>
+					<a  title="Categories" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'category', 'action'=>'index'))?>">
+						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/category.png">
+						<span>Categories</span>
+					</a>
+				</li>
+				<li>
+					<a title="Persons" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'person', 'action'=>'index'))?>">
+						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/female_male_users.png">
+						<span>Persons</span>
+					</a>
+				</li>
+			<!--  </ul>
+			<ul>-->
+				<li>
+					<a title="Degrees" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'degree', 'action'=>'index'))?>">
+						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/degree.png">
+						<span>Degrees</span>
+					</a>
+				</li>
+				<li>
+					<a title="Universities" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'university', 'action'=>'index'))?>" >
+						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/university.png">
+						<span>Universities</span>
+					</a>
+				</li>
+				<li>
+					<a title="Testimonials" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'testimonial', 'action'=>'index'))?>" >
+						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/comments.png">
+						<span>Testimonials</span>
+					</a>
+				</li>
+				<li>
+					<a title="Contact Requests" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'contact', 'action'=>'index'))?>" >
+						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/mail.png">
+						<span>Contact Requests</span>
+					</a>
+				</li>
+<!--manejo de css o otros-->
+				<li>
+					<a title="Edit Styles" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'stylefile', 'action'=>'index'))?>" >
+						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/styling.png">
+						<span>Edit Styles</span>
+					</a>
+				</li>
+
+<!--manejo de css o otros -->
+				<li>
+					<a title="Broken Links" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'blc', 'action'=>'index'))?>" >
+						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/Link-icon.png">
+						<span>Broken Links</span>
+					</a>
+				</li>
+				<li>
+					<a title="Promotions" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'ads', 'action'=>'index'))?>" >
+						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/office_customer_male.png">
+						<span>Promotions</span>
+					</a>
+				</li>
+				<li>
+					<a title="Frontend" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'frontend', 'action'=>'index'))?>" >
+						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/frontend_manager_1.png">
+						<span>FrontEnd</span>
+					</a>
+				</li>
+			</ul>
+		<div class="clear"></div>
+		</div>
+</div>
+</div>

@@ -1,0 +1,28 @@
+<?php
+?>
+<div class="loginWrapper">
+    <div class="widget">
+        <div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/key.png" alt="" class="titleIcon" style="border:none;"/><h6>Login</h6></div>
+        <?php $this->responseLogin ? $this->messages()->error($this->responseLogin . ' [Click to hide]', 'ERROR:'): null; ?>
+        <form action="" id="validate" class="form" method="post"> 
+            <fieldset>
+                <div class="formRow">
+                    <label for="login">User:</label>
+                    <div class="loginInput"><input type="text" name="usrName" class="validate[required]" id="login" value="<?php echo $this->usrName ? $this->usrName : ''  ?>"/></div>
+                    <div class="clear"></div>
+                </div>
+                
+                <div class="formRow">
+                    <label for="pass">Password:</label>
+                    <div class="loginInput"><input type="password" name="usrPassword" class="validate[required]" id="pass" /></div>
+                    <div class="clear"></div>
+                </div>
+                
+                <div class="loginControl">
+                    <input type="submit" value="Submit" class="dblueB logMeIn" />
+                    <div class="clear"></div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>   

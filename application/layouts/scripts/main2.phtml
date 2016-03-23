@@ -1,0 +1,208 @@
+<?php $section = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();?>
+<?php echo $this->doctype('XHTML1_RDFA') ?>
+<html lang="en">
+  <head>
+	<?php echo $this->headTitle('UC Irvine, OpenCourseWare')->setSeparator(' :: '); ?>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="<?php echo 'http://'.$_SERVER['SERVER_NAME']?>/frontend/img/fb-logo.jpg"/>
+    <?php echo $this->headMeta(); ?>
+    <!-- Bootstrap -->
+    <?php echo $this->headLink()->appendStylesheet($this->baseUrl().'/frontend/css/bootstrap.css','screen')
+        						->appendStylesheet($this->baseUrl().'/frontend/css/bootstrap-responsive.css','screen')
+        						->appendStylesheet($this->baseUrl().'/frontend/css/bootstrap-formhelpers.css','screen')
+        						->appendStylesheet($this->baseUrl().'/frontend/css/bootstrap-formhelpers-countries.flags.css','screen')
+        						->appendStylesheet($this->baseUrl().'/frontend/css/bootstrap-formhelpers-currencies.flags.css','screen')
+        						
+        						->appendStylesheet($this->baseUrl().'/frontend/css/style.css','screen')
+        						->appendStylesheet($this->baseUrl().'/frontend/css/ovp.css','screen')
+        						->appendStylesheet($this->baseUrl().'/frontend/css/prettify.css','screen')
+        						
+    ;
+
+    ?>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+	<script src="http://code.jquery.com/jquery.js"></script>
+	
+	<?php echo $this->inlineScript()->appendFile($this->baseUrl()."/frontend/js/jquery.zrssfeed.min.js",'text/javascript')
+									->appendFile($this->baseUrl()."/frontend/js/holder.js",'text/javascript')
+									->appendFile($this->baseUrl()."/frontend/js/bootstrap.min.js",'text/javascript')
+									->appendFile($this->baseUrl()."/frontend/js/prettify.js",'text/javascript')
+									->appendFile($this->baseUrl()."/frontend/js/bootstrap-formhelpers-selectbox.js",'text/javascript')
+									->appendFile($this->baseUrl()."/frontend/js/bootstrap-formhelpers-countries.en_US.js",'text/javascript')
+									->appendFile($this->baseUrl()."/frontend/js/bootstrap-formhelpers-countries.js",'text/javascript')
+									->appendFile($this->baseUrl()."/frontend/js/jquery.expander.min.js",'text/javascript')
+									->appendFile($this->baseUrl()."/frontend/js/custom.js",'text/javascript')
+	;
+	?>
+	<!-- Self Stylesheet -->
+	<link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic|Noto+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  </head>
+  
+  <body>
+	<div class="container">
+		<div class="row">
+			<div class="span12" id="header">
+				<a href="<?php echo $this->baseUrl()?>/"><img class="logo" src="<?php echo $this->baseUrl()?>/frontend/img/uciocwlogo_horizontal.png" alt="UCI OpenCourseWare Logo"></a>
+				<span style="float:right; margin-top:35px; margin-right:10px;">
+					<a href="http://sites.uci.edu/ucirvineocw/"><img src="<?php echo $this->baseUrl()?>/frontend/img/donate/donate-OCW-sm.png" id="" alt="Support global education"></a>
+                    <a href="http://sites.uci.edu/opencourseware/feed/"><img src="<?php echo $this->baseUrl()?>/frontend/img/social/rss.png" id="" alt="Read our blog!"></a>
+					<a href="http://www.facebook.com/pages/UC-Irvine-OpenCourseWare/314697770646?v=info"><img src="<?php echo $this->baseUrl()?>/frontend/img/social/facebook.png" id="" alt="Like us on Facebook!"></a>
+					<a href="http://www.youtube.com/user/UCIrvineOCW"><img src="<?php echo $this->baseUrl()?>/frontend/img/social/youtube.png" id="" alt="Subscribe to me on YouTube"></a>
+					<a href="https://twitter.com/UCI_OCW"><img src="<?php echo $this->baseUrl()?>/frontend/img/social/twitter.png" id="" alt="Tweet Us!"></a>
+				</span>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="span12" id="navi">
+				<div class="navbar">
+					<?php echo $this->partial("nav.phtml", array('section'=>$section, 'keyword'=>$this->keyword)); ?>
+				</div>
+			</div>
+			<!-- breadcrumbs -->
+			<?php echo ($section != 'info' && $section != 'index' && $section != 'file' && $section != 'error' ) ? $this->partial("breadcrumb.phtml", array('section'=>$section, 'title'=> $this->title )) : ''; ?>
+			<?php echo $this->layout()->content; ?>
+		</div>
+	</div>
+	<br/>
+	
+    
+ <!-- footer changed 5/29 ljc
+   <div id="footer" >
+		<p align="center" ><a href="http://uci.edu" >UC Irvine</a> | <a href="http://unex.uci.edu/?WT.mc_id=OCWWEB" >UC Irvine Extension</a> | <a href="http://www.ocwconsortium.org/" >Open Courseware Consortium</a>
+		</p>
+	</div>
+-->
+    
+    <!-- footer below added 5/29/2014 -->
+
+                <footer id="footer-head">
+                                <div class="container">
+                                                <div class="row">
+                                                                <div class="span12" >                                                                     
+                                                                                                <p></p>                                                                               
+                                                                </div>
+                                                                
+                                                            
+                                                                <div> <class="span1"></div>
+                                                                
+                                                                <div class="span2" id="sitemap">
+                                                                                <p>Navigation</p>
+                                                                                <ul>
+                                                                                                <li><a href="http://ocw.uci.edu">Home</a></li>
+                                                                                                <li><a href="http://ocw.uci.edu/collections">Collections</a></li>
+                                                                                                <li><a href="http://ocw.uci.edu/conferences">Conferences</a></li>
+                                                                                                <li><a href="http://ocw.uci.edu/courses">Courses</a></li>
+                                                                                                <li><a href="http://ocw.uci.edu/lectures">Lectures</a></li>
+                                                                                                <li><a href="http://ocw.uci.edu/info">About UCI OpenCourseWare</a></li>
+                                                                                                
+                                                                                </ul>
+                                                                </div>
+                                                                
+                                                                <div class="span2" id="sitemap">
+                                                                                <p>Social Media</p>
+                                                                                <ul>
+                                                                                                <li><a href="http://sites.uci.edu/opencourseware/">UCI OCW Blog</a></li>
+                                                                                                <li><a href="http://www.facebook.com/pages/UC-Irvine-OpenCourseWare/314697770646?v=info">Facebook</a></li>
+                                                                                                <li><a href="http://www.youtube.com/user/UCIrvineOCW">Youtube Channel</a></li>
+                                                                                                <li><a href="https://twitter.com/UCI_OCW">Twitter</a></li>
+                                                                                </ul>
+                                                                </div>
+                                                                
+                                                                <div class="span2" id="sitemap">
+                                                                                <p>Related Links</p>
+                                                                                <ul>
+                                                                                                <li><a href="http://uci.edu" >UC Irvine</a></li>
+                                                                                                <li><a href="http://unex.uci.edu/?WT.mc_id=OCWWEB" >UC Irvine Extension</a></li>
+                                                                                </ul>
+                                                                                
+                                                                                <p>Useful Information</p>
+                                                                                <ul>
+                                                                                                <li><a href="http://ocw.uci.edu/info#faq">FAQ</a></li>
+                                                                                                <li><a href="http://ocw.uci.edu/contact">Contact Us</a></li>
+                                                                                                <li><a href="http://ocw.uci.edu/search/results">Search</a></li>
+                                                                                                <li><a href="http://ocw.uci.edu/info#termsofuse">Terms of Use</a></li>
+                                                                                                                                                                                       <li><a href="/rss/">RSS</a></li>
+                                                                                </ul>
+                                                                </div>
+                                                                
+                                                                <div class="span2" id="sitemap">
+                                                                                <p>UCI OpenCourseWare is an open education project supporting the needs of learners and educators everywhere: on our campus, within California, and the rest of the United States and the world.<a href="http://sites.uci.edu/ucirvineocw/><img src="<?php echo $this->baseUrl()?>/frontend/img/donate/donate-OCW-sm.png" id="" alt="Support global education"></a></p>
+                                                                </div>
+                                                                
+                                                                <div class="span2">
+                                                                                
+                                                                                <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
+                                                                  <p style="font-size: 75%">Unless otherwise noted.</p>
+                                                                                <a href="http://www.openedconsortium.org/"><img src="http://www.oeconsortium.org/wp-content/themes/ocwc-mainsite/images/logo-oe.png" width="300" height="70"></a>
+                                                                                <br />
+                                                                                <br />
+                                                                                <a href="http://uci.edu"><img src="http://www.uci.edu/img/uci-wordmark.png"></a>
+                                                                </div>
+                                                                
+                                                                 
+                                                                <div class="span1"></div>
+                                                                
+                                                </div>
+                                </div>
+                </footer>
+
+		
+  </body>
+	<script type="text/javascript">
+	$(function() {
+	    $("iframe[src^='http://www.youtube.com']" ).each(function(){
+	          var url = $(this).attr("src");
+	          var char = "?";
+	          if(url.indexOf("?") != -1){
+	                  var char = "&";
+	           }
+	          $(this).attr("src",url+char+"wmode=opaque");
+	    });
+	    $("iframe[src^='//www.youtube.com']" ).each(function(){
+	          var url = $(this).attr("src");
+	          var char = "?";
+	          if(url.indexOf("?") != -1){
+	                  var char = "&";
+	           }
+	          $(this).attr("src",url+char+"wmode=opaque");
+	    });	   
+	    // resize videos
+	    $("object, embed, iframe[src^='//www.youtube.com'],iframe[src^='http://www.youtube.com']").each(function() {
+			var orig = $(this);
+			var ratio = orig.attr("height") / orig.attr("width");
+			var parWidth = orig.parent().width();
+			if(orig.attr("width")> parWidth) {
+				orig
+					.attr("width", parWidth)
+					.attr("height", (parWidth * ratio));
+			}
+		}); 
+		$('#myTab a').click(function (e) {
+			  e.preventDefault();
+			  $(this).tab('show');
+		});
+		$("[rel='popover']").popover();
+	});
+	$(document).ready(function() {
+		$('.expand').expander({ slicePoint: 350, expandText: ' Read more', userCollapseText: ' Less' });
+	});
+	</script>
+	<script type="text/javascript">
+	    var _gaq = _gaq || [];
+	    _gaq.push(['_setAccount', 'UA-19047581-1']);
+	    _gaq.push(['_setDomainName', '.uci.edu']);
+	    _gaq.push(['_trackPageview']);
+	
+	    (function () {
+	        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	    })();
+	
+	</script>	
+</html>

@@ -1,0 +1,41 @@
+<?php
+echo $this->doctype('XHTML1_STRICT');
+//<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+$controller = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+$action     = Zend_Controller_Front::getInstance()->getRequest()->getActionName();
+
+// Datos de Login //
+// require_once "AclDAL.php";
+// $AclDALL  = new AclDAL();
+// $data     = $AclDALL->getLoginInfo();
+?>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <?php echo $this->headTitle('OCW Admin area')->setSeparator(' :: '); ?>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=100"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Last-Modified" content="0">
+		<meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+		<meta http-equiv="Pragma" content="no-cache">        
+        <?php echo $this->headLink()->appendStylesheet($this->baseUrl().'/backend/css/oficial.css')
+        							->appendStylesheet($this->baseUrl().'/backend/css/oficial.print.css', 'print')
+        							->appendStylesheet($this->baseUrl().'/backend/css/fullcalendar.print.min.css', 'print')
+        							//->appendStylesheet($this->baseUrl().'/backend/css/fff.icon.icons.css')
+        							->appendStylesheet($this->baseUrl().'/backend/css/msgBoxLight.min.css');
+        ?>
+        <script type="text/javascript" src="/backend/js/plugins/plupload/browserplus-min.js"></script>
+        <?php echo $this->jQuery()->addJavascriptFile($this->baseUrl() . "/backend/js/custom.js");?>
+    </head>
+    <body>
+        <div class="topNav">
+        	<a href="/" title="Volver al home" class="top-logo" ><img height="56" src="<?php echo $this->baseUrl()?>/frontend/img/uciocwlogo_horizontal.png" alt="" /></a>
+        <!-- Cabecera -->
+            <?php echo $this->partial("top_info.phtml", array('file'=>$controller . '_' . $action)); ?>
+        </div>
+        <!-- Contenido principal del administrador -->
+        <?php echo $this->layout()->content; ?>
+    </body>
+</html>

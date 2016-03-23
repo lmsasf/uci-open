@@ -1,0 +1,137 @@
+<?php
+?>
+<style>
+<!--
+.taskWidget td.tasFolder {
+    background-image: url("/backend/images/icons/dark/folder.png");
+        background-position: 12px 7px;
+    background-repeat: no-repeat;
+    padding-left: 32px;
+    text-align: left;
+}
+.taskWidget td.taskDoc {
+    background-image: url("/backend/images/icons/dark/doc.png");
+    background-position: 12px 7px;
+    background-repeat: no-repeat;
+    background-repeat: no-repeat;
+    padding-left: 32px;
+    text-align: left;    
+}
+.subElement {
+   	background-position: 54px 7px !important;
+    padding-left: 70px !important;
+}
+
+-->
+</style>
+<div class="topHeader" style="top:0px;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+				<div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>						
+						<li class="current"><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'cache', 'action'=>'index') )?>">Cache</a></li>
+					</ul>
+				</div>				
+			</div>			
+		</div>
+	</div>
+</div>
+<div id="content">
+	<div class="wrapper">
+	
+        <div class="widgets">
+            <div class="">
+				<div id="mensajes"></div>           
+                <div class="widget">
+                    <div class="title"><a href="javascript:cleanCache()" title="Clean cache"><img src="/backend/images/icons/dark/refresh4.png" alt="" class="titleIcon" /></a><h6>Cached pages</h6></div>
+                    <table cellpadding="0" cellspacing="0" width="100%" class="sTable taskWidget">
+                        <thead>
+                            <tr>
+                                <td>Description</td>
+                                <td width="60">Acts</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($this->cached as $clave => $valor ): ?>
+	                			<?php if(!is_numeric($clave)):?>
+	                            <tr>
+	                                <td colspan="2" class="tasFolder" style="text-align: left;"><a href="#" title=""><?php echo $clave?></a></td>                                
+	                            </tr>
+	                            
+		                            <?php foreach ($valor as $k=>$v):?>
+		                            <tr>
+										<td class="taskDoc subElement"><a href="javascript:void(0)" title=""><?php echo substr($v['name'],0, -5)?></a></td>
+		                                <td class="actBtns"><a href="javascript:removeFromCache('<?php echo base64_encode($v['path'])?>')" title="Remove" class="tipS"><img src="/backend/images/icons/remove.png" alt="" /></a></td>
+		                            </tr>
+		                            <?php endforeach;?>
+	                            
+	                            <?php endif;?>
+                    		<?php endforeach;?>                        
+                            <?php foreach ($this->cached as $clave => $valor ): ?>
+                			<?php if(is_numeric($clave)):?>
+                            <tr>
+                                <td class="taskDoc"><a href="javascript:void(0)" title=""><?php echo $valor['name']?></a></td>
+                                <td class="actBtns"><a href="javascript:removeFromCache('<?php echo base64_encode($valor['path'])?>')" title="Remove" class="tipS"><img src="/backend/images/icons/remove.png" alt="" /></a></td>
+                            </tr>
+                            <?php endif;?>
+                    		<?php endforeach;?>
+                        </tbody>
+                    </table>            
+                </div>            
+                   <div class="clear"></div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+	<?php if($this->success){ ?>
+		$('#mensajes').message({ type: 'success',  frase: '<?php  echo $this->success ?>', prefrase: 'Success'  });
+		setTimeout(function(){ $("#mensajes").fadeOut(800);$("#mensajes").html('');}, 3000);
+	<?php }?>
+	<?php if($this->error){ ?>
+		$('#mensajes').message({ type: 'error',  frase: '<?php  echo $this->error ?>', prefrase: 'Error'  });
+		setTimeout(function(){ $("#mensajes").fadeOut(800);$("#mensajes").html('');}, 3000);
+	<?php }?>	
+});
+
+function removeFromCache(data){
+	 var form = $('<form>').attr({
+         name:'remveForm', 
+         method: 'post', 
+         action: '<?php echo $this->url(array('module'=>'admin','controller'=>'cache', 'action'=>'remove'))?>'
+     });
+     $('<input>').attr({
+          type: 'hidden',
+          id: 'data',
+          name: 'data',
+          value: data
+      }).appendTo(form);
+      form.appendTo($('body'));
+      form.submit();
+	  return false;
+}
+function cleanCache(){
+	$.msgbox("Are you sure you want clear all cache? <br> This action could take a few minutes", {
+		  type: "confirm",
+		  buttons : [
+		    {type: "submit", value: "Yes"},
+		    {type: "cancel", value: "No"}
+		  ]
+		}, function(result) {
+			if(result === 'Yes'){
+				 var form = $('<form>').attr({
+			         name:'remveForm', 
+			         method: 'post', 
+			         action: '<?php echo $this->url(array('module'=>'admin','controller'=>'cache', 'action'=>'clean'))?>'
+			     });
+				form.appendTo($('body'));
+      			form.submit();
+	  			return false;
+			}
+		});
+}
+</script>

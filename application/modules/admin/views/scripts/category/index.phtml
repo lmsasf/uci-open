@@ -1,0 +1,235 @@
+<?php
+$this->jQuery()->disable();
+echo $this->headScript()->appendFile($this->baseUrl() . '/backend/js/jquery/jquery-1.8.3.min.js')
+					->appendFile($this->baseUrl() . '/backend/js/jquery/jquery-ui-1.9.2.custom.min.js')
+					->appendFile($this->baseUrl() . '/backend/js/plugins/jquery.nestable.js')
+					->appendFile($this->baseUrl() . '/backend/js/plugins/ui/jquery.blockUI.js')
+					->appendFile($this->baseUrl() . "/backend/js/plugins/ui/jquery.jgrowl.js")
+					->appendFile($this->baseUrl() . "/backend/js/plugins/messagesHelper.js")
+					->appendFile($this->baseUrl() . "/backend/js/plugins/ui/jquery.msgBox.js")
+										
+					->appendFile($this->baseUrl() . "/backend/js/plugins/spinner/jquery.mousewheel.js")
+			    	->appendFile($this->baseUrl() . '/backend/js/plugins/forms/uniform.js')
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/forms/jquery.cleditor.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/forms/jquery.validationEngine-en.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/forms/jquery.validationEngine.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/forms/jquery.tagsinput.min.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/forms/autogrowtextarea.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/forms/jquery.maskedinput.min.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/forms/jquery.dualListBox.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/forms/jquery.inputlimiter.min.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/forms/chosen.jquery.min.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/wizard/jquery.form.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/wizard/jquery.validate.min.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/wizard/jquery.form.wizard.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/tables/jquery.dataTables.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/tables/tablesort.min.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/tables/resizable.min.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/ui/jquery.tipsy.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/ui/jquery.collapsible.min.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/ui/jquery.prettyPhoto.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/ui/jquery.progress.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/ui/jquery.timeentry.min.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/ui/jquery.colorpicker.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/ui/jquery.breadcrumbs.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/ui/jquery.sourcerer.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/fullcalendar.min.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/elfinder.min.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/plugins/ui/jquery.ui.monthpicker.js")
+			    	->appendFile($this->baseUrl() . "/backend/js/custom.js")
+;
+?>
+<style>
+<!--
+ .active { pointer-events: none; cursor: default; color:red}
+-->
+
+.editcat { background: url("/backend/images/icons/dark/add.png") repeat-x scroll 0 0 transparent; height: 37px; padding-right: 15px; margin-left: 10px;}
+.savecat { background: url("/backend/images/icons/dark/save.png") repeat-x scroll 0 0 transparent; height: 37px; padding-right: 15px; margin-left: 10px;}
+</style>
+<div class="topHeader" style="top:0px;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+				<div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>						
+						<li class="current"><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'category', 'action'=>'index') )?>">Category list</a></li>
+					</ul>
+				</div>				
+			</div>			
+		</div>
+	</div>
+</div>
+<div id="content">
+	<div class="wrapper">
+		<div id="mensajes" ></div>
+	 	<div id="breadcrumbs-wrapper" style="display: none;" >
+	       <div class="fbc">
+	            <ul id="fbreadcrumbs" class="fbreadcrumbs">
+	            </ul>
+	            <div class="clear"></div>    
+	        </div> 
+	    </div>		    
+        <!-- Dynamic table -->
+        <div class="widget">        
+            <div class="title" >	
+            	<a title="Add category" href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'category', 'action'=>'editcategory') )?>"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/add.png"></a>		
+				<a title="Save changes" href="javascript:saveChanges()"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/save.png"></a>
+            </div>              
+			<!-- Edición de categorias -->
+		    <div class="dd" id="nestable2">
+				<?php echo $this->tree?>
+		    </div>
+		    <div class="clear"></div>				
+        </div>  	    
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {   	
+    	$('.dd').nestable({ maxDepth:10 });
+        $('.dd').on('change', function() {
+            /* on change event */
+            //console.debug($(this));
+        	//console.debug($('.dd').nestable('serialize'));
+        });
+    } );
+	function saveChanges(){
+	       $.blockUI({ 
+	           theme:     true, 
+	           title:    'Working', 
+	           message:  '<div id="loadingBUI"> Please wait....</div>'
+	       }); 
+		   $.ajax( {
+		        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'category', 'action'=> 'savetree'))?>",
+		        data: { data: $('.dd').nestable('serialize') } , 
+		        async: true,
+		        beforeSend: function(objeto){},
+		        complete: function(objeto, exito) { },
+		        dataType: "json",
+		        global: true,
+		        cache:false,
+		        ifModified: false,
+		        processData:true,
+		        success: function(datos)
+		        {
+		        	$.unblockUI();
+		        	// tipo, mensaje, prefrase, url_redirect
+		        	displayMessage( 'success', 'Data saved successfully', 'Success', '' );
+		        	//$.jGrowl('Data saved successfully', { header: 'Success', sticky: false, theme: 'success' });
+
+		        },
+		        error: function(request, status, error)
+		        {
+		        	$.unblockUI();
+		            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+        		    // tipo, mensaje, prefrase, url_redirect
+		        	displayMessage( 'error', mensaje, 'Error', '' );
+		            // $.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+		        },
+		        timeout: 200000,
+		        type: "POST"
+		    } ); 
+	}
+	function edit(idCat){
+		var form = $('<form>').attr({
+            name:'editform', 
+            method: 'post', 
+            action: '<?php echo $this->url(array('module'=>'admin','controller'=>'category', 'action'=>'editcategory'))?>'
+        });
+        $('<input>').attr({
+             type: 'hidden',
+             id: 'id',
+             name: 'id',
+             value: idCat
+         }).appendTo(form);
+         form.appendTo($('body'));
+         form.submit();		
+	}
+	function del(idCat){
+		$.msgbox("Are you sure to delete the category? This will remove also the subcategories.", {
+			  type: "confirm",
+			  buttons : [
+			    {type: "submit", value: "Yes"},
+			    {type: "cancel", value: "No"}
+			  ]
+			}, function(result) {
+				if(result === 'Yes'){
+				       $.blockUI({ 
+				           theme:     true, 
+				           title:    'Working', 
+				           message:  '<div id="loadingBUI"> Please wait. When completed, this page will reload</div>'
+				       }); 
+
+				       // guardar antes
+				       
+				       $.ajax( {
+					        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'category', 'action'=> 'savetree'))?>",
+					        data: { data: $('.dd').nestable('serialize') } , 
+					        async: true,
+					        beforeSend: function(objeto){},
+					        complete: function(objeto, exito) { },
+					        dataType: "json",
+					        global: true,
+					        cache:false,
+					        ifModified: false,
+					        processData:true,
+					        success: function(datos)
+					        {
+						        //Elimino 
+								   $.ajax( {
+								        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'category', 'action'=> 'delcategory'))?>",
+								        data: { id:idCat } , 
+								        async: true,
+								        beforeSend: function(objeto){},
+								        complete: function(objeto, exito) { },
+								        dataType: "json",
+								        global: true,
+								        cache:false,
+								        ifModified: false,
+								        processData:true,
+								        success: function(datos)
+								        {
+								        	//$.unblockUI();
+								        	displayMessage( 'success', 'Data deleted successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'category', 'action'=>'index'))?>' );
+								        	/*var form = $('<form>').attr({
+								                name:'delform', 
+								                method: 'post', 
+								                action: ''
+								            });
+								             form.appendTo($('body'));
+								             form.submit();	*/	        	
+								        	//$.jGrowl('Data deleted successfully', { header: 'Success', sticky: false, theme: 'success' });
+
+								        },
+								        error: function(request, status, error)
+								        {
+								        	$.unblockUI();
+								            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+								            //$.msgbox(mensaje, {type: "error"});
+								            displayMessage( 'error', mensaje, 'Error', '' );
+								            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+								            
+								        },
+								        timeout: 20000,
+								        type: "POST"
+								    } ); 
+			
+					        },
+					        error: function(request, status, error)
+					        {
+					        	$.unblockUI();
+					            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+					            //$.msgbox(mensaje, {type: "error"});
+					            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+					            displayMessage( 'error', mensaje, 'Error', '' );
+					        },
+					        timeout: 20000,
+					        type: "POST"
+					    } );
+					
+				}
+			});
+	}	
+</script>

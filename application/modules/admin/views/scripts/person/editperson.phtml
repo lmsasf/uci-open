@@ -1,0 +1,713 @@
+<style>
+.dd3-handle { height: 34px; }
+#listDegree_chzn { width: 95% !important; }
+
+.chzn-drop{width: 95% !important;}
+.chzn-search{width: 95% !important;}
+
+.chzn-container-single .chzn-search {
+    margin: 0;
+    padding: 3px 4px;
+    position: relative;
+    white-space: nowrap;
+    width: 95% !important;
+    z-index: 1010;
+}
+.chzn-container .chzn-drop {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: -moz-use-text-color #D5D5D5 #D5D5D5;
+    border-image: none;
+    border-right: 1px solid #D5D5D5;
+    border-style: none solid solid;
+    border-width: 0 1px 1px;
+    left: 0;
+    margin-top: 1px;
+    position: absolute;
+    top: 29px;
+    width: 95% !important;
+    z-index: 998;
+}
+.chzn-container-single .chzn-search input {
+    background: url("../images/searchSmall.png") no-repeat scroll 320px center rgba(0, 0, 0, 0) !important;
+    border: 1px solid #AAAAAA;
+    font-family: sans-serif;
+    font-size: 11px;
+    margin: 1px 0;
+    outline: 0 none;
+    padding: 4px 0 4px 5px;
+    width: 95% !important;
+}
+</style>
+<div class="topHeader" style="top: 0;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+	        	<!-- <h5>Person</h5>
+	            <span><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></span>-->
+	            <div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'person', 'action'=>'index') )?>">Person list</a></li>
+						<li class="current"><a href="javascript:void(0)"><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></a></li>
+					</ul>
+				</div>
+	        </div>			
+		</div>
+	</div>
+</div>
+<!-- CONTENIDO -->
+<div id="content">
+	<div class="wrapper">
+	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+	<div id="mensajes"></div>
+		<div class="widgets">
+			<div class="oneTwo">
+	        <!-- Validation form -->
+		        <form id="validate" class="form" method="post" action="" onsubmit="return false;">
+		        	<input type="hidden" name="id" id="personId" value="<?php echo is_null($this->id) && $this->accion ==='add' ? '' : $this->Person->id ?>" />
+		        	<input type="hidden" name="accion" id="accion" value="<?php echo $this->accion ?>" />
+		        	<fieldset>
+		                <div class="widget">
+		                    <div class="title"><h6>Details</h6></div>
+		                    <div class="formRow">
+		                        <label for="perFirstName">First Name:<span class="req">*</span></label>
+		                        <div class="formRight">
+		                        	<input type="text" class="validate[required]" name="perFirstName" id="perFirstName" value="<?php echo is_null($this->Person) ? '' : $this->escape($this->Person->perFirstName) ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>
+		                    <div class="formRow">
+		                        <label for="perLastName">Last Name:<span class="req">*</span></label>
+		                        <div class="formRight">
+		                        	<input type="text" class="validate[required]" name="perLastName" id="perLastName" value="<?php echo is_null($this->Person) ? '' : $this->escape($this->Person->perLastName) ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>
+							<div class="formRow">
+							
+		                        <label>Degree:</label>
+		                        <div class="formRight searchDrop">
+		                        	<!-- <table style="border:none; width: 100%">
+		                        		<tr>
+		                        			<td > 
+												<select data-placeholder="Select one.." class="chzn-select exclude" style="width:100%;top:0px;" tabindex="2" name="listDegree" id="listDegree">
+						                            <option value=""></option> 
+						                            <?php foreach($this->Degrees AS $degree ) { ?>
+						                            <option value="<?php echo $degree->id?>"><?php echo $degree->degShortDescription?></option>
+						                            <?php } ?> 
+						                         </select>		                        			
+		                        			</td>
+		                        			<td style="width: 20px;">
+			 									<a class="smallButton" style="line-height: 0; padding: 5px; position: relative; top:-6px;" title="Add degree" href="javascript:adddegree()">
+													<img alt="" src="/backend/images/icons/color/plus.png">
+												 </a>		                        			
+		                        			</td>
+		                        		</tr>
+		                        	</table>	 -->
+		                        	
+			                        <div style="float:left;width:95%;">
+			                   			<select data-placeholder="Select one.." class="chzn-select exclude" style="width:100%;top:0px;" tabindex="2" name="listDegree" id="listDegree">
+				                            <option value=""></option> 
+				                            <?php foreach($this->Degrees AS $degree ) { ?>
+				                            <option value="<?php echo $degree->id?>"><?php echo $degree->degShortDescription?></option>
+				                            <?php } ?> 
+				                         </select>	
+						            </div>
+						            <div style="float:left;margin-top:5px;">
+						             	<a class="smallButton" style="line-height: 0; padding: 5px; position: relative; top:-6px;" title="Add degree" href="javascript:adddegree()">
+											<img alt="" src="/backend/images/icons/color/plus.png">
+									    </a>	            
+			                		</div>
+			                        <div class="clear"></div>
+								
+				                     <ul id="sortable">
+				                     <?php if($this->PersonDegree) {?>
+				                     <?php foreach($this->PersonDegree as $degree ){ ?>
+										<li class="ui-state-default dd-item dd3-item" id="Degree_<?php echo $degree['idDeg']?>">
+											<div class="dd-handle dd3-handle"></div>
+											<div class="liLeft" style="margin-left:30px;" title="Drag and Drop to order items"><?php echo $degree['degDescription']?></div>
+											<div class="liRight">
+												<a class="smallButton buttonLi" title="remove degree" href="javascript:removeDegree(<?php echo $degree['idDeg']?>, '<?php echo $degree['degDescription']?>' )"><img alt="" src="/backend/images/icons/color/cross.png"></a>
+											</div>		   
+											<div class="clear"></div>	
+										</li>                  	
+				                     <?php } ?>
+				                     <?php } ?>
+									 </ul>           
+		                        
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>		                    	
+		                    <div class="formRow">
+		                        <label for="perEmail">E-Mail:</label>
+		                        <div class="formRight">
+		                        	<input type="text" class="validate[custom[email]]" name="perEmail" id="perEmail" value="<?php echo is_null($this->Person) ? '' : $this->Person->perEmail ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>	
+		                     <div class="formRow">
+		                        <label for="perEmail1">Optional E-Mail:</label>
+		                        <div class="formRight">
+		                        	<input type="text" class="validate[custom[email]]" name="perEmail1" id="perEmail1" value="<?php echo is_null($this->Person) ? '' : $this->Person->perEmail1 ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>	
+		                     <div class="formRow">
+		                        <label for="perUrlPersonal">Personal url:</label>
+		                        <div class="formRight">
+		                        	<input type="text" name="perUrlPersonal" id="perUrlPersonal" value="<?php echo is_null($this->Person) ? '' : $this->Person->perUrlPersonal ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>		
+		                    <div class="formRow">
+		                        <label for="perPhone">Phone:</label>
+		                        <div class="formRight">
+		                        	<input type="text" name="perPhone" id="perPhone" value="<?php echo is_null($this->Person) ? '' : $this->Person->perPhone ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>
+		                    <div class="formRow">
+		                        <label for="perAddress1">Address 1:</label>
+		                        <div class="formRight">
+		                        	<textarea name="perAddress1" id="perAddress1" cols="" rows="5"><?php echo is_null($this->Person) ? '' : trim($this->Person->perAddress1) ?></textarea>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>
+		                    <div class="formRow">
+		                        <label for="perAddress1">Address 2:</label>
+		                        <div class="formRight">
+		                        	<textarea name="perAddress2" id="perAddress2" cols="" rows="5"><?php echo is_null($this->Person) ? '' : trim($this->Person->perAddress2) ?></textarea>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>		                    
+		                    <div class="formRow">
+		                        <label for="perCity">City:</span></label>
+		                        <div class="formRight">
+		                        	<input type="text" name="perCity" id="perCity" value="<?php echo is_null($this->Person) ? '' : $this->escape($this->Person->perCity) ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>	
+		                    <div class="formRow">
+		                        <label for="perState">State:</label>
+		                        <div class="formRight">
+		                        	<input type="text" name="perState" id="perState" value="<?php echo is_null($this->Person) ? '' : $this->escape($this->Person->perState) ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>			                    
+		                    <div class="formRow">
+		                        <label for="perCountry">Country:</label>
+		                        <div class="formRight">
+		                        	<input type="text" name="perCountry" id="perCountry" value="<?php echo is_null($this->Person) ? '' : $this->escape($this->Person->perCountry) ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>	
+		                    <div class="formRow">
+		                        <label for="perCountry">Zip Code:</label>
+		                        <div class="formRight">
+		                        	<input type="text" name="perZipCode" id="perZipCode" value="<?php echo is_null($this->Person) ? '' : $this->escape($this->Person->perZipCode) ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>	
+		                    
+		                    <div class="clear" style="padding-bottom:20px;"></div>
+		                    		                    
+		                    
+		                    <!-- selección department -->
+		                    <fieldset style="padding: 5px 14px; border-top: 1px solid #E2E2E2; border-bottom: 1px solid #E2E2E2; border-left: 1px solid #E2E2E2; border-right: 1px solid #E2E2E2; margin-left:5px; margin-right:5px;" id ="fieldset_dep"><legend style="font-size: 12px;font-weight: bold;">Departments</legend>
+		                    	 							 
+								 <a class="smallButton" style="float:right; margin: 0px; line-height: 0;position: relative; padding: 5px;  text-align:center;" title="Add department" href="javascript:adddep()">
+									<label style="padding-top:8px; margin-right:12px; float:left;">Add department</label><img alt="" src="/backend/images/icons/color/plus.png">
+								</a>																	
+								 
+								 <!-- muestro los depart que tiene asignados -->
+								 <ul id="sortabledep" style="padding-top:10px;">
+				                     <?php if($this->PersonDepartment) {?>
+				                     <?php foreach($this->PersonDepartment as $perdep ){ ?>
+									 	<li class="ui-state-default dd-item dd3-item" id="Department_<?php echo $perdep['idDep']?>" style="margin-bottom:4px;" data-titleDepartment="<?php echo $perdep['pedTitle'] ?>">
+									 		<div class="dd-handle dd3-handle"></div>
+											<div class="liLeft infoTitle" style="margin-left:30px;" title="Drag and Drop to order items"><?php echo $perdep['pedTitle'] . ' at ' .$perdep['uniName'].' | '.$perdep['schName'].' Sch. | '. $perdep['depName'] . ' Dept.'   ?></div>
+											<div class="liRight">
+												<a class="smallButton buttonLi" title="remove department" href="javascript:removeDep(<?php echo $perdep['idDep']?>, '<?php echo $perdep['depName']?>' )"><img alt="" src="/backend/images/icons/color/cross.png"></a>
+											</div>		   
+											<div class="clear"></div>	
+										</li>                 	
+				                     <?php } ?>
+				                     <?php } ?>
+								 </ul>     			                     
+		                   </fieldset>
+		                   
+		                    <fieldset style="padding: 5px 14px; border-top: 1px solid #E2E2E2; border-bottom: 1px solid #E2E2E2; border-left: 1px solid #E2E2E2; border-right: 1px solid #E2E2E2; margin-left:5px; margin-right:5px; margin-top:10px;" id ="fieldset_sponsor"><legend style="font-size: 12px;font-weight: bold;">Sponsor</legend> 
+		                     <?php if($this->Sponsor) $display = 'display:block'; else $display = 'display:none';?>
+			                    <div class="formRow">
+			                        <label>Is Sponsor:</label>
+			                        <div class="formRight">
+			                        	<?php if(!is_null($this->Sponsor)){ $checkedsp = "checked"; $on = 'on';}else{ $checkedsp = "";$on = 'off';}?>
+			                        	<input type="checkbox" name="spoIsSponsor" id="spoIsSponsor" <?php echo $checkedsp ?> onClick="javascript:cargarSponsor()" value="<?php echo $on?>"><!-- <label style="margin-top:5px;">Is sponsor</label> -->
+			                        </div>
+			                        <div class="clear"></div>
+			                    </div>	
+			                    <div class="clear"></div>			                    
+			                    <div id="datosSponsor" style="<?php echo $display ?>">
+				                    <div class="formRow" >
+				                        <label for="spoIsOrganization">Is Organization:</label>
+				                        <div class="formRight">
+				                        <?php if(!empty($this->Sponsor) && !is_null($this->Sponsor->spoIsOrganization) && $this->Sponsor->spoIsOrganization == 1){ $checked = "checked"; $on = 'on'; }else{ $checked = "";$on = 'off';}?>
+				                        	<input type="checkbox" name="spoIsOrganization" id="spoIsOrganization" <?php echo $checked?> onClick="javascript:cargarOrg()" value="<?php echo $on?>"/>
+				                        </div>
+				                        <div class="clear"></div>
+				                    </div>	
+				                    <div class="formRow" >
+				                        <label for="spoCompanyName">Name:<span class="req">*</span></label>
+				                        <div class="formRight">
+				                        	<input type="text" class="validate[required]" name="spoCompanyName" id="spoCompanyName" value="<?php echo is_null($this->Sponsor) ? '' : $this->escape($this->Sponsor->spoCompanyName) ?>"/>
+				                        </div>
+				                        <div class="clear"></div>
+				                    </div>	
+			                    	<div class="formRow" >
+				                        <label for="spoCompanyURL">Url:</label>
+				                        <div class="formRight">
+				                        	<input type="text" name="spoCompanyURL" id="spoCompanyURL" value="<?php echo is_null($this->Sponsor) ? '' : $this->Sponsor->spoCompanyURL ?>"/>
+				                        </div>
+				                        <div class="clear"></div>
+				                    </div>	
+				                    <div class="formRow" >
+				                        <label for="spoImageURL">Image url:</label>
+				                        <div class="formRight">
+				                        	<input type="text" name="spoImageURL" id="spoImageURL" value="<?php echo is_null($this->Sponsor) ? '' : $this->Sponsor->spoImageURL ?>"/>
+				                        </div>
+				                        <div class="clear"></div>
+				                    </div>	
+				                    <div class="formRow" >
+				                        <label for="spoEmail">email:</label>
+				                        <div class="formRight">
+				                        	<input type="text" class="validate[custom[email]]" name="spoEmail" id="spoEmail" value="<?php echo is_null($this->Sponsor) ? '' : $this->Sponsor->spoEmail ?>"/>
+				                        </div>
+				                        <div class="clear"></div>
+				                    </div>	
+				                    <div class="formRow" >
+				                        <label for="spoPhone">Phone:</label>
+				                        <div class="formRight">
+				                        	<input type="text" name="spoPhone" id="spoPhone" value="<?php echo is_null($this->Sponsor) ? '' : $this->Sponsor->spoPhone ?>"/>
+				                        </div>
+				                        <div class="clear"></div>
+				                    </div>	
+				                    <div class="formRow" >
+				                        <label for="spoAddress">Address:</label>
+				                        <div class="formRight">
+				                        	<input type="text" name="spoAddress" id="spoAddress" value="<?php echo is_null($this->Sponsor) ? '' : $this->escape($this->Sponsor->spoAddress) ?>"/>
+				                        </div>
+				                        <div class="clear"></div>
+				                    </div>	
+			                    </div>
+		                    </fieldset>
+		                    <div class="formSubmit">		                    	
+		                    	<input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancel()" />
+		                    	<input type="button" value="Save" class="blueB" onclick="save()" />
+		                    </div>
+		                    <div class="clear"></div>
+		                </div>		                
+		            </fieldset>
+		        </form>  
+	        </div>	        
+        </div>	
+	</div>
+</div>	        
+<script type="text/javascript">
+	function cargarSponsor(){
+			var mostrar = document.getElementById("datosSponsor"). style.display;
+			if(mostrar == 'none'){ 
+				document.getElementById("spoIsSponsor").value = 'on';
+				document.getElementById("datosSponsor"). style.display = 'block';
+			}else{ 
+				document.getElementById("spoIsSponsor").value = 'off';
+				document.getElementById("datosSponsor"). style.display = 'none'; 
+			}			
+	}
+	
+	function cargarOrg(){
+		var isorg = document.getElementById("spoIsOrganization").checked;
+		if(isorg == true)
+				document.getElementById("spoIsOrganization").value ='on';
+		else
+				document.getElementById("spoIsOrganization").value ='off';
+	}
+	
+	function adddep(){
+		$( "#dialog-message" ).dialog( "open" );
+	}
+	$(function() {
+		$( "#sortable" ).sortable({
+			placeholder: "placeholder",
+			forcePlaceholderSize: true,
+	        opacity: 0.4
+		});
+		$( "#sortable" ).disableSelection();
+		$( '.buttonLi' ).on('click', function(){
+			$(this).parents('li').remove();
+		});
+
+		 $("#validatedep").validationEngine({
+	    		prettySelect : true,
+				useSuffix: "_chzn"
+	    }); 
+		    
+		$( "#dialog-message" ).dialog({
+			autoOpen: false,
+			height : 300,
+			width: $(window).width() < 510 ? ($(window).width() - 10) : 530,
+			resizable: false,
+			modal: true,
+			open: function(event,ui){
+				$('.dialog').validationEngine({
+		    		prettySelect : true,
+		    		useSuffix: "_chzn"
+		    });
+			},
+			buttons: {
+				
+				'Cancel': function() {
+					$( this ).dialog( "close" );
+				},
+				"Accept": function() {	
+					if (jQuery('#validatedep').validationEngine('validate')) {
+						guardarDep(true);
+						$( this ).dialog( "close" );					
+					}				
+				}
+			},
+			close: function() {
+				$('.dialog').validationEngine('hideAll');
+			}
+		});
+
+
+
+		 $('#idUniversity').on('change', function(){
+	            var idUniversity = $(this).val();
+	            
+	     	   $.ajax( {
+	    	        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ocw', 'action'=> 'getschoolajax'))?>",
+	    	        data: { idUniversity: idUniversity  } , 
+	    	        dataType: "json",global: true, cache:false,
+	    	        ifModified: false, processData:true,
+	    	        success: function(datos)
+	    	        {
+	    	        	$('#uniform-idSchool span').html(""); 
+	    				var option = '<option value=""></option> ';
+	    				$.each( datos, function( key, value ) {
+	    					var str = value.schName;
+	    					if(str.length > 35) str = str.substring(0,34)+'...';
+	    					option += '<option value="' + value.id + '" >' + str + '</option>';
+	    				});
+	    				$('#idSchool').html('');
+	    				$('#idDepartment').html('');
+	    				$('#idSchool').append(option);
+	    				$("#idSchool").trigger("liszt:updated");
+	    				$("#idDepartment").trigger("liszt:updated");
+	    				
+	    	        },
+	    	        error: function(request, status, error)
+	    	        {
+	    	            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+	    	            $.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+	    	        },
+	    	        timeout: 20000,
+	    	        type: "POST"
+	    	    } ); 
+	        });
+	        $('#idSchool').on('change', function(){
+	            var idSchool = $(this).val();
+	     	   $.ajax( {
+	    	        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ocw', 'action'=> 'getdepartmentajax'))?>",
+	    	        data: { idSchool: idSchool  } , 
+	    	        dataType: "json",global: true, cache:false,
+	    	        ifModified: false, processData:true,
+	    	        success: function(datos)
+	    	        {
+
+	    	            $('#uniform-idDepartment span').html(""); 
+	    	            
+	    				var option = '<option value=""></option> ';
+	    				$.each( datos, function( key, value ) {
+	    					var str = value.depName;
+	    					if(str.length > 35) str = str.substring(0,34)+'...';
+	    					option += '<option value="' + value.id + '" >' + str + '</option>';
+	    				});
+	    				
+	    				$('#idDepartment').html('');
+	    				$('#idDepartment').append(option);
+	    				$("#idDepartment").trigger("liszt:updated");
+	    				//$('#uniform-idDepartment').html(""); 
+	    				
+	    	        },
+	    	        error: function(request, status, error)
+	    	        {
+	    	            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+	    	            $.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+	    	        },
+	    	        timeout: 20000,
+	    	        type: "POST"
+	    	    } ); 
+	        });   
+	        
+	});	
+
+	function guardarDep(callback){
+
+		if (jQuery('#validatedep').validationEngine('validate') || callback === true) {
+			var data = new Array();
+
+			var idschool = '';
+			var textschool = '';
+			var iddep = '';
+			var textdep = ''; 
+			var iduni = '';
+			var textuni = '';
+			
+			$('#validatedep select').each(function(index, value){ 
+				if($(this).attr('name') !=='' && $(this).val() !=='' ){		
+					if($(this).attr('name') == 'idUniversity' ){
+						iduni = $(this).val();
+						textuni = $(this).find('option:selected').text();
+					}
+					if($(this).attr('name') == 'idSchool' ){
+						idschool = $(this).val();
+						textschool = $(this).find('option:selected').text();
+					}
+					if($(this).attr('name') == 'idDepartment' ){
+						iddep = $(this).val();
+						textdep = $(this).find('option:selected').text();
+					}
+				}
+			}); 
+			var titleDepartment = $('#titleDepartment').val();
+			
+			var li = $('<li class="ui-state-default dd-item dd3-item" id="Department_' + iddep + '" data-titleDepartment="'+ titleDepartment +'"></li>');
+			var licat = $('<div class="dd-handle dd3-handle"></div>');
+			var liLeft = $('<div class="liLeft infoTitle" style="margin-left:30px;" title="Drag and Drop to order items">' + titleDepartment + ' at ' + textuni + ' | ' + textschool +  ' Sch. | '  + textdep + ' Dept.' + '</div>');
+			var liRight = $('<div class="liRight"></div>');
+			var button = $('<a class="smallButton buttonLi" title="remove department" href="javascript:removeDep('+ iddep +', \'' + textdep + '\' )"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
+			var clear= $('<div class="clear"></div>');
+
+			button.on('click',function(){
+				$(this).parents('li').remove();
+			});
+			liRight.append(button);
+			li.append(licat).append(liLeft).append(liRight).append(clear);
+			$('#sortabledep').append(li);
+		}			
+	}
+	
+		
+	function save(){
+		if (jQuery('#validate').validationEngine('validate') ) { 
+			var data = new Array();
+			var datasponsor = new Array();
+			$('#validate input[type="text"], #validate input[type="hidden"], #validate textarea, #validate input[type="checkbox"]').each(function(index, value){
+				if( $(this).attr('name') && $(this).attr('name').substr(0,3) !=='spo'){
+					//console.debug($(this).attr('name'));
+					data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+				}
+				//console.debug(data);
+				if($(this).attr('name') && $(this).attr('name').substr(0,3) =='spo'){
+					datasponsor.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+				}
+			});
+
+			var Id = $('#personId').val();
+			var accion = $('#accion').val();
+			var degrees		= new Array();
+			$('#sortable li').each(function (index) {
+				var stringId 	= $(this).attr('id')
+				var arrayId 	= stringId.split('_');
+				degrees.push({ id : parseInt(arrayId[1]), order: index });
+			});
+
+			var departments		= new Array();
+			$('#sortabledep li').each(function (index) {
+				var stringId 	= $(this).attr('id')
+				var arrayId 	= stringId.split('_');
+				var titleDepartment = $(this).attr('data-titleDepartment');
+				//console.debug(titleDepartment);
+				departments.push({ id : parseInt(arrayId[1]), order: index, titleDepartment: titleDepartment });
+			});
+			
+		   $.ajax( {
+		        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'person', 'action'=> 'saveperson'))?>",
+		        data: { data: data, accion: accion, id:Id, degrees: degrees, departments: departments, datasponsor: datasponsor  } , 
+		        async: false,
+		        beforeSend: function(objeto){},
+		        complete: function(objeto, exito) { },
+		        dataType: "json",
+		        global: true,
+		        cache:false,
+		        ifModified: false,
+		        processData:true,
+		        success: function(datos)
+		        {
+		        	//$.jGrowl('Data saved successfully', { header: 'Success', sticky: false, theme: 'success' });
+		        	$('#personId').val(datos.id);
+		        	$('#accion').val('edit');		        	
+		        	$(".loader").show();
+		        	window.setTimeout(function() {
+		        		$(".loader").hide();
+		        		displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'person', 'action'=>'index'))?>' );
+		        	}, 2000); 
+		        },
+		        error: function(request, status, error)
+		        {
+		            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+		            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+		            displayMessage( 'error', mensaje, 'Error', '' );
+		        },
+		        timeout: 20000,
+		        type: "POST"
+		    } ); 
+		} else {
+			return false;
+		}
+	}	
+	function cancel(){
+		document.location.href='<?php echo $this->url(array('module'=>'admin','controller'=>'Person', 'action'=>'index'))?>';
+	}
+	function removeDegree(id, text){
+		$('#listDegree').append('<option value="'+id+'">'+ text +'</option>');
+		$("#listDegree").trigger("liszt:updated");
+	}
+	function removeDep(id, text){
+		$('#listDep').append('<option value="'+id+'">'+ text +'</option>');
+		$("#listDep").trigger("liszt:updated");
+	}	
+	function adddegree(){		
+		var itemselected = $('#listDegree option:selected');		
+		if(itemselected.val() !== '') {
+			var li = $('<li class="ui-state-default dd-item dd3-item" id="Degree_' + itemselected.val() + '"></li>');
+			var licat = $('<div class="dd-handle dd3-handle"></div>');
+			var liLeft = $('<div class="liLeft" style="margin-left:30px;" title="Drag and Drop to order items">' + itemselected.text() + '</div>');
+			var liRight = $('<div class="liRight"></div>');
+			var button = $('<a class="smallButton buttonLi" title="remove degree" href="javascript:removeDegree('+ itemselected.val() +', \'' + itemselected.text() + '\' )"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
+			var clear= $('<div class="clear"></div>');			
+			button.on('click',function(){
+				$(this).parents('li').remove();
+			});
+			liRight.append(button);
+			li.append(licat).append(liLeft).append(liRight).append(clear);
+			$('#sortable').append(li);
+			itemselected.remove();
+			$("#listDegree").trigger("liszt:updated");
+		}else{
+			$.jGrowl( 'Plese, select an option', { header: 'Error', sticky: false, theme: 'error' } );
+		}
+	}
+	$(function() {
+		$( "#sortable" ).sortable({
+			placeholder: "placeholder",
+			forcePlaceholderSize: true,
+            opacity: 0.4
+		});
+		$( "#sortable" ).disableSelection();
+		$( '.buttonLi' ).on('click', function(){
+			$(this).parents('li').remove();
+		});
+
+		$( "#sortabledep" ).sortable({
+			placeholder: "placeholder",
+			forcePlaceholderSize: true,
+	        opacity: 0.4
+		});
+		$( "#sortabledep" ).disableSelection();
+		$( '.buttonLi' ).on('click', function(){
+			$(this).parents('li').remove();
+		});
+	});	
+
+	$(function() {
+		   $('#validate').submit(function() {
+				save();
+		    	return false;
+		    }); 
+	});		
+</script>
+<style>
+<!--
+.liLeft { float: left; width: 70%; padding: 5px;}
+.liRight{ float: right;}
+.buttonLi{ padding: 5px; line-height: 0;}
+.placeholder { background-color: white; border:1px dashed #c5c5c5; margin:5px;}
+.degreeItem { padding: 3px;border: solid 1px lime;}
+/*#sortable { float: left; list-style-type: none; margin: 0;}
+#sortable li { cursor: pointer; margin: 0 0 4px; padding: 2px;}*/
+
+#sortable li{ cursor: pointer; margin: 0 0 4px; padding: 3px;}
+#sortable .ui-state-default a { color: #555555; margin-top: 0px; text-decoration: none;}
+#sortable {margin-top:9px;}
+#sortable li {height:28px;}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { background: url("/backend/images/jquery/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6; border: 1px solid #D3D3D3;}
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #555555; text-decoration: none; }
+-->
+.formRow .formRight { display: block; float: right; margin-right: 0px; width: 70%;}
+#sortabledep { float: left; list-style-type: none; margin: 0; padding: 0 0 2.5em; width: 100%;}
+#sortabledep li { cursor: pointer; margin: 0 0 4px; padding: 1px;}
+.formRow > label { display: block; float: left; padding: 4px 0; width: 20%;}
+/* comobos uni, school, dep  */
+div.selector {width: 280px;}
+div.selector select {width: 280px;}
+div.selector span {text-align: left; width: 280px;}
+.ui-widget-overlay {height: 0;}
+.infoTitle {overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 80%;}
+</style>
+
+<div id="dialog-message" title="Add Department" style="display:none;">
+        <div class="">
+             <form id="validatedep" method="post" action="" class="dialog" onsubmit="return false;">
+	        		<div class="formRow" style="border-top: 0px none;border-bottom: 0px none;">
+                        &nbsp;     
+                        <div class="clear"></div>
+                    </div>                  
+				   <div class="formRow" style="border-top: 0px none; border-bottom:0px none;">
+                        <label>University:<span class="req">*</span></label>
+                        <div class="formRight" style="margin-left:10px;float:left" ><!-- searchDrop -->
+                        <select data-placeholder="Choose a University..." name="idUniversity" id="idUniversity" class="validate[required]" tabindex="2"><!-- chzn-select  -->
+                        	<option value="">Choose a University...</option> 
+                            <?php foreach ($this->universitys as $university){ ?>
+                            <?php $str = $this->escape($university->uniName); if(strlen($str) > 35) $str = substr($str,0,34).'...';?>
+                            <option value="<?php echo $university->id?>"><?php echo $str ?></option> 
+                            <?php }?>
+                        </select>
+                    </div>             
+                        <div class="clear"></div>
+                    </div>
+                    <div class="formRow"  style="border-bottom:0px none;border-top:0px none;">
+                        <label>School:<span class="req">*</span></label>
+                        <div class="formRight" style="margin-left:10px;float:left"><!-- searchDrop -->
+                        <select data-placeholder="Choose a School..." name="idSchool" id="idSchool" class="validate[required]" tabindex="2"><!-- chzn-select  -->
+                            <option value="">Choose a School...</option> 
+                        </select>
+                        </div>             
+                        <div class="clear"></div>
+                    </div>    
+                    <div class="formRow"  style="border-bottom:0px none;border-top:0px none;">
+                        <label>Department:<span class="req">*</span></label>
+                        <div class="formRight" style="margin-left:10px;float:left"><!-- searchDrop -->
+                        <select data-placeholder="Choose a Deparment..." name="idDepartment" id="idDepartment" class="validate[required]" tabindex="2"><!-- chzn-select  -->
+                            <option value="">Choose a Deparment...</option> 
+                        </select>
+                        </div>             
+                        <div class="clear"></div>
+                  </div>
+                  <div class="formRow"  style="border-bottom:0px none;border-top:0px none;">
+                  		<label>Title:<span class="req">*</span></label>
+               			<div class="formRight" style="margin-left:10px;float:left">
+				        	<input style="margin:0; width: 280px;" type="text" name="titleDepartment" id="titleDepartment" class="validate[required]" value=""/>
+                        </div>
+                        <div class="clear"></div>
+                  </div>
+            </form>
+        </div>
+</div>
+			                    

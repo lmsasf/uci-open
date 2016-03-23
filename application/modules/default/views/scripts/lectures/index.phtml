@@ -1,0 +1,117 @@
+
+<style>
+<!--
+#preMessage {
+    margin-top: 150px;
+    text-align: center;
+}
+-->
+</style>
+<div class="span12" id="content">
+    <div class="<?php if($this->count_ads > 0){ ?>span8<?php }else{?> span11 <?php }?>" id="content_left"<?php if($this->count_ads > 0) echo ' style="width: 830px"'?>>
+        <div class="tabbable tabs-left">
+            <ul class="nav nav-tabs" id="myTabs">
+                <?php
+                $active = 0 ;
+                foreach ($this->tree as $cat ){ 
+                ?>
+                <li class="<?php if( $active === 1 ){ echo 'active'; $active = 0; } ?>"><a href="<?php echo $this->escape('#CAT_'.$cat['node']['id']) ?>" data-toggle="tab"><?php echo $this->escape($cat['node']['catName']) ?></a></li>
+                <?php } ?>
+            </ul>
+            <div class="tab-content">
+            <div id="preMessage"><h2>Select a category</h2></div>
+            <?php 
+            $active = 0;
+            foreach ($this->tree as $cat ){ 
+            ?>
+                <div class="tab-pane <?php if($active===1 ){ echo 'active'; $active = 0; } ?>" id="<?php echo $this->escape('CAT_'.$cat['node']['id']) ?>">
+                    <h2><?php echo $this->escape($cat['node']['catName']); ?></h2>
+                    <?php if ( !empty($cat['childrens']) ) { ?>
+                            <div id="<?php echo $this->escape('ACC_'.$cat['node']['id']) ?>" class="accordion">
+                                <?php foreach ($cat['childrens'] as $sub ): ?>
+                                    <!-- Start accordion grouping -->
+                                    <div class="accordion-group">
+                                        <div class="accordion-heading">
+                                            <a href="<?php echo $this->escape('#SUB_'.$sub['id']) ?>" data-parent="<?php echo $this->escape('ACC_'.$cat['node']['id']) ?>" data-toggle="collapse" class="accordion-toggle">
+                                            <h3><?php echo $this->escape($sub['catName']) ?></h3>
+                                            </a>
+                                        </div>
+                                            <!-- Start accordion body -->
+                                            <div class="accordion-body in collapse" id="<?php echo $this->escape('SUB_'.$sub['id']) ?>" style="height: auto;">
+                                                <div class="accordion-inner">
+                                                    <?php if(array_key_exists($sub['id'], $this->lectures)): ?>
+                                                        <?php foreach ($this->lectures[$sub['id']] as $lectures ): ?>
+                                                            <?php $titleEncode = is_null($lectures['ocwTitleEncode']) ? codificar_titulo($lectures['ocwTitle']) : $lectures['ocwTitleEncode'] ?>
+                                                            <?php $lectureUrl = !is_null($lectures['ocwBypassUrlLecture']) && !empty($lectures['ocwBypassUrlLecture']) ? $lectures['ocwBypassUrlLecture'] : '/lectures/'.$titleEncode.'.html' ?>
+                                                            <?php $target = !is_null($lectures['ocwBypassUrlLecture']) && !empty($lectures['ocwBypassUrlLecture']) ? 'target="_blank"' : '' ?>
+                                                            <p><a href="<?php echo $lectureUrl ?>"><?php echo $this->escape( $lectures['ocwTitle'] .' (' . $lectures['lanName'] . ')' )?></a>
+                                                        <?php endforeach;?>
+                                                    <?php else :?>
+                                                    <p>No lectures in this category</p>
+                                                    <?php endif;?>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                    </div>
+                                <?php endforeach;?>			
+                            </div>
+                    <?php } //else { ?>
+                        <div class="" id="<?php echo $this->escape('ACC_'.$cat['node']['id']) ?>">
+                        <?php if(array_key_exists($cat['node']['id'], $this->lectures)){ ?>
+                            <?php foreach ($this->lectures[$cat['node']['id']] as $lectures ){ ?>
+                                <?php $titleEncode = is_null($lectures['ocwTitleEncode']) ? codificar_titulo($lectures['ocwTitle']) : $lectures['ocwTitleEncode'] ?>
+                                <?php $lectureUrl = !is_null($lectures['ocwBypassUrlLecture']) && !empty($lectures['ocwBypassUrlLecture']) ? $lectures['ocwBypassUrlLecture'] : '/lectures/'.$titleEncode.'.html' ?>
+                                <?php $target = !is_null($lectures['ocwBypassUrlLecture']) && !empty($lectures['ocwBypassUrlLecture']) ? 'target="_blank"' : '' ?>
+                                <p>
+                                <a href="<?php echo $lectureUrl ?>" ><?php echo $this->escape(strip_tags($lectures['ocwTitle']))?></a>
+                                </p>
+                            <?php }?>
+                        <?php } ?>
+
+                        </div>
+                    <?php //}?>
+                </div>
+            <?php }?>
+            </div>	      
+        </div>
+    </div>
+    
+    <?php if($this->count_ads > 0){
+        /* Imagen de sponsortships o donate */ ?>
+    <div class="span3" id="content_right" style="margin-top: 10px;margin-right: 20px;float: right">
+		<div class="well well-small" style="text-align: center;">
+			<div id="img_url" class="img-polaroid"></div>
+		</div>
+    </div>
+	<?php }?>
+    
+</div>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $('#myTabs a').click(function (e) {
+        $('#preMessage').hide();
+    });
+    
+    loadAds();
+});
+function loadAds(){
+    data = $.parseJSON('<?php echo $this->ads ?>');
+    images = new Array; 
+    links = new Array;     
+
+    $.each(data, function(ind, obj){
+       images[ind] = obj.adsImageURL; 
+       links[ind] = obj.adsRedirectURL;
+    });
+    
+    if(images.length > 1){
+        $('#img_url').html('<a href="'+ links[0] +'"><img src="'+ images[0] +' " style="border: 0px;"></a>');
+        $('#img_url1').html('<a href="'+ links[1] +'"><img src="'+ images[1] +' " style="border: 0px;"></a>');
+    }else{
+        $('#img_url').html('<a href="'+ links[0] +'"><img src="'+ images[0] +' " style="border: 0px;"></a>');
+    }    
+}
+
+</script>

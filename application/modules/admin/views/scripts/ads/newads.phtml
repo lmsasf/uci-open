@@ -1,0 +1,752 @@
+<?php
+/**
+ * Agrego las JS de plupload para archivos e imágenes
+ */
+$this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
+    ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
+    ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js')
+    ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
+;
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/modules/admin/promotions.css');
+?>
+<div class="topHeader" style="top: 0;">
+    <div class="titleArea">
+        <div class="wrapper">
+            <div class="TopPageTitle">
+                <div class="bc">
+                    <ul id="breadcrumbs" class="breadcrumbs">
+                        <li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+                        <li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ads', 'action'=>'index') )?>">Promotions LIST</a></li>
+                        <li class="current"><a href="javascript:void(0)"><?php echo $this->accion ==='add' ? 'Add':'ADD Promotions' ?></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CONTENIDO -->
+<div id="content">
+    <div class="wrapper">
+        <div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+        <div id="mensajes"></div>
+        <div class="widgets">
+            <div class="oneTwo">
+                <!-- Validation form -->
+                <form id="validate" class="form" method="post" action="" onsubmit="return false;">
+                    <input type="hidden" name="idAds" id="idAds" value="<?php  if($this->ads){ echo $this->ads->idAds; }else{echo '';}?>" />
+                    <input type="hidden" name="accion" id="accion" value="<?php echo $this->accion ?>" />
+                    <fieldset>
+                        <div class="widget">
+                            <div class="title"><h6>Details Promotions</h6></div>
+                            <!-- Ads Name -->
+                            <div class="formRow">
+                                <label for="adsName">Name:<span class="req">*</span></label>
+                                <div class="formRight">
+                                    <input type="text" class="validate[required]" name="adsName" id="adsName" value="<?php  if($this->ads){ echo $this->ads->adsName; }?>"/>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <!-- FIN Ads Name -->
+
+                            <!-- Ads Type -->
+                            <div class="formRow">
+                                <label for="idAdsType">Type:<span class="req">*</span></label>
+                                <div class="formRight searchDrop">
+                                    <select data-placeholder="Choose a type..." id="idAdsType" name="idAdsType" class="validate[required] chzn-select exclude" style="width:350px;" tabindex="2">
+                                        <option value="<?php if ($this->adsSelect){ echo $this->adsSelect->idAdsType;} ?>"><?php if ($this->adsSelect){ echo $this->adsSelect->adsTypName;} ?></option>
+                                        <?php foreach ($this->adstypes as $type) { ?>
+                                            <option value="<?php echo $type->idAdsType ?>" <?php if (!empty($this->Ocw->idType) && $type->id == $this->Ocw->idType) {
+                                                echo "selected";
+                                            } ?>><?php echo $this->escape($type->adsTypName); ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <!-- FIN Ads Type -->
+
+                            <!-- OCW Type -->
+                            <div class="formRow">
+                                <label for="idOWCTypes">OCW Type:<span class="req">*</span></label>
+                                <div class="formRight searchDrop">
+                                    <select data-placeholder="Choose a type..." id="idOCWTypes" name="idOCWTypes" class="validate[required] chzn-select exclude" style="width:350px;" tabindex="2">
+                                        <option value="<?php if ($this->typeSelect){ echo $this->typeSelect->id;} ?>"><?php if ($this->typeSelect){ echo $this->typeSelect->typName;} ?></option>
+                                        <?php foreach ($this->types as $type) { ?>
+                                            <option value="<?php echo $type->id ?>" <?php if (!empty($this->Ocw->idType) && $type->id == $this->Ocw->idType) {
+                                                echo "selected";
+                                            } ?>><?php echo $this->escape($type->typName); ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <!-- FIN OCW Type -->
+
+                            <!-- Categories Type -->
+                            <div class="formRow">
+
+                                <label>Categories:</label>
+                                <div class="formRight searchDrop">
+
+                                    <select data-placeholder="Select all.." class="chzn-select" style="width:350px;" tabindex="2" name="listCategories" id="listCategories">
+                                        <option value=""></option>
+                                        <?php foreach ($this->allcategories AS $category) {
+                                            $exist = "";
+                                            if(in_array($category["id"], $this->includecategoriesids)){
+                                                $exist = "font-weight:bold;color:green";
+                                            }
+                                            ?>
+                                            <option value="<?php echo $category["id"] ?>" title='<?php echo $category['path'] ?>' style="<?php echo $exist ?>"><?php echo $this->escape(str_repeat(' - ', (int) $category['level']) . $category['catName']) ?></option>
+                                        <?php } ?>
+                                    </select>
+
+                                    <a class="smallButton" style="line-height: 0; padding: 5px; position: absolute; margin-left:10px;" title="Add category" href="javascript:addCategory()" id="btnAddCategories">
+                                        <img alt="" src="/backend/images/icons/color/plus.png">
+                                    </a>
+
+                                    <div class="clear"></div>
+                                    <ul id="sortable-categories">
+                                        <?php if (!empty($this->pagecategories)) { ?>
+                                            <?php foreach ($this->pagecategories as $cat) { ?>
+                                                <li class="ui-state-default dd-item dd3-item" id="Category_<?php echo $cat["id"] ?>">
+                                                    <div class="liLeft" title="Drag and Drop to order items"><?php echo $this->escape($cat["path"]); ?></div>
+                                                    <div class="liRight">
+                                                        <a class="smallButton buttonLi" title="remove category" href="javascript:removeCategory('<?php echo $cat["id"] ?>')"><img alt="" src="/backend/images/icons/color/cross.png"></a>
+                                                    </div>
+                                                    <div class="clear"></div>
+                                                </li>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    </ul>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+
+                            <!-- FIN Categories Type -->
+
+                            <!-- OCW -->
+
+                            <div class="formRow">
+                                <label for="idOCWpage">OCW Page:<span class="req"></span></label>
+                                <div class="formRight searchDrop">
+
+                                    <select data-placeholder="Select all..." id="idOCWpage" name="idOCWpage" class="chzn-select" style="width:350px;" tabindex="2" <?php //echo $disabled ?>>
+                                        <option value=""></option>
+                                        <?php foreach ($this->pages AS $page) { ?>
+                                            <option value="<?php echo $page["id"] ?>" title='<?php echo $page['ocwTitle'] ?>'><?php echo $this->escape($page['ocwTitle']) ?></option>
+                                        <?php } ?>
+                                    </select>
+
+                                    <a class="smallButton" style="line-height: 0; padding: 5px; position: absolute; margin-left:10px;" title="Add OCW Page" href="javascript:addPage()" id="btnAddPages">
+                                        <img alt="" src="/backend/images/icons/color/plus.png">
+                                    </a>
+
+                                    <div class="clear"></div>
+                                    <ul id="sortable-pages">
+                                        <?php if (!empty($this->ocwpages)) { ?>
+                                            <?php foreach ($this->ocwpages as $ocwpage) { ?>
+                                                <li class="ui-state-default dd-item dd3-item" data-category="<?php echo $ocwpage['idCat']?>" data-category-del="" id="Page_<?php echo $ocwpage["id"] ?>">
+                                                    <div class="liLeft" title="Drag and Drop to order items"><?php echo $this->escape($ocwpage['ocwTitle']); ?></div>
+                                                    <div class="liRight">
+                                                        <a class="smallButton buttonLi" title="remove page" href="javascript:removePage('<?php echo $ocwpage['id'] ?>')"><img alt="" src="/backend/images/icons/color/cross.png"></a>
+                                                    </div>
+                                                    <div class="clear"></div>
+                                                </li>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    </ul>
+
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+
+                            <!-- url -->
+                            <div class="formRow">
+                                <label for="adsRedirectURL">URL:</label>
+                                <div class="formRight">
+                                    <input type="text" name="adsRedirectURL" placeholder="http://" id="adsRedirectURL" value="<?php  if($this->ads){ echo $this->ads->adsRedirectURL; }?>"/>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <!-- FIN url -->
+
+                            <!-- Imagen -->
+                            <div class="formRow courseForm">
+                                <label for="adsImageURL">Upload image:<span class="req">*</span></label>
+                                <div class="formRight">
+                                    <input type="hidden" name="adsImageURL" placeholder="http://" id="adsImageURL" value="<?php  if($this->ads){ echo $this->ads->adsImageURL; }?>">
+                                    <div id="image-upload-ads"></div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="formRow courseForm">
+                                <label>Image URL:</label>
+                                <div class="formRight"><input type="text" name="adsImage"  placeholder="http://" id="adsImage"  class="campo validate[required]" value="<?php  if($this->ads){ echo $this->ads->adsImageURL; }?>"/></div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="formRow courseForm">
+                                <label>Preview:</label>
+                                <div class="formRight">
+                                    <div id="simg_target"><img id="urlimagen-ads" style="width:100px;" src="<?php  if($this->ads){ echo $this->ads->adsImageURL; }else{?>/backend/images/not-available.jpg<?php }?>"></div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <!-- FIN Imagen -->
+
+                            <!-- Date -->
+                            <div class="formRow lectureForm">
+                                <label for="adsBeginDate">Begin Date:<span class="req">*</span></label>
+                                <div class="formRight">
+                                    <input type="text" class="validate[required]" id="adsBeginDate" name="adsBeginDate" style="width:58px;" value="<?php if($this->ads){ echo $this->ads->adsBeginDate; } ?>" />
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="formRow lectureForm">
+                                <label for="adsEndDate">End Date:</label>
+                                <div class="formRight"><input type="text" class="" id="adsEndDate" name="adsEndDate" style="width:58px;" value="<?php if($this->ads){ echo $this->ads->adsEndDate; } ?>" /></div>
+                                <div class="clear"></div>
+                            </div>
+                            <!-- FIN Date -->
+
+                            <!-- Active ADS -->
+                            <div class="formRow courseForm">
+                                <label>Active:</label>
+                                <div class="formRight">
+                                    <?php
+                                    if($this->ads){
+                                        if($this->ads->adsActive == 1){
+                                            ?>
+                                            <input type="radio" name='adsActive' id="adsActive" checked value='1'/><label>Yes</label>
+                                            <input type="radio" name='adsActive' id="adsActive1" value='0'/><label>NO</label>
+                                        <?php
+                                        }else{
+                                            ?>
+                                            <input type="radio" name='adsActive' id="adsActive" value='1' /><label>Yes</label>
+                                            <input type="radio" name='adsActive' id="adsActive1" checked value='0'/><label>NO</label>
+                                        <?php
+                                        }
+                                    }else{
+                                        ?>
+                                        <input type="radio" name='adsActive' id="adsActive" value='1' checked/><label>Yes</label>
+                                        <input type="radio" name='adsActive' id="adsActive1" value='0'/><label>NO</label>
+                                    <?php
+                                    } ?>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <!-- FIN Active ADS -->
+
+                            <!-- Section ADS -->
+                            <div class="formRow courseForm">
+                                <label>Section:</label>
+                                <div class="formRight">
+                                    <?php
+                                    if($this->ads){
+                                        if($this->ads->adsSection == 1){ ?>
+                                            <input type="checkbox" name='adsSection' id="adsSection" checked/><label>Index</label>
+                                        <?php
+                                        }else {     ?>
+                                            <input type="checkbox" name='adsSection' id="adsSection"/><label>Index</label>
+                                        <?php
+                                        }
+                                    }else{      ?>
+                                        <input type="checkbox" name='adsSection' id="adsSection"/><label>Index</label>
+                                    <?php
+                                    }   ?>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <!-- FIN Section ADS -->
+
+                            <div class="clear" style="padding-bottom:20px;"></div>
+
+                            <div class="formSubmit">
+                                <input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancel()" />
+                                <input type="button" value="Save" class="blueB" onclick="save()" />
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    <?php $idcats = null; if(!empty($this->idcats)) $idcats = $this->idcats ;?>
+    <?php $idocwpage = null; if(!empty($this->idocwpage)) $idocwpage = $this->idocwpage ;?>
+    <?php $idauthors = null;?>
+    <?php if(!empty($this->authorocw)): ?>
+    <?php foreach($this->authorocw as $author): ?>
+    <?php $idauthors[] = $author->id;?>
+    <?php endforeach;?>
+    <?php endif;?>
+
+    $(document).ready(function(){
+        $( "#adsBeginDate" ).datepicker({
+            dateFormat: 'yy-mm-dd',
+            minDate: 0
+        });
+
+        $( "#adsEndDate" ).datepicker({
+            dateFormat: 'yy-mm-dd',
+            minDate: 0
+        });
+    });
+
+    var urlImage = "<?php echo 'http://'.$_SERVER['SERVER_NAME'].'/upload/images/'?>";
+    var urlFile = "<?php echo 'http://'.$_SERVER['SERVER_NAME'].'/upload/files/'?>";
+
+    var idcats = new Array();
+
+    <?php if(count($this->pagecategories_ids) > 0){ ?>
+    idcats = <?php echo json_encode($this->pagecategories_ids) ?>;
+    <?php } ?>
+
+    if(idcats.length > 0){
+        idcats = JSON.stringify(idcats);
+        idcats = $.parseJSON(idcats);
+    }
+
+    var idocwpage = new Array();
+
+    <?php if(count($this->ocwpages_ids) > 0){ ?>
+    idocwpage = <?php echo json_encode($this->ocwpages_ids) ?>;
+    <?php } ?>
+
+    if(idocwpage.length > 0){
+        idocwpage = JSON.stringify(idocwpage);
+        idocwpage = $.parseJSON(idocwpage);
+    }
+
+    $(function() {
+
+        $("#idAdsType").chosen().each(function () {
+            $(this).on("liszt:showing_dropdown", function () {
+                countElementsChosen("idAdsType");
+            });
+        });
+
+        $("#idOCWTypes").chosen().each(function () {
+            $(this).on("liszt:showing_dropdown", function () {
+                countElementsChosen("idOCWTypes");
+            });
+        });
+
+        $("#listCategories").chosen().each(function () {
+            $(this).on("liszt:showing_dropdown", function () {
+                countElementsChosen("listCategories");
+            });
+        });
+
+        $("#idOCWpage").chosen().each(function () {
+            $(this).on("liszt:showing_dropdown", function () {
+                countElementsChosen("idOCWpage");
+            });
+        });
+
+        <?php if(empty($this->boolType)): ?>
+        $('#listCategories').attr("disabled", true);
+        $("#listCategories").trigger("liszt:updated");
+        <?php
+            endif;
+            if(empty($this->pagecategories)): ?>
+        $('#idOCWpage').attr("disabled", true);
+        $("#idOCWpage").trigger("liszt:updated");
+        <?php endif;?>
+
+        /*Cargar Imagen*/
+        $('#image-upload-ads').fineUploader({
+            request: {
+                endpoint: '/admin/ocw/uploadfile/target/images'
+            },
+            multiple: false,
+            validation: {
+                allowedExtensions: ['jpeg', 'jpg', 'png', 'gif']//,
+            },
+            text: {
+                uploadButton: 'Select or drop here, a image file to upload'
+            },
+            showMessage: function(message) {
+                displayMessage( 'error', message, 'Error', '' );
+            }
+        }).on('complete', function(event, id, fileName, responseJSON) {
+            if (responseJSON.success) {
+                $('#adsImage').val(urlImage + responseJSON.nameFile);
+                $(".adsImageformError").remove();
+                $('#urlimagen-ads').attr('src', urlImage + responseJSON.nameFile);
+            }
+        }).on('error', function(event, id, filName, mensaje) {
+            mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+            displayMessage( 'error', mensaje, 'Error', '' );
+        });
+
+
+        $('#adsImage').change(function() {
+            var cadena = $(this).val().split("/");
+            for (var i=0; i < cadena.length; i++) {
+                if( (i + 1) == cadena.length){
+                    var nombre = cadena[i];
+                }
+            }
+            $('#urlimagen-ads').attr('src', $(this).val());
+        });
+
+        /*FIN Cargar Imagen*/
+
+        $("#idOCWTypes").change(function() {
+            OCWTypes = $("#idOCWTypes option:selected").val();
+
+            $('#listCategories').html('');
+            $("#sortable-categories").html('');
+            idcats.length = 0;
+            $('#listCategories').attr("disabled", false);
+            $("#btnAddCategories").unbind('click');
+            $("#listCategories").trigger("liszt:updated");
+
+            $('#idOCWpage').html('');
+            $("#sortable-pages").html('');
+            idocwpage.length = 0;
+            $('#idOCWpage').attr("disabled", true);
+            $("#btnAddPages").unbind('click');
+            $("#idOCWpage").trigger("liszt:updated");
+
+            //Ajax para habilitar las Categorias y Subcategorias de un tipo
+            $.ajax({
+                url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ads', 'action'=> 'getcategoryfortype'))?>",
+                data: {OCWTypes: OCWTypes},
+                dataType: "json",
+
+                success: function(datos){
+                    var option = '<option value=""></option> ';
+                    $.each( datos[1], function( key, value ) {
+                        var name_categories;
+                        if (value.level == "1"){
+                            name_categories = "- " + value.catName;
+                        }else{
+                            name_categories = value.catName;
+                        }
+
+                        var exist = "";
+
+                        $.each(datos[0], function(key2, value2){
+                            if(value.id == value2.id){
+                                exist = "font-weight:bold;color:green";
+                            }
+                        });
+
+                        option += '<option title="'+ value.path +'" value="' + value.id + '" style="'+exist+'">'+  name_categories + '</option>';
+                    });
+                    $('#listCategories').html('');
+                    $('#listCategories').append(option);
+                    $("#listCategories").trigger("liszt:updated");
+                    countElementsChosen("listCategories");
+                },
+                error: function (request, status, error){
+                    mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+                    displayMessage( 'error', mensaje, 'Error', '' );
+                },
+                type: 'POST'
+            });
+
+        });
+
+        var $radios = $('input:radio[name=adsActive]');
+        if($radios.is(':checked') === false) {
+            $radios.filter('[value=0]').prop('checked', true);
+        }
+
+        $("#adsName").on("change", function(){
+            if($("#adsName").val() != ""){
+                $(".adsNameformError").remove();
+            }
+        });
+
+        $("#idAdsType").on("change", function(){
+            $(".idAdsType_chznformError").remove();
+        });
+
+        $("#idOCWTypes").on("change", function(){
+            $(".idOCWTypes_chznformError").remove();
+        });
+
+        $("#adsBeginDate").on("change", function(){
+            if($("#adsBeginDate").val() != ""){
+                $(".adsBeginDateformError").remove();
+            }
+        });
+    });
+
+    function countElementsChosen(id) {
+        var chosen = $("#"+id+"_chzn");
+        var results = chosen.find(".chzn-results  li");
+
+        if (results.length <= 10) {
+            chosen.find(".chzn-search").hide();
+        }else{
+            chosen.find(".chzn-search").show();
+        }
+    }
+
+    function getPagesByCategories(load){
+        if(load == 1){
+            OCWTypes = $("#idOCWTypes option:selected").val();
+            $.ajax({
+                url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ads', 'action'=> 'getpages'))?>",
+                data: {categories: idcats, OCWTypes: OCWTypes},
+                dataType: "json",
+                success: function(datos){
+                    var option = '<option value=""></option> ';
+                    $.each( datos, function( key, value ) {
+                        option += "<option title='" +value.ocwTitle+ "' value='" + value.id + "' data-category='"+value.idCat+"'>" + value.ocwTitle + "</option>";
+                    });
+                    $('#idOCWpage').html('');
+                    $('#idOCWpage').append(option);
+                    $('#idOCWpage').attr('disabled', false);
+                    $("#idOCWpage").trigger("liszt:updated");
+                    countElementsChosen("idOCWpage");
+                },
+                error: function (request, status, error){
+                    mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+                    displayMessage( 'error', mensaje, 'Error', '' );
+                },
+                type: 'POST'
+            });
+        }else{
+            $('#idOCWpage').html('');
+            $("#sortable-pages").html('');
+            idocwpage.length = 0;
+            $("#idOCWpage").trigger("liszt:updated");
+        }
+    }
+
+    function save(){
+        if (jQuery('#validate').validationEngine('validate') ) {
+            var inputs = new Array();
+            var IdAds = $('#idAds').val();
+            var adsName = $('#adsName').val();
+            var idAdsType = $('select#idAdsType').val();
+            var idOCWTypes = $('select#idOCWTypes').val();
+            var adsPages = idocwpage;
+            var adsRedirectURL = $('#adsRedirectURL').val();
+            var adsImage = $('#adsImage').val();
+            var adsBeginDate = $('#adsBeginDate').val();
+            var adsEndDate = $('#adsEndDate').val();
+            var adsActive = $('input:radio[name=adsActive]:checked').val();
+            var adsSection = $('input:checkbox[name=adsSection]:checked');
+            var adsCategories = idcats;
+
+            if(adsRedirectURL){
+                if(!isValidUrl(adsRedirectURL)){
+                    displayMessage( 'error', 'Invalid Url', 'Error', '' );
+                    return false;
+                }
+            }
+
+            // if(adsImage){
+            //     if(!isValidUrl(adsImage)){
+            //         displayMessage( 'error', 'Invalid Image Url', 'Error', '' );
+            //         return false;
+            //     }
+            // }
+
+            if(adsSection.is(':checked')){
+                adsSection = '1';
+            }else{
+                adsSection = '0';
+            }
+
+            if(adsPages.length == 0){
+                adsPages = '';
+            }
+
+            if(adsCategories.length == 0){
+                adsCategories = '';
+            }
+
+            if(adsEndDate){
+                if(adsBeginDate > adsEndDate){
+                    displayMessage( 'error', 'End Date is more big to Begin Date, Please insert Begin Date more big to End Date', 'Error', '' );
+                    return false;
+                }
+            }
+
+            inputs.push(adsName,idAdsType,idOCWTypes,adsRedirectURL,adsImage,adsBeginDate,adsEndDate,adsActive,adsSection,adsPages,IdAds, adsCategories);
+
+            $.ajax( {
+                url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ads', 'action'=> 'save'))?>",
+                data: { data:inputs },
+                success: function(datos)
+                {
+                    window.setTimeout(function() {
+                        displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ads', 'action'=>'index') )?>' );
+                    }, 2000);
+
+                },
+                error: function(request, status, error)
+                {
+                    mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+                    displayMessage( 'error', mensaje, 'Error', '' );
+                    console.log(mensaje);
+                },
+                timeout: 20000,
+                type: "POST"
+            });
+        } else {
+            return false;
+        }
+    }
+
+    function isValidUrl(url){
+        var pattern = /^(http|https)\:\/\/[a-z0-9\.-]+\.[a-z]{2,4}/gi;
+
+        if(url.match(pattern)){
+            return true;
+            console.info("true");
+        }else{
+            return false;
+            console.info("false");
+        }
+    }
+    function cancel(){
+        document.location.href='<?php echo $this->url(array('module'=>'admin','controller'=>'ads', 'action'=>'index'))?>';
+    }
+
+
+    function addCategory(){
+        var itemselected = $('#listCategories option:selected');
+        if(itemselected.val() !== '' && itemselected.val() != undefined) {
+            if(idcats.length > 0){
+                for(i=0; i<idcats.length; i++){
+                    //Compara el nuevo valor con los ya ingresados
+                    if(idcats[i] == itemselected.val()){
+                        mensaje = 'Please, select another category, this already exists';
+                        displayMessage( 'error', mensaje, 'Error', '' );
+                        return;
+                    }
+                }
+            }
+            var li = $('<li class="ui-state-default dd-item dd3-item" id="Category_' + itemselected.val() + '"></li>');
+            var liLeft = $('<div class="liLeft" title="Drag and Drop to order items">' + itemselected.attr('title') + '</div>');
+            var liRight = $('<div class="liRight"></div>');
+            var button = $('<a class="smallButton buttonLi" title="remove category" onclick="removeCategory('+itemselected.val()+')"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
+            var clear= $('<div class="clear"></div>');
+            idcats.push(itemselected.val());
+            liRight.append(button);
+            li.append(liLeft).append(liRight).append(clear);
+            $('#sortable-categories').append(li);
+            if(idcats.length > 0){
+                getPagesByCategories(1);
+            }
+
+            var idCategoria = itemselected.val().toString();
+            $("#sortable-pages").find("li").each(function(){
+                var dataCategoryEnd = ($(this).data("category-del")).toString();
+                var arrayDataDel = dataCategoryEnd.split(",");
+
+                if($.inArray(idCategoria, arrayDataDel) > -1){
+                    var position = arrayDataDel.indexOf(idCategoria);
+                    arrayDataDel.splice(position,1);
+
+                    var dataCategory = ($(this).data("category")).toString();
+                    var arrayData = dataCategory.split(",");
+                    arrayData.push(idCategoria);
+
+                    $(this).data("category-del", arrayDataDel.toString());
+                    $(this).attr("data-category-del", arrayDataDel.toString()); //guardo el array sin el id ingresado
+
+                    $(this).data("category", arrayData.toString());
+                    $(this).attr("data-category", arrayData.toString());
+                }
+            });
+
+        }else{
+            mensaje = 'Please, select an option';
+            displayMessage( 'error', mensaje, 'Error', '' );
+        }
+    }
+
+    function addPage(){
+        var itemselected = $('#idOCWpage option:selected');
+        if(itemselected.val() !== '' && itemselected.val() != undefined) {
+            if(idocwpage.length > 0){
+                for(i=0; i<idocwpage.length; i++){
+                    if(idocwpage[i] == itemselected.val()){
+                        mensaje = 'Please, select another page, this already exists';
+                        displayMessage( 'error', mensaje, 'Error', '' );
+                        return;
+                    }
+                }
+            }
+            var li = $('<li class="ui-state-default dd-item dd3-item" data-category="'+itemselected.data("category")+'" id="Page_' + itemselected.val() + '"></li>');
+            var liLeft = $('<div class="liLeft" title="Drag and Drop to order items">' + itemselected.attr('title') + '</div>');
+            var liRight = $('<div class="liRight"></div>');
+            var button = $('<a class="smallButton buttonLi" title="remove page" onclick="removePage('+itemselected.val()+')"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
+            var clear= $('<div class="clear"></div>');
+            idocwpage.push(itemselected.val());
+            liRight.append(button);
+            li.append(liLeft).append(liRight).append(clear);
+            $('#sortable-pages').append(li);
+        }else{
+            mensaje = 'Please, select an option';
+            displayMessage( 'error', mensaje, 'Error', '' );
+        }
+    }
+
+    function removeCategory(id_cat){
+        $('#Category_'+id_cat).remove();
+        var id = id_cat.toString();
+        var position_category = idcats.indexOf(id);
+
+        idcats.splice(position_category,1);
+
+        if(idcats.length == 0){
+            $('#idOCWpage').attr('disabled', true);
+            $("#idOCWpage").trigger("liszt:updated");
+            getPagesByCategories(0);
+        }else{
+            $("#sortable-pages").find("li").each(function(){
+                var dataCategory = ($(this).data("category")).toString();
+                if(dataCategory.search(",") == "-1"){
+                    if($(this).data("category") == id_cat){
+                        $(this).remove();
+                        var page_id = $(this).attr("id").split("_")[1];
+                        var position_page = idocwpage.indexOf(page_id);
+                        idocwpage.splice(position_page,1);
+                    }
+                }else{
+                    var aArray = dataCategory.split(",");
+                    if(jQuery.inArray(id, aArray) > -1){
+                        var position = aArray.indexOf(id);
+                        aArray.splice(position,1);
+                        if($(this).data("category-del")){
+                            var dataCategoryDel = ($(this).data("category-del")).toString();
+                            var arrayDataDel = dataCategoryDel.split(",");
+                            arrayDataDel.push(id);
+                            $(this).data("category-del", arrayDataDel.toString());
+                            $(this).attr("data-category-del", arrayDataDel.toString());
+                        }else{
+                            $(this).data("category-del", id);
+                            $(this).attr("data-category-del", id);
+                        }
+                        $(this).data("category",aArray.toString());
+                        $(this).attr("data-category",aArray.toString());
+                    }
+                }
+            });
+            getPagesByCategories(1);
+        }
+    }
+
+    function removePage(id_page){
+        $('#Page_'+id_page).remove();
+        var id = id_page.toString();
+        var position_page = idocwpage.indexOf(id);
+        idocwpage.splice(position_page,1);
+    }
+
+</script>

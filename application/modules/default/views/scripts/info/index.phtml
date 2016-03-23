@@ -1,0 +1,93 @@
+<!-- Start primary content -->
+<div class="span12" id="navi2">
+    <div class="navbar">
+        <div class="navbar-inner" id="nav2">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target="#navbar2">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <div id="navbar2" class="nav-collapse">
+                    <ul class="nav">
+                        <li><a id="navaboutocw" href="#">About Us</a></li>
+                        <li><a id="navfaq" href="#">FAQ</a></li>
+                        <li><a id="navtermsofuse" href="#">Terms of Use</a></li>
+                        <li><a id="navawards" href="#">Awards</a></li>
+                        <li><a id="navtestimonials" href="#">Testimonials</a></li>
+                        <li><a id="navinfo" href="#">Information for Faculty</a></li>
+                        <li><a id="navourteam" href="#">Our Team</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="span12" id="content">
+    <!-- Start accordion -->
+    <div class="accordion" id="about">
+
+        <!-- Start accordion grouping -->
+        <div class="accordion-group">
+            <div class="accordion-heading"><a class="accordion-toggle" data-parent="#about" href="#ocw"><h3>About us</h3></a>
+            </div>
+
+            <!-- Start accordion-body content -->
+            <div id="ocw" class="accordion-body collapse in">
+                <div class="accordion-inner">In construction...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".accordion-heading").html('<a class="accordion-toggle" data-parent="#about" href="#ocw"><h3><?php echo is_null($this->about_us) ? 'About us' : $this->about_us->secTitle; ?></h3></a>');
+        $(".accordion-inner").html('<?php echo is_null($this->about_us) ? 'Coming soon!' : addslashes($this->about_us->secText); ?>');
+        $(".nav li #navaboutocw").click(function (){
+            $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(1)").addClass("active");
+            $(".accordion-heading").html('<a class="accordion-toggle" data-parent="#about" href="#ocw"><h3><?php echo is_null($this->about_us) ? 'About us' : $this->about_us->secTitle; ?></h3></a>');
+            $(".accordion-inner").html('<?php echo is_null($this->about_us) ? 'Coming soon!' : addslashes($this->about_us->secText); ?>');
+        })
+        $(".nav li #navfaq").click(function () {
+            $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(2)").addClass("active");
+            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#faq"><h3><?php echo is_null($this->faq) ? 'Frequently Asked Questions' : $this->faq->secTitle; ?></h3></a>');
+            $(".accordion-inner").html('<?php echo is_null($this->faq) ? 'Coming soon!' : addslashes($this->faq->secText); ?>');
+        })
+        $(".nav li #navtermsofuse").click(function () {
+            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#termsofuse"><h3><?php echo is_null($this->term_of_use) ? 'Term of Use' : $this->term_of_use->secTitle; ?></h3></a>');
+            $(".accordion-inner").html('<?php echo is_null($this->term_of_use) ? 'Coming soon!' : addslashes($this->term_of_use->secText); ?>');
+            $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(3)").addClass("active");
+        })
+
+        $(".nav li #navawards").click(function () {
+            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#termsofuse"><h3><?php echo is_null($this->awards) ? 'Awards' : $this->awards->secTitle; ?></h3></a>');
+            $(".accordion-inner").html('<?php echo is_null($this->awards) ? 'Coming soon!' : addslashes($this->awards->secText); ?>');
+            $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(4)").addClass("active");
+        })
+        $(".nav li #navtestimonials").click(function(){
+            $("#content").load("about/testimonials.html");
+            $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(5)").addClass("active");
+        })
+        $(".nav li #navinfo").click(function(){
+            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#termsofuse"><h3><?php echo is_null($this->faculty) ? 'Information for Faculty' : $this->faculty->secTitle; ?></h3></a>');
+            $(".accordion-inner").html('<?php echo is_null($this->faculty) ? 'Coming soon!' : addslashes($this->faculty->secText); ?>');
+            $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(6)").addClass("active");
+        })
+        $(".nav li #navourteam").click(function(){
+            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#termsofuse"><h3><?php echo is_null($this->our_team) ? 'Our Team' : $this->our_team->secTitle; ?></h3></a>');
+            $(".accordion-inner").html('<?php echo is_null($this->our_team) ? 'Coming soon!' : addslashes($this->our_team->secText); ?>');
+            $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(7)").addClass("active");
+        })
+    });
+</script>
+

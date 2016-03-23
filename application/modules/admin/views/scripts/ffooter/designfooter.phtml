@@ -1,0 +1,217 @@
+<?php
+$this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
+    ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
+    ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js')
+    ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
+    ->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js')
+;
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
+?>
+<style>
+    .step h1 { display: none;}
+    .widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
+    div.checker span { vertical-align: top !important;}
+    .editor {
+        border: dashed 2px #DDDDDD !important;
+        background-color: white;
+        height: 150px;
+        overflow: auto;
+        padding:10px;
+
+    }
+    .ui-dialog form { text-align: left; }
+    .ui-dialog .ui-dialog-content { overflow:visible;}
+
+</style>
+<div class="topHeader" style="top: 0;">
+    <div class="titleArea">
+        <div class="wrapper">
+            <div class="TopPageTitle">
+                <div class="bc">
+                    <ul id="breadcrumbs" class="breadcrumbs">
+                        <li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+                        <li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'frontend', 'action'=>'index') )?>">Frontend Dashboard</a></li>
+                        <li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ffooter', 'action'=>'index') )?>">Pages Design list</a></li>
+                        <li class="current"><a href="javascript:void(0)"><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- CONTENIDO -->
+<div id="content">
+    <div class="wrapper">
+        <div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+        <div id="mensajes"></div>
+
+        <div class="widgets">
+            <div class="oneTwo">
+                <div class="widget">
+                <!-- Validation form -->
+                <form id="validate" class="form" method="post" action="" onsubmit="return false;">
+                    <fieldset>
+                        <div id="step4template" style="">
+                            <fieldset id="" class="step">
+                                <div class="title"><h6>Choose footer design</h6></div>
+                                <div class="formRow courseForm">
+                                    <label>Select template:</label>
+                                    <div class="formRight" style="width: 64%;">
+                                        <input type="hidden" name="secTemplate" id="secTemplate" class="campo" value="<?php if(!empty($this->design)) echo $this->design->secTemplate;?>"/>
+                                        <input type="hidden" name="id" id="id" class="campo" value="<?php if(!empty($this->design)) echo $this->design->id;?>"/>
+                                        <input type="hidden" name="accion" id="accion" class="campo" value="<?php echo (!empty($this->design->id))?'edit':'add'; ?>"/>
+                                        <input type="hidden" name="secCode" id="secCode" class="campo" value="<?php echo (!empty($this->design))?$this->design->secCode:'FOO'; ?>"/>
+                                        <input type="hidden" name="secDescription" id="secDescription" class="campo" value="<?php echo (!empty($this->design))?$this->design->secDescription:'Footer'; ?>"/>
+                                        <?php
+                                        $path_template="/backend/images/frontTemplates/templates/foo";
+                                        $path_view="/backend/images/frontTemplates/views/foo";
+                                        ?>
+                                        <!--template-view -->
+                                        <div id="simg_target" style="text-align: center;display: flex;">
+                                            <div style="padding: 2%;">
+                                                <a href="#" id="tmpl-a1" class="selectorTemplate"><img class="box-tmpl" id="box-tmpl-a1" style="border:4px solid #fff;width:100px;" src="<?php echo $path_template?>Template_01.jpg"></a>
+                                                <div>
+                                                    <a href="#" class="tmpl-v" id="tmpl-v1" src="<?php echo $path_view?>Preview_01.png">Preview</a>
+                                                </div>
+                                                <a href="#" id="tmpl-a3" class="selectorTemplate"><img class="box-tmpl" id="box-tmpl-a3" style="border:4px solid #fff;width:100px;" src="<?php echo $path_template?>Template_03.jpg"></a>
+                                                <div>
+                                                    <a href="#" class="tmpl-v" id="tmpl-v3" src="<?php echo $path_view?>Preview_03.png">Preview</a>
+                                                </div>
+                                            </div>
+
+                                            <div style="padding: 2%;">
+                                                <a href="#" id="tmpl-a2" class="selectorTemplate"><img class="box-tmpl" id="box-tmpl-a2" style="border:4px solid #fff;width:100px;" src="<?php echo $path_template?>Template_02.jpg"></a>
+                                                <div>
+                                                    <a href="#" class="tmpl-v" id="tmpl-v2" src="<?php echo $path_view?>Preview_02.png">Preview</a>
+                                                </div>
+                                                <a href="#" id="tmpl-a4" class="selectorTemplate"><img class="box-tmpl" id="box-tmpl-a4" style="border:4px solid #fff;width:100px;" src="<?php echo $path_template?>Template_04.jpg"></a>
+                                                <div>
+                                                    <a href="#" class="tmpl-v" id="tmpl-v4" src="<?php echo $path_view?>Preview_04.png">Preview</a>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <!-- template-view-->
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                            </fieldset>
+                            <div class="formSubmit">
+                                <input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancel()" />
+                                <input type="button" value="Save" class="blueB" onclick="save()" />
+                            </div>
+                            <div class="clear"></div>
+
+                        </div>
+                    </fieldset>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="template-viewer" title="Template Viewer">
+    <div style="text-align: center;">
+        <img id="tmpl-img" src="" width="100%">
+    </div>
+</div>
+
+<script type="application/javascript">
+
+    if($( "#secTemplate" ).val())
+        var seletmpl = $( "#secTemplate" ).val();
+    else{
+        seletmpl = '1';
+    }
+
+    $("#box-tmpl-a"+seletmpl).css({"border-color": "#a5d24a"});
+
+    $('.tmpl-v').click(function(e) {
+        e.preventDefault();
+        var stringId 	= this.id
+        var arrayId 	= stringId.split('v');
+        if (arrayId[1]==1) {$('#tmpl-img').attr('src', $('#tmpl-v1').attr('src'));}
+        if (arrayId[1]==2) {$('#tmpl-img').attr('src', $('#tmpl-v2').attr('src'));}
+        if (arrayId[1]==3) {$('#tmpl-img').attr('src', $('#tmpl-v3').attr('src'));}
+        if (arrayId[1]==4) {$('#tmpl-img').attr('src', $('#tmpl-v4').attr('src'));}
+        $( "#template-viewer" ).data("tmplId", arrayId[1]).dialog('open');
+    });
+
+    $(".selectorTemplate").click(function(event){
+        event.preventDefault();
+        id = $(this).attr("id").split("a")[1];
+        applyTemplate(id);
+    });
+
+    $( "#template-viewer" ).dialog({
+        autoOpen: false,
+        width: 680,
+        minHeight: 320,
+        resizable: false,
+        modal: true,
+        open: function(event,ui){},
+        buttons: {
+            'Apply': function() { applyTemplate($(this).data("tmplId")); $( this ).dialog( "close" );	}
+        },
+        close: function() {	}
+    });
+
+    function applyTemplate(tmplId){
+        $( "#secTemplate" ).val(tmplId);
+        $(".box-tmpl").css("border-color", "#fff");
+        $("#box-tmpl-a"+tmplId).css("border-color", "#a5d24a");
+    }
+
+    function cancel(){
+        document.location.href='<?php echo $this->url(array('module'=>'admin','controller'=>'ffooter', 'action'=>'index'))?>';
+    }
+
+    function save(){
+        // recorro los campos del formulario
+        if (jQuery('#validate').validationEngine('validate') ) {
+            var data = new Array();
+            $('#validate input[type="hidden"],#validate input[type="text"]').each(function(index, value){
+                if($(this).attr('name') !=='' && $(this).val() !==''){
+                    data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+                }
+            });
+
+            var id = $('#id').val();
+            var accion = $('#accion').val();
+            var type = 'footer';
+
+            $.ajax( {
+                url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ffooter', 'action'=> 'savedesign'))?>",
+                data: { data: data, id: id, type: type, accion: accion } ,
+                async: false,
+                beforeSend: function(objeto){},
+                complete: function(objeto, exito) { },
+                dataType: "json",
+                global: true,
+                cache:false,
+                ifModified: false,
+                processData:true,
+                success: function(datos)
+                {
+                    $('#id').val(datos.id);
+
+                    $(".loader").show();
+                    window.setTimeout(function() {
+                        $(".loader").hide();
+                        displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'ffooter', 'action'=>'index'))?>' );
+                    }, 2000);
+                },
+                error: function(request, status, error)
+                {
+                    var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+                    displayMessage( 'error', mensaje, 'Error', '' );
+                },
+                timeout: 20000,
+                type: "POST"
+            } );
+        } else {
+            return false;
+        }
+    }
+</script>

@@ -1,0 +1,451 @@
+<?php echo $this->headScript()->appendFile($this->baseUrl() . "/frontend/js/pace.min.js",'text/javascript')?>
+<style>
+<!--
+#preMessage {
+    margin-top: 150px;
+    text-align: center;
+}
+
+-->
+</style>
+<div class="span12" id="content">
+    <div class="<?php if($this->count_ads > 0){ ?>span8<?php }else{?> span11 <?php }?>" id="content_left"<?php if($this->count_ads > 0) echo ' style="width: 830px"'?>>
+	<div class="tabbable tabs-left">
+        <ul class="nav nav-tabs" id="myTabs">
+            <?php
+            $i = '';
+            $firstLink = '';
+            $secondLink = '';
+            $thirdLink = '';
+            $j = 0;
+            $firstElement = current($this->tree);
+            $fistSubElement = current($firstElement['childrens']);
+            $idTour = $fistSubElement['id'];
+            //d($idTour);
+            $elementTour = $this->courses[$idTour];
+            $elementTour = current($elementTour);
+            // d($elementTour);
+            $secondLink = '#' . $elementTour['ocwTitleEncode'] . '-acc-' . $idTour;
+            $thirdLink = '#' . $elementTour['ocwTitleEncode'] . '-description-' . $idTour;
+     
+            foreach ($this->tree as $cat ){
+                if( $j == 0 ) { 
+                        $firstLink = $this->escape('#CAT_'.$cat['node']['id']);
+                }
+                $j++;
+            ?>
+            <li class="<?php if($i=='active'){ echo 'active'; $i='';}?>"><a href="<?php echo $this->escape('#CAT_'.$cat['node']['id']) ?>" data-toggle="tab"><?php echo $this->escape($cat['node']['catName']) ?></a></li>
+            <?php } ?>
+        </ul>
+        <div class="tab-content">
+            <div id="preMessage"><!-- h2>Select a category</h2 --> </div>
+            <?php 
+            $i='';
+
+            foreach ($this->tree as $cat ){
+            ?>
+            <div class="tab-pane <?php if($i=='active'){ echo 'active'; $i='';}?>" id="<?php echo $this->escape('CAT_'.$cat['node']['id']) ?>">
+                <h2><?php echo $this->escape($cat['node']['catName']) ?></h2>
+
+                <?php if ( !empty($cat['childrens']) ) { ?>
+                <div class="tabbable tabs-left">
+                    <ul class="nav nav-tabs" id="myTabs">
+                        <?php 
+                            $i='active';
+                            foreach ($cat['childrens'] as $sub ) {
+                        ?>
+                        <li class="<?php if($i=='active'){ echo 'active'; $i='';}?>"><a href="<?php echo $this->escape('#SUB_'.$sub['id']) ?>" data-toggle="tab"><?php echo $this->escape($sub['catName']) ?></a></li>
+                        <?php 
+                                }
+                        ?>
+                    </ul>                
+                    <div class="tab-content">
+                        <?php 
+                        $i='active';
+
+                        foreach ($cat['childrens'] as $sub ) { 
+                        ?>
+                        <div class="tab-pane <?php if($i=='active'){ echo 'active'; $i='';}?>" id="<?php echo $this->escape('SUB_'.$sub['id']) ?>">
+                            <div class="accordion" id="<?php echo $this->escape('ACC_'.$sub['id']) ?>">
+                            <?php if(array_key_exists($sub['id'], $this->courses)){ ?>
+                                <?php foreach ($this->courses[$sub['id']] as $courses ){  ?>
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <?php $titleEncode = is_null($courses['ocwTitleEncode']) ? codificar_titulo($courses['ocwTitle']) : $courses['ocwTitleEncode'] ?>
+
+                                        <a class="accordion-toggle" data-toggle="collapse" data-parent="chem" href="<?php echo '#'.$titleEncode.'-acc-'. $sub['id'] ?>">
+                                        <h2><?php echo $this->escape( $courses['ocwTitle'] .' (' . $courses['lanName'] . ')' )?></h2>
+                                        </a>
+                                    </div>
+                                        <div id="<?php echo $titleEncode .'-acc-'. $sub['id'] ?>" class="accordion-body collapse">
+                                            <div class="accordion-inner">
+                                                <div class="media">
+                                                    <?php if(is_null($courses['thumbnail']) || trim($courses['thumbnail'])=='' ):?>
+                                                    <img class="pull-left" style="width: 64px; height: 64px;" src="<?php echo $this->baseUrl()?>/frontend/img/no-image.jpg" >
+                                                    <?php else: ?>
+                                                    <img class="pull-left img64 pop-preview" data-container="body" rel="popover" data-toggle="popover" data-trigger="hover" data-placement="right" data-html="true" data-content="<img style='max-width:250px;' src='<?php echo $courses['thumbnail'] ?>'>" src="<?php echo $courses['thumbnail'] ?>">
+                                                    <?php endif;?>
+                                                    <div class="media-body">
+                                                            <p >
+                                                                    <div class="expand" id="<?php echo $titleEncode .'-description-'. $sub['id'] ?>">
+                                                                    <?php echo removeHtmlAttribute($courses['ocwDescription'])?>
+                                                                    </div>
+                                                            </p>
+
+                                                            <?php $courseUrl = !is_null($courses['ocwBypassUrlCourse']) && !empty($courses['ocwBypassUrlCourse']) ? $courses['ocwBypassUrlCourse'] : '/courses/'.$titleEncode.'.html' ?>
+                                                            <?php $target = !is_null($courses['ocwBypassUrlCourse']) && !empty($courses['ocwBypassUrlCourse']) ? 'target="_blank"' : '' ?>
+                                                            <a href="<?php echo $courseUrl ?>" <?php echo $target ?> role="button" class="btn btn-success" data-toggle="modal">Start Course</a>
+                                                            <a href="<?php echo '#'.$titleEncode .'-acc-'. $sub['id'] ?>-info" role="button" class="btn btn-primary" data-toggle="modal">Course Information</a>
+                                                            <?php if( $this->relatedCourses[$courses['idCourse']]->count() > 0 ):?>
+                                                            <a href="<?php echo '#'.$titleEncode .'-acc-'. $sub['id'] ?>-related" role="button" class="btn btn-info" data-toggle="modal">Related resources</a>
+                                                            <?php endif;?>										
+                                                    </div>
+                                                </div>								  
+
+                                                <p>
+
+                                                </p>
+
+                                                <div id="<?php echo $titleEncode.'-acc-'. $sub['id'] ?>-info" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="Chem1A" aria-hidden="true">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                                        <h3 id="chem1aheader"><?php echo $this->escape( $courses['ocwTitle'] )?></h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <?php if( array_key_exists($courses['idCourse'], $this->authors) ) { ?>
+                                                        <dl>
+                                                            <dt><h5>Authors:</h5></dt>
+                                                            <dd>											
+                                                                <?php foreach ($this->authors[$courses['idCourse']] as $author) {?>
+                                                                <dl>
+                                                                    <dt><h6><?php echo $this->escape( $author['Author'] )?></h6></dt>
+                                                                    <?php 
+                                                                        $dsu = array();
+                                                                        if($author['authorDepartment'] != '') { array_push($dsu, $author['authorDepartment']);}
+                                                                        if($author['authorSchool'] != '') { array_push($dsu, $author['authorSchool']);}
+                                                                        if($author['authorUniversity'] != '') { array_push($dsu, $author['authorUniversity']);}
+                                                                    ?>
+                                                                    <dd><?php echo $this->escape( implode(', ', $dsu) ) ?></dd>
+                                                                </dl>
+                                                                <?php } ?>
+                                                            </dd>
+                                                        </dl>										    
+                                                            <p class="text-center" style="font-size: 9pt;">
+                                                                <?php echo $courses['ocwLicense'] ;?>
+                                                            </p>										    
+                                                        <?php }?>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                                                    </div>
+                                                </div>
+
+                                                <div id="<?php echo $titleEncode .'-acc-'. $sub['id']?>-related" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="Chem1A-related" aria-hidden="true">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                                        <h3 id="chem1a-related-header">Resources related to <?php echo $this->escape( $courses['ocwTitle'] )?></h3>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <?php if( $this->relatedCourses[$courses['idCourse']]->count() > 0 ) {  ?>
+                                                            <?php foreach ($this->relatedCourses[$courses['idCourse']] as $course) { ?>
+                                                            <dl>
+                                                                <?php 
+                                                                $titleEncode = is_null($course->ocwTitleEncode) ? codificar_titulo($course->ocwTitle) : $course->ocwTitleEncode;
+                                                                $type = '';
+                                                                $external = '';
+                                                                $target ='';												    
+                                                                switch ($course->idType) {
+                                                                    case 1: // courses
+                                                                            if(is_null($course->ocwBypassUrlCourse) || empty($course->ocwBypassUrlCourse)){
+                                                                                    $target='/courses/'.$titleEncode.'.html';
+                                                                            } else {
+                                                                                    $external = 'target="_blank"';
+                                                                                    $target = $course->ocwBypassUrlCourse;
+                                                                            }												    		
+                                                                            $type = 'Course';
+                                                                            break;
+                                                                    case 2: // files
+                                                                            //$target='/getfile/'.$titleEncode.'.html';
+                                                                            $target = $course->ocwUrlFile;
+                                                                            $type = 'File';
+                                                                            break;					    	
+                                                                    case 3: // lectures
+                                                                            if(is_null($course->ocwBypassUrlLecture) || empty($course->ocwBypassUrlLecture)){
+                                                                                    $target='/lectures/'.$titleEncode.'.html';
+                                                                            } else {
+                                                                                    $external = 'target="_blank"';
+                                                                                    $target = $course->ocwBypassUrlLecture;
+                                                                            }												    		
+                                                                            $type = 'Lecture';
+                                                                            break;
+                                                                    case 4: // Collections
+                                                                            $target='/collections/'.$titleEncode.'.html';
+                                                                            $type = 'Collection';
+                                                                            break;
+                                                                    case 6: // Conferences
+                                                                            $target='/conferences/'.$titleEncode.'.html';
+                                                                            $type = 'Conference';
+                                                                            break;										    			
+                                                                    default:
+                                                                            ;
+                                                                    break;
+                                                                } 
+                                                                ?>
+                                                                <?php if ($course->idType == 5) { // Header?>
+                                                                    <dt><h6><?php echo $this->escape( $course->ocwTitle ) ?></h6></dt>
+                                                                <?php } else { ?>
+                                                                    <dd><a href="<?php echo $target ?>" <?php echo $external ?>><?php echo $this->escape( $course->ocwTitle ) . ' ('. $type . ')' .' ('. $course->lanName . ')' ?></a></dd>
+                                                                <?php }?>	
+                                                            </dl>
+                                                            <?php } ?>
+                                                        <?php } else { ?>
+                                                            <div class="alert alert-info" style="width: 90%;">
+                                                                <h4>Info!</h4>
+                                                                There are no related resources
+                                                            </div>										
+                                                        <?php }?>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>							
+                                <?php }?>
+                            <?php } ?>
+
+                            </div>
+                        </div>
+                        <?php 
+                         }
+                        ?>
+                    </div>
+                </div>
+                <?php } //else { ?>
+                <div class="tab-pane <?php if($i=='active'){ echo 'active'; $i='';}?>" id="<?php echo $this->escape('CAT_'.$cat['node']['id']) ?>">
+                    <div class="accordion" id="<?php echo $this->escape('ACC_'.$cat['node']['id']) ?>">
+                    <?php if(array_key_exists($cat['node']['id'], $this->courses)){ ?>
+                        <?php foreach ($this->courses[$cat['node']['id']] as $courses ){ ?>
+                        <div class="accordion-group">
+                            <div class="accordion-heading">
+                                <?php $titleEncode = is_null($courses['ocwTitleEncode']) ? codificar_titulo($courses['ocwTitle']) : $courses['ocwTitleEncode'] ?>
+                                <a class="accordion-toggle" data-toggle="collapse" data-parent="chem" href="<?php echo '#'.$titleEncode.'-acc-'. $cat['node']['id'] ?>">
+                                <h2><?php echo $this->escape( $courses['ocwTitle']. ' ('. $courses['lanName'] . ')' )?></h2>
+                                </a>
+                            </div>
+                            <div id="<?php echo $titleEncode.'-acc-'. $cat['node']['id'] ?>" class="accordion-body collapse">
+                                <div class="accordion-inner">
+                                    <div class="media">
+                                        <?php if(is_null($courses['thumbnail']) || trim($courses['thumbnail'])=='' ):?>
+                                        <img class="pull-left" style="width: 64px; height: 64px;" src="<?php echo $this->baseUrl()?>/frontend/img/no-image.jpg" >
+                                        <?php else: ?>
+                                        <img class="pull-left img64 pop-preview" data-container="body" rel="popover" data-toggle="popover" data-trigger="hover" data-placement="right" data-html="true" data-content="<img style='max-width:250px;' src='<?php echo $courses['thumbnail'] ?>'>" src="<?php echo $courses['thumbnail'] ?>">
+                                        <?php endif;?>
+                                        <div class="media-body">
+                                            <p>
+                                                <div class="expand">
+                                                <?php echo removeHtmlAttribute($courses['ocwDescription']) ?>
+                                                </div>
+                                            </p>
+                                            <?php $courseUrl = !is_null($courses['ocwBypassUrlCourse']) && !empty($courses['ocwBypassUrlCourse']) ? $courses['ocwBypassUrlCourse'] : '/courses/'.$titleEncode.'.html' ?>
+                                            <?php $target = !is_null($courses['ocwBypassUrlCourse']) && !empty($courses['ocwBypassUrlCourse']) ? 'target="_blank"' : '' ?>
+                                            <a href="<?php echo $courseUrl ?>" <?php echo $target?> role="button" class="btn btn-success" data-toggle="modal">Start Course</a>
+                                            <a href="<?php echo '#'.$titleEncode.'-acc-'. $cat['node']['id']  ?>-info" role="button" class="btn btn-primary" data-toggle="modal">Course Information</a>
+                                            <?php if( $this->relatedCourses[$courses['idCourse']]->count() > 0 ):?>
+                                            <a href="<?php echo '#'.$titleEncode.'-acc-'. $cat['node']['id']  ?>-related" role="button" class="btn btn-info" data-toggle="modal">Related resources</a>
+                                            <?php endif;?>											
+                                        </div>
+                                    </div>
+                                    <div id="<?php echo $titleEncode.'-acc-'. $cat['node']['id']  ?>-info" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="Chem1A" aria-hidden="true">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                            <h3 id="chem1aheader"><?php echo $this->escape( $courses['ocwTitle'] )?></h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <?php if( array_key_exists($courses['idCourse'], $this->authors) ) { ?>
+                                                <dl>
+                                                    <dt><h5>Authors:</h5></dt>
+                                                    <dd>										
+                                                    <?php foreach ($this->authors[$courses['idCourse']] as $author) {?>
+                                                        <dl>
+                                                            <dt><h6><?php echo $this->escape( $author['Author'] )?></h6></dt>
+                                                            <?php 
+                                                                $dsu = array();
+                                                                if($author['authorDepartment'] != '') { array_push($dsu, $author['authorDepartment']);}
+                                                                if($author['authorSchool'] != '') { array_push($dsu, $author['authorSchool']);}
+                                                                if($author['authorUniversity'] != '') { array_push($dsu, $author['authorUniversity']);}
+                                                            ?>
+                                                            <dd><?php echo $this->escape( implode(', ', $dsu) ) ?></dd>
+                                                        </dl>
+                                                    <?php } ?>
+                                                    </dd>
+                                                </dl>										    
+                                                <p class="text-center" style="font-size: 9pt;">
+                                                <?php echo $courses['ocwLicense'] ;?>
+                                                </p>
+                                            <?php } else { ?>
+                                                <div class="alert alert-info" style="width: 90%;">
+                                                    <h4>Info!</h4>
+                                                    No authors in this course
+                                                </div>										
+                                            <?php }?>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                                        </div>
+                                    </div>
+
+                                    <div id="<?php echo $titleEncode.'-acc-'. $cat['node']['id']  ?>-related" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="Chem1A-related" aria-hidden="true">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                            <h3 id="chem1a-related-header">Resources related to <?php echo $this->escape( $courses['ocwTitle'] )?></h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <?php if( $this->relatedCourses[$courses['idCourse']]->count() > 0 ) {  ?>
+                                                <?php foreach ($this->relatedCourses[$courses['idCourse']] as $course) { ?>
+                                                    <dl>
+                                                        <?php 
+                                                        $titleEncode = is_null($course->ocwTitleEncode) ? codificar_titulo($course->ocwTitle) : $course->ocwTitleEncode;
+                                                        $type = '';
+                                                        $external = '';
+                                                        $target ='';
+                                                        switch ($course->idType) {
+                                                            case 1: // courses
+                                                                    if(is_null($course->ocwBypassUrlCourse) || empty($course->ocwBypassUrlCourse)){
+                                                                        $target='/courses/'.$titleEncode.'.html';
+                                                                    } else {
+                                                                        $external = 'target="_blank"';
+                                                                        $target = $course->ocwBypassUrlCourse;
+                                                                    }
+                                                                    $type = 'Course';
+                                                                    break;
+                                                            case 2: // files
+                                                                    //$target='/getfile/'.$titleEncode.'.html';
+                                                                    $target = $course->ocwUrlFile;
+                                                                    $type = 'File';
+                                                                    break;					    	
+                                                            case 3: // lectures
+                                                                    if(is_null($course->ocwBypassUrlLecture) || empty($course->ocwBypassUrlLecture)){
+                                                                        $target='/lectures/'.$titleEncode.'.html';
+                                                                    } else {
+                                                                        $external = 'target="_blank"';
+                                                                        $target = $course->ocwBypassUrlLecture;
+                                                                    }												    		
+                                                                    $type = 'Lecture';
+                                                                    break;
+                                                            case 4: // Collections
+                                                                    $target='/collections/'.$titleEncode.'.html';
+                                                                    $type = 'Collection';
+                                                                    break;
+                                                            case 6: // Conferences
+                                                                    $target='/conferences/'.$titleEncode.'.html';
+                                                                    $type = 'Conference';
+                                                                    break;										    			
+                                                            default:
+                                                                    ;
+                                                            break;
+                                                        } 
+                                                        ?>
+                                                        <?php if ($course->idType == 5) { // Header?>
+                                                        <dt><h6><?php echo $this->escape( $course->ocwTitle ) ?></h6></dt>
+                                                        <?php } else { ?>
+                                                        <dd><a href="<?php echo $target ?>"><?php echo $this->escape( $course->ocwTitle ) . ' ('. $type . ')' .' ('. $course->lanName . ')' ?></a></dd>
+                                                        <?php }?>
+                                                    </dl>
+                                                <?php } ?>
+                                            <?php } else { ?>
+                                                <div class="alert alert-info" style="width: 90%;">
+                                                    <h4>Info!</h4>
+                                                    There are no related resources
+                                                </div>										
+                                            <?php }?>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>							
+                        <?php }?>
+                    <?php }  ?>
+                    </div>
+                </div>		
+            <?php // }?>
+            </div>
+            <?php } // end foreach?>
+	
+        </div>
+	</div>
+    </div>
+    <?php if($this->count_ads > 0){
+        /* Imagen de sponsortships o donate */ ?>
+    <div class="span3" id="content_right" style="margin-top: 10px;margin-right: 20px;float: right">
+		<div class="well well-small" style="text-align: center;">
+			<div id="img_url" class="img-polaroid"></div>
+		</div>
+    </div>
+	<?php }?>
+</div>	
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $('#myTabs a').click(function (e) {
+        $('#preMessage').hide();
+    })
+
+    var tour = new Tour({ 
+        storage: false, // guarda en cokies falso
+        steps:  [
+                    {
+                        element: "#myTabs",
+                        title: "Step 1: Categories",
+                        content: "Select a category",
+                        onNext: function (tour) { $('a[href="<?php echo $firstLink?>"]').click();},
+                    },
+                    {
+                        element: "a[href='<?php echo $secondLink?>']",
+                        title: "Step 2. Select",
+                        content: "Select the course you want to display",
+                        placement: "bottom",
+                        onNext: function (tour) {$(this.element).click();  },
+                    },
+                    {
+                        element: "<?php echo $thirdLink?>",
+                        title: "Step 3: Options",
+                        content: "Here you can see a short description and you can start the course, see more information and related resources.",
+                        placement: "top",
+
+                    },
+                ]
+    });
+
+    // Initialize the tour
+    tour.init();	
+    Pace.on('done', function(){
+            // Start the tour
+            tour.start();
+    });
+    loadAds();            
+});
+
+function loadAds(){
+    data = $.parseJSON('<?php echo $this->ads ?>');
+    images = new Array; 
+    links = new Array;     
+
+    $.each(data, function(ind, obj){
+       images[ind] = obj.adsImageURL; 
+       links[ind] = obj.adsRedirectURL;
+    });
+    
+    if(images.length > 1){
+        $('#img_url').html('<a href="'+ links[0] +'"><img src="'+ images[0] +' " style="border: 0px;"></a>');
+        $('#img_url1').html('<a href="'+ links[1] +'"><img src="'+ images[1] +' " style="border: 0px;"></a>');
+    }else{
+        $('#img_url').html('<a href="'+ links[0] +'"><img src="'+ images[0] +' " style="border: 0px;"></a>');
+    }    
+}
+</script>

@@ -1,0 +1,510 @@
+<?php
+$this->jQuery()->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/datatable.fnReloadAjax.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/TableTools/media/js/TableTools.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/TableTools/media/js/ZeroClipboard.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/advancedFilter.js')
+;
+$this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools.css')
+->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools_JUI.css')
+;
+?>
+<style>
+
+.ui-dialog form {
+    text-align: left;
+}
+form.dialog > div.row {
+    float: right;
+    width: 60%;
+    padding-top: 9px;
+}
+.ui-dialog form label {
+    cursor: pointer;
+    float: left;
+    margin: 9px 0 0 10px;
+}
+</style>
+<div class="topHeader" style="top:0px;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+				<div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>						
+						<li class="current"><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'testimonial', 'action'=>'index') )?>">Testimonials list</a></li>
+					</ul>
+				</div>	
+			</div>
+		</div>
+	</div>
+</div>
+<div id="content">
+	<div class="wrapper">
+	 	<div id="mensajes"></div>
+	 	
+		<div class="filterDetailed" id="f1" style="display:none;">
+                    <div class="filterContent">
+                        <div class="advancedFilterButons">
+                        	<a class="button basic" title="" href="javascript:reloadFilters();" id="reload-table">
+								<img class="icon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/refresh2.png">
+								<span title="Reload Filters">Reload</span>
+							</a>
+                        	<a class="button basic"  title="" href="javascript:clarFilters();" id="clean-filters">
+								<img class="icon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/smallBrush.png">
+								<span title="Clean filters">Clean</span>
+							</a>		                            
+                        </div>
+                        <span class="line"></span>
+                        <div class="advancedFilterToggle">
+							<div class="toggle acc">
+							
+			                    <div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>OCW Title</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="TEXT" >
+			                    		<input type="hidden" name="op" value="LIKE" >
+			                    		<input type="hidden" name="label" value="Title" >
+			                    		<div class="formRow">
+											<label for="ocwTitle">Title:</label>
+											<div class="formRight">
+												<input id="ocwTitle" name="ocwTitle" type="text" value="" >
+											</div>
+											<div class="clear"></div>
+										</div>
+									</form>	
+			                    </div>	
+			                    						
+								<div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/check.png" alt="" class="titleIcon" /><h6>Visible</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="MULTIPLE" >
+			                    		<input type="hidden" name="op" value="IN" >
+			                    		<input type="hidden" name="label" value="Visible" >
+			                    		<div class="formRow">
+											<label for="r0.tesVisible">Visible:</label>
+											<div class="formRight">
+												<input type="radio" name="r0.tesVisible" id="Yes" value="1" alt="Yes" /><label for="Yes">Yes</label>
+											</div>
+											<div class="formRight">
+												<input type="radio" name="r0.tesVisible" id="No" value="0" alt="No" /><label for="No">No</label>
+											</div>
+										</div>														
+									</form>	
+			                    </div>
+								<div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/check.png" alt="" class="titleIcon" /><h6>OCW Type</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="MULTIPLE" >
+			                    		<input type="hidden" name="op" value="IN" >
+			                    		<input type="hidden" name="label" value="Type" >
+			                    		<div class="formRow">
+											<label for="ocwTitle">Type:</label>
+											<div class="formRight">
+												<input type="checkbox" name="r2.typName" id="Course" value="Course" alt="Course" /><label for="Course">Course</label>
+											</div>
+											<div class="formRight">
+												<input type="checkbox" name="r2.typName" id="File" value="File" alt="File" /><label for="File">File</label>
+											</div>
+											<div class="formRight">
+												<input type="checkbox" name="r2.typName" id="Lecture" value="Lecture" alt="Lecture" /><label for="Lecture">Lecture</label>
+											</div>
+											<div class="formRight">
+												<input type="checkbox" name="r2.typName" id="Conference" value="Conference" alt="Conference" /><label for="Conference">Conference</label>
+											</div>	
+											<div class="formRight">
+												<input type="checkbox" name="r2.typName" id="Collection" value="Collection" alt="Collection" /><label for="Collection">Collection</label>
+											</div>													
+											<div class="clear"></div>
+										</div>														
+									</form>	
+			                    </div>
+	                    		<div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>Name</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="TEXT" >
+			                    		<input type="hidden" name="op" value="LIKE" >
+			                    		<input type="hidden" name="label" value="Name" >
+			                    		<div class="formRow">
+											<label for="r0.tesName">Name:</label>
+											<div class="formRight">
+												<input id="r0.tesName" name="r0.tesName" type="text" value="" >
+											</div>
+											<div class="clear"></div>
+										</div>
+									</form>	
+			                    </div>
+			                    <div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>Country</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="TEXT" >
+			                    		<input type="hidden" name="op" value="LIKE" >
+			                    		<input type="hidden" name="label" value="Country" >
+			                    		<div class="formRow">
+											<label for="r3.name">Country:</label>
+											<div class="formRight">
+												<input id="r3.name" name="r3.`name`" type="text" value="" >
+											</div>
+											<div class="clear"></div>
+										</div>
+									</form>	
+			                    </div>
+	                    		<div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>E-Mail</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="TEXT" >
+			                    		<input type="hidden" name="op" value="LIKE" >
+			                    		<input type="hidden" name="label" value="E-Mail" >
+			                    		<div class="formRow">
+											<label for="r0.tesEmail">E-Mail:</label>
+											<div class="formRight">
+												<input id="r0.tesEmail" name="r0.tesEmail" type="text" value="" >
+											</div>
+											<div class="clear"></div>
+										</div>
+									</form>	
+			                    </div>
+			                    
+	                    		<div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>Question 1</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="TEXT" >
+			                    		<input type="hidden" name="op" value="LIKE" >
+			                    		<input type="hidden" name="label" value="Question 1" >
+			                    		<div class="formRow">
+											<label for="r0.tesQuestion1">Question 1:</label>
+											<div class="formRight">
+												<input id="r0.tesQuestion1" name="r0.tesQuestion1" type="text" value="" >
+											</div>
+											<div class="clear"></div>
+										</div>
+									</form>	
+			                    </div>			                    
+			                    
+	                    		<div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>Question 2</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="TEXT" >
+			                    		<input type="hidden" name="op" value="LIKE" >
+			                    		<input type="hidden" name="label" value="Question 2" >
+			                    		<div class="formRow">
+											<label for="r0.tesQuestion2">Question 2:</label>
+											<div class="formRight">
+												<input id="r0.tesQuestion2" name="r0.tesQuestion2" type="text" value="" >
+											</div>
+											<div class="clear"></div>
+										</div>
+									</form>	
+			                    </div>			                    
+
+	                    		<div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>Question 3</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="TEXT" >
+			                    		<input type="hidden" name="op" value="LIKE" >
+			                    		<input type="hidden" name="label" value="Question 2" >
+			                    		<div class="formRow">
+											<label for="r0.tesQuestion3">Question 3:</label>
+											<div class="formRight">
+												<input id="r0.tesQuestion3" name="r0.tesQuestion3" type="text" value="" >
+											</div>
+											<div class="clear"></div>
+										</div>
+									</form>	
+			                    </div>			                    
+			                    
+			                    <div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/check.png" alt="" class="titleIcon" /><h6>Marketing</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="MULTIPLE" >
+			                    		<input type="hidden" name="op" value="IN" >
+			                    		<input type="hidden" name="label" value="Visible" >
+			                    		<div class="formRow">
+											<label for="r0.tesMarketing">Marketing:</label>
+											<div class="formRight">
+												<input type="radio" name="r0.tesMarketing" id="Yes" value="1" alt="Yes" /><label for="Yes">Yes</label>
+											</div>
+											<div class="formRight">
+												<input type="radio" name="r0.tesMarketing" id="No" value="0" alt="No" /><label for="No">No</label>
+											</div>
+										</div>														
+									</form>	
+			                    </div>
+			                    
+			                    <div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/check.png" alt="" class="titleIcon" /><h6>Contact</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="MULTIPLE" >
+			                    		<input type="hidden" name="op" value="IN" >
+			                    		<input type="hidden" name="label" value="Visible" >
+			                    		<div class="formRow">
+											<label for="r0.tesContact">Contact:</label>
+											<div class="formRight">
+												<input type="radio" name="r0.tesContact" id="Yes" value="1" alt="Yes" /><label for="Yes">Yes</label>
+											</div>
+											<div class="formRight">
+												<input type="radio" name="r0.tesContact" id="No" value="0" alt="No" /><label for="No">No</label>
+											</div>
+										</div>														
+									</form>	
+			                    </div>
+			                    
+			                    <div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/dayCalendar.png" alt="" class="titleIcon" /><h6>Post Date</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="DATE" >
+			                    		<input type="hidden" name="op" value="BETWEEN" >
+			                    		<input type="hidden" name="label" value="Post Date" >
+										<div class="formRow">
+											<label>From:</label>
+											<div class="formRight">
+												<input name="tesDate" class="datepicker" type="text" size="10" value="" />
+											</div>
+											<div class="clear"></div>
+										</div>
+										<div class="formRow">
+											<label>To:</label>
+											<div class="formRight">
+												<input name="tesDate" class="datepicker" type="text" size="10" value="" />
+											</div>
+											<div class="clear"></div>
+										</div>													
+									</form>						                    
+			                    </div>
+
+			                </div>
+                        </div>
+                 </div>
+        </div>	 	
+	 	
+	    <div class="dataTables_wrapper">
+	        <!-- Dynamic table -->
+	        <div class="widget">
+	            <div class="title">
+	            	<a href="" style="visibility: hidden;"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/add.png"></a>
+		            <a href="javascript:displayFilter()">
+		            	<img style="margin-left: 243px;border:none;" class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/filter.png">
+		            </a>
+				 	<div id="breadcrumbs-wrapper" style="" >
+				       <div class="fbc">
+				            <ul id="fbreadcrumbs" class="fbreadcrumbs">
+				            </ul>
+				            <div class="clear"></div>    
+				        </div> 
+				    </div>
+	            	<div class="clear"></div>
+	            </div>                          
+	            <table class="display dTable">
+	                <thead>
+	                    <tr>
+							<th>Functions</th>
+							<th>OCW Title</th>
+							<th>Visible</th>
+							<th>OCW Type</th>
+							<th>Name</th>
+							<th>Country</th>
+							<th>Email</th>
+							<th>Question1</th>
+							<th>Question2</th>
+							<th>Question3</th>
+							<th>Testimonial</th>
+							<th>Marketing</th>
+							<th>Contact</th>
+							<th>Post Date</th>
+	                    </tr>
+	                </thead>
+	                <tbody>	                    
+	                </tbody>
+	            </table>
+	        </div>  
+	    </div>
+    </div>
+</div>
+<div id="testimonial-info-box" title="Testimonial info">
+	<form onsubmit="return false" class="dialog" style="text-align: left;" action="">
+		<label>OCW Title:</label>
+	    <div class="row">
+	    	<span id="ocw-title-label"></span>
+	    </div>	
+	    <div class="clear"></div>  
+		<label>OCW Type:</label>
+	    <div class="row">
+	    	<span id="ocw-type-label"></span>
+	    </div>	
+	    <div class="clear"></div>     
+		<label>Name:</label>
+	    <div class="row">
+	    	<span id="name-label"></span>
+	    </div>
+	    <div class="clear"></div>  
+		<label>Country:</label>
+	    <div class="row">
+	    	<span id="country-label"></span>
+	    </div>
+	    <div class="clear"></div>	
+		<label>Testimonial:</label>
+	    <div class="row">
+	    	<span id="testimonial-label" style="display:block; max-height: 200px; overflow:auto"></span>
+	    </div>
+	    <div class="clear"></div>
+		<label>Post Date:</label>
+	    <div class="row">
+	    	<span id="postdate-label"></span>
+	    </div>
+	    <div class="clear"></div>	    
+    </form>	
+</div>
+<script type="text/javascript">
+    var oTable;
+    $(document).ready(function() {
+
+	   	 $( "#testimonial-info-box" ).dialog({
+			 modal: true,
+			 autoOpen: false,
+			 width: $(window).width() < 600 ? ($(window).width() - 10) : 500,
+			 buttons: {
+				 Ok: function() {
+				 		$( this ).dialog( "close" );
+				 	}
+				 }
+		 });
+
+    	var calcDataTableHeight = function() {
+            return $(window).height()-300 ; 
+            // la altura de la tabla se calcula en base 
+        };
+    	oTable = $('.dTable').dataTable( { 
+            "bJQueryUI": true, // soporte para temas UI
+            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+            "bRetrieve"  : true,
+            "bProcessing": true,
+        	"bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+        	"sDom": '<""flT>rt<"F"ip>',
+    		"aoColumns": [{ "sWidth": "90px", "bSortable": false }, { "sWidth": "300px" }, { "sWidth": "50px" }, { "sWidth": "100px" }, { "sWidth": "200px" }, { "sWidth": "100px" }, { "sWidth": "100px" }, { "sWidth": "100px" }, { "sWidth": "100px" }, { "sWidth": "150px" }, { "sWidth": "200px" }, { "sWidth": "100px" }, { "sWidth": "100px" }, {"sWidth": "150px"}],
+    		"aaSorting":[[13,'desc']], 
+        	"iDisplayLength": 50,           
+            "sScrollY": calcDataTableHeight() ,
+            "bScrollCollapse": true,
+            "sScrollX": "100%",
+            "bSortClasses": false, // no muestra las clases de ordenamiento
+            //"bDeferRender": true, // similar al smartrendering de DHTMLX
+            "sAjaxSource": '<?php echo $this->url(array( 'controller'=>'testimonial', 'action'=>'testimonialgrid'))?>',
+            "fnServerParams": function ( aoData ) {
+                var filters = getAdvancedFilters();
+                aoData.push( { "name": "filters", "value": JSON.stringify(filters.filters) } );
+            } , 
+            
+            "sServerMethod": "POST",
+            "bDestroy": true,
+            
+            "oTableTools": {
+                "sSwfPath": "<?php echo $this->baseUrl()?>/backend/js/plugins/tables/TableTools/media/swf/copy_csv_xls_pdf.swf"
+            },
+
+            "oTableTools": { "aButtons": [ ] },
+            "fnCreatedRow": function( nRow, aData, iDataIndex ) {
+                // botones
+               //	var editar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Edit" href="#"><img alt="" src="/backend/images/icons/color/pencil.png"></a>');
+                var borrar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
+                     borrar.on('click',function(){
+                    		$.msgbox("Are you sure you want to remove this testimonial? <br> You cannot undo this action", {
+                    			  type: "confirm",
+                    			  buttons : [
+                    			    {type: "submit", value: "Yes"},
+                    			    {type: "cancel", value: "No"}
+                    			  ]
+                    			}, function(result) {
+                    				if(result === 'Yes'){
+                                      	 var form = $('<form>').attr({
+                                             name:'deleteform', 
+                                             method: 'post', 
+                                             action: '<?php echo $this->url(array('module'=>'admin','controller'=>'testimonial', 'action'=>'delete'))?>'
+                                         });
+                                         $('<input>').attr({
+                                             type: 'hidden',
+                                             id: 'Id',
+                                             name: 'Id',
+                                             value: aData[0]
+                                         }).appendTo(form);
+                                         form.appendTo($('body'));
+                                         form.submit();
+                                         return false;
+                    				}
+                    			});
+                     });    
+                 var view = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="View" href="#"><img alt="" src="/backend/images/icons/control/16/search.png"></a>');    
+	                 view.on('click',function(){
+		                 
+						$('#ocw-title-label').html(aData[1]);
+						$('#ocw-type-label').html(aData[3]);
+						$('#name-label').html(aData[4]);
+						$('#country-label').html(aData[5]);
+						$('#testimonial-label').html(aData[10]);
+						$('#postdate-label').html(aData[13]);
+						$( "#testimonial-info-box" ).dialog('open');
+	              	 }); 
+	              	                        
+                     $('td:eq(0)', nRow).empty();
+                     $('td:eq(0)', nRow).append(view); 
+                     $('td:eq(0)', nRow).append(borrar);   
+
+ 					  // testimonial body
+ 					  var tesTestimonial = aData[10].substring(0,100) + '...';
+ 					  $('td:eq(10)', nRow).empty();
+                      $('td:eq(10)', nRow).append(tesTestimonial);
+                      // los inputs                    
+                      var selected = aData[2] == 'Yes' ? 'checked="checked"' : ''; 
+                      var checkbox = $('<input type="checkbox" name="tesVisible_' + aData[0] + '" value="1" ' + selected + ' >');
+                      
+                      checkbox.on('change', function(){
+                          var me =  $(this);
+                    	 	
+							$.ajax( { 
+	      	                	url: "<?php echo $this->url(array( 'module'=>'admin','controller'=>'testimonial', 'action'=>'savevisible'))?>",
+	      	                    data:  { Id: $(nRow).attr('id'), value: $(this).is(':checked') ? 1 : 0 },
+	      	                    //async: false,
+	      	                    type: "POST",
+	      	                    beforeSend: function(objeto){
+		      	                    me.prop("disabled", true);
+		      	                },
+	      	                    complete: function(objeto, exito) { },
+	      	                    dataType: "json",
+	      	                    global: true,
+	      	                    cache:false,
+	      	                    ifModified: false,
+	      	                    processData:true,
+	      	                    success: function(datos)
+	      	                    {
+	      	                    	me.prop("disabled", false);
+	      	                    	displayMessage( 'success', 'Status updated successfully', 'Ok!', '' );
+	      	                    },
+		      	      	        error: function(request, status, error)
+			      	  	        {
+			      	  	            mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+			      	  	            displayMessage( 'error', mensaje, 'Error', '' );
+			      	  	        },
+	      	                 });
+                      });
+					  
+                      $('td:eq(2)', nRow).empty();
+                      $('td:eq(2)', nRow).append(checkbox); 
+	                                      
+              }
+            ,"oLanguage": { "sUrl": "<?php echo $this->baseUrl()?>/backend/js/plugins/tables/en.txt"}
+        });
+        
+
+       $(window).resize(function () {
+	        var oSettings = oTable.fnSettings();
+	        oSettings.oScroll.sY = calcDataTableHeight(); 
+	        oTable.fnDraw();
+        }); 
+		// dibujar los filtros si los hubiese
+		drawfbreadcrumbs(getAdvancedFilters()); 
+
+    } );
+
+    function reloadFilters(){
+		oTable.fnReloadAjax( '<?php echo $this->url(array( 'module'=>'admin',  'controller'=>'testimonial', 'action'=>'testimonialgrid'))?>' );
+		drawfbreadcrumbs(getAdvancedFilters()); 
+	}
+</script>

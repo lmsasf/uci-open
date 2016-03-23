@@ -1,0 +1,562 @@
+<?php
+$this->headLink()->appendStylesheet($this->baseUrl().'/backend/css/boxes.css')
+;
+$this->jQuery() ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
+				->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js');
+?>
+ <style>
+  	#ocw-all, #ocw-join { list-style-type: none; margin: 0; padding: 0; width: 100%; float:left; min-height:50px;}  
+	#ocw-all li,#ocw-join li { float:left; margin: 4px; } 
+	.smallButton {float: right;	height: 16px; margin: 2px;	line-height: 15px;}
+	.smallButtonSep {background: url("/backend/images/backgrounds/titleBg.png") repeat-x scroll 0 0 transparent; border: 1px solid #CDCDCD; display: inline-block; padding: 3px;float: right;	height: 16px; margin: 2px;	line-height: 15px;}
+	.widget-content-ocw, .widget-content-all { overflow: auto;height: 500px;	padding: 5px;}
+	.oneThree { width: 32%; display: inline; float: left; margin-left: 2%; }
+	.oneThree:first-child { margin-left: 0; float: left; }
+	.twoOne { width: 66%; float: right; margin-left: 2%;  clear: none;} 
+	.twoOne:first-child { margin-left: 0; float: left; }
+	.chzn-container-multi { width: 100% !important; }
+	.chzn-container-multi .chzn-choices .search-choice { max-width: 150px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;}
+    .placeholder { background-color: #fff; border:2px dashed #c5c5c5; margin:5px; height: 118px; width: 195px;}
+    .dataTables_filter {position: relative; top: 7px; }
+    .dataTables_filter input[type="text"] {  width: 200px !important; }
+    #startMessage { text-align: center; padding-top: 50px; }
+    .formRow .formRight {width: 80%;}
+    .infoBox{ white-space:nowrap; overflow:hidden; text-overflow: ellipsis;background: url('/backend/images/backgrounds/titleBg.png') repeat-x scroll 0 0 #EFEFEF;  border-bottom: 1px solid #CDCDCD; padding:5px;}
+    .header { border: 1px solid rgba(0, 0, 0, 0.2);	border-top-left-radius: 5px; border-top-right-radius: 5px; box-shadow: 0 0 1px 1px rgba(255, 255, 255, 0.5) inset, 0 -3px 15px -1px rgba(0, 0, 0, 0.2) inset; cursor: pointer; background: none repeat scroll 0 0 #000; width: 98%; text-align: left; float:left; }
+	.header h1 { color: #FFFFFF; float: left; font-size: 12px; letter-spacing: 1px; margin: 4px; overflow: hidden; padding-left: 4px; text-overflow: ellipsis; text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3); white-space: nowrap; width: 80%; }
+	.inbar iframe { max-width: 100%;}
+	.inbar img { max-width: 100%;}
+	.label {
+	    background: none repeat scroll 0 0 #000;
+	    border: 1px solid rgba(0, 0, 0, 0.2);
+	    border-top-left-radius: 5px;
+	    border-top-right-radius: 5px;
+	    box-shadow: 0 0 1px 1px rgba(255, 255, 255, 0.5) inset, 0 -3px 15px -1px rgba(0, 0, 0, 0.2) inset;
+	    cursor: pointer;
+	    float: left;
+	    text-align: left;
+	    width: 99%;
+	}
+	.label h1 { color: #FFFFFF; float: left; font-size: 12px; letter-spacing: 1px; margin: 4px; overflow: hidden; padding-left: 4px; text-overflow: ellipsis; text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3); white-space: nowrap; width: 80%; }
+	.infoTitle {overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 110px;}
+	.editor { 
+		border: dashed 2px #DDDDDD !important;
+		background-color: white;
+		height: 200px;
+		overflow: auto;
+		padding:10px;
+		
+	 }	
+	@media only screen and (min-width: 768px) and (max-width: 1470px) {
+		.formRow .formRight {width: 65%;}
+	}	
+	@media only screen and (min-width: 980px) and (max-width: 1280px) {
+		.formRow .formRight {width: 72%;}
+	}	
+	.cke_dialog_body { z-index: 10200 !important; }
+</style>
+  <script>
+$(function() {
+	
+	//$.fx.off = true;
+
+	$( "#ocw-join , #ocw-all" ).sortable( 
+		{ 	 connectWith: ".connectedSortable"
+			,placeholder: "placeholder"
+			,receive: function( event, ui ) {
+				if( ui.sender.prop('id') == 'ocw-all'){ 
+					// le cambio el icomo al boton
+					ui.item.find('.smallButton').text('►');
+				}else{
+					var id = ui.item.find('.smallButtonSep').parents('li').prop('id');
+					if(id){ // Boton x de los joins
+						removejoin(id);
+					}
+					// le cambio el icomo al boton
+					ui.item.find('.smallButton').text('◄');
+				}
+			}
+		}).disableSelection();
+
+	calculateWidgetContentHeight();
+	
+	$(window).resize(function() {calculateWidgetContentHeight();});
+	
+	$("#chzn-select").on('change', function(){
+		var select_filter = new Array();
+		var type_filter = new Array();
+		var exclude_join  = getJoins();
+		var text_filter	  = $('#textFilterOCW').val();
+		var all_filters   = new Array();
+		$('#startMessage').hide();
+		$(this).find(':selected').each(function(){
+			select_filter.push($(this).prop('id'));
+		});
+		$('.filtersType input[type=checkbox]:checked').each(function(index){
+			type_filter.push( $(this).val() );
+		});
+		all_filters = {combo:select_filter, joins:exclude_join, text: text_filter, type: type_filter, id: <?php echo $this->Id?> };
+		// enviar por ajax
+		$('.twoOne').block({ 
+			theme:     true, 
+		    title:    'Loading', 
+		    message:  '<div id="loadingBUI"> Please wait....</div>'			        
+        });
+	    $.ajax( {
+	        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ocw', 'action'=> 'getocwjoin'))?>",
+	        data: all_filters , 
+	        dataType: "json",
+	        global: true,
+	        cache:false,
+	        ifModified: false,
+	        processData:true,
+	        success: function(datos) { 
+		        $('#ocw-all').html('');
+		        if(datos.length > 0) {
+					$.each(datos, function(key, dato ){
+						var li = $('<li>').attr({ id: dato.id, 'class':'ocwChild' });
+						var holder = $('<div>').attr({ 'class':'holder' });
+						var topbar = $('<div>').attr({ 'class':'topbar ' + dato.typName.toLowerCase() }).html('<h1 title="' + dato.ocwTitle +'">'+ dato.ocwTitle +'</h1><a class="smallButton" title="move left" href="javascript:void(0)">◄</a><div class="clear"></div>');
+							holder.append(topbar);
+						var inbar  = $('<div>').attr({ 'class':'inbar' });
+						var inbarUL= $('<ul>');
+							inbarUL.append('<li title="'+dato.typName+'"><p>Type:'+dato.typName+'</p></li>');
+							inbarUL.append('<li title="'+dato.uniName+'"><p>'+ (dato.uniName ? dato.uniName : '&nbsp;') +'</p></li>');
+							inbarUL.append('<li title="'+dato.schName+'"><p>'+ (dato.schName ? dato.schName : '&nbsp;') +'</p></li>');
+							inbarUL.append('<li title="'+dato.depName+'"><p>'+ (dato.depName ? dato.depName : '&nbsp;') +'</p></li>');
+							inbar.append(inbarUL).append('<div style="clear:both"></div>');
+						holder.append(inbar);
+						li.append(holder);
+						$('#ocw-all').append(li);
+				        
+					});
+		        } else {
+		        	$('#startMessage').html('<h1>There are no results for your search</h1>');
+		        	$('#startMessage').show();
+		        }
+				$('.twoOne').unblock();
+				//$.jGrowl('Data saved successfully', { header: 'Success', sticky: false, theme: 'success' });
+		    },
+	        error: function(request, status, error)
+	        {
+	        	$('.twoOne').unblock();
+	            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+	            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+	            displayMessage( 'error', mensaje, 'Error', '' );
+	        },
+	        timeout: 20000,
+	        type: "POST"
+	    } );		
+		//console.debug( all_filters );
+		// remuevo los toolTip que se quedan flotando en Firefox
+		$('.tipsy').remove();
+		
+	 });
+	$("#textFilterOCW").on("keypress",function(e) {
+	    if(e.which == 13) {
+	    	$("#chzn-select").change();
+	    }
+	});
+	$('.filtersType input[type=checkbox]').on( 'click', function(){
+		$("#chzn-select").change();
+		$('#startMessage').hide();
+	});
+	// agrego un tooltip elegante para no perder la linea de los filtros
+	$('.search-choice').tipsy({live: true, title: function() { return $(this).text(); }	, delayOut: 400});
+
+	$('.smallButton').live('click', function(){
+		//busco en que lado esta el boton que estoy pulsando
+		if($(this).parents('#ocw-all').length > 0){ 
+			//a este elemento le busco el LI y lo muevo de lista de la izquierda
+			$(this).parents('li').hide().appendTo('#ocw-join').fadeIn(1000);
+			// le cambio el icomo al boton
+			$(this).text('►');
+		}else{
+			//a este elemento le busco el LI y lo muevo de lista de la derecha
+			$(this).parents('li').hide().appendTo('#ocw-all').fadeIn(1000);
+			// le cambio el icomo al boton
+			$(this).text('◄');
+		}
+	});
+	$('.smallButtonSep').live('click', function(){
+		var id = $(this).parents('li').prop("id");
+		//$(this).parents('li').remove();
+		removejoin(id);
+	});
+	 $( "#ocw-info-box" ).dialog({
+		 modal: true,
+		 autoOpen: false,
+		 width: $(window).width() < 600 ? ($(window).width() - 10) : 500,
+		 buttons: {
+			 Ok: function() {
+			 		$( this ).dialog( "close" );
+			 	}
+			 }
+	 });
+	 
+	 $( "#ocw-add-header" ).dialog({
+			autoOpen: false,
+			height : 200,
+			width: $(window).width() < 600 ? ($(window).width() - 10) : 500,
+			resizable: false,
+			modal: true,
+			open: function(event,ui){},
+			buttons: {
+				"Ok": function() {
+					if (jQuery('.dialog').validationEngine('validate')) {
+							if (jQuery('#validate').validationEngine('validate')) {
+								// agregar el encabezado
+								addHeader();
+								$( this ).dialog( "close" );					
+							}
+					}
+				},
+				'Cancel': function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			close: function() {
+				$('.dialog').validationEngine('hideAll');
+			}
+		});
+
+	 $( "#ocw-add-label" ).dialog({
+			autoOpen: false,
+			height : 350,
+			width: $(window).width() < 600 ? ($(window).width() - 10) : 500,
+			resizable: false,
+			modal: false,
+			open: function(event,ui){},
+			buttons: {
+				"Ok": function() {
+					if($('#labelText').html() != '' ) {
+						addLabel();
+						$( this ).dialog( "close" );
+					}					
+				},
+				'Cancel': function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			close: function() {
+
+		    	var name;
+		    	for(name in CKEDITOR.instances) {
+		    		var instance = CKEDITOR.instances[name];
+		    		instance.destroy();
+		    		instance = null;
+		    	}				
+				var instance = CKEDITOR.instances['content'];	
+				$('.dialog').validationEngine('hideAll');
+			}
+		});	
+
+	  $('.editor').click(function() {
+	    	var name;
+	    	for(name in CKEDITOR.instances) {
+	    		var instance = CKEDITOR.instances[name];
+	    		if(this && this == instance.element.$) {
+	    			return;
+	    		}
+	    	}
+	    	$(this).attr('contenteditable', true);
+	    	CKEDITOR.inline(this);
+	    });		 
+	 
+});
+
+function calculateWidgetContentHeight(){
+	var windowHeight = $(window).height();
+	var widgetContentHeight = (70 * windowHeight) / 100;
+	$('.widget-content-ocw').height(widgetContentHeight -35 );
+	$('.widget-content-all').height(widgetContentHeight -100);
+}
+function getJoins(){
+	var data = new Array();
+	$('#ocw-join li.ocwChild').each(function(index, value){	
+		if($(this).attr('id') !=='' ){
+			data.push( { idChild: $(this).attr('id'), sequence: index } );
+		}
+	});
+	return data;
+}
+function save(){
+		var data = getJoins();
+		//console.debug(data);
+		var Id = <?php echo $this->Id?>;
+	    $.ajax( {
+	        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ocw', 'action'=> 'saveocwjoin'))?>",
+	        data: { data: data, id: Id } , 
+	        dataType: "json",
+	        global: true,
+	        cache:false,
+	        ifModified: false,
+	        processData:true,
+	        success: function(datos) { 
+		        // $.jGrowl('Data saved successfully', { header: 'Success', sticky: false, theme: 'success' });
+	        	// tipo, mensaje, prefrase, url_redirect
+	        	displayMessage( 'success', 'Data saved successfully, redirecting...', 'Success', '<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ocw', 'action'=>'index') )?>' ); 
+		    },
+	        error: function(request, status, error)
+	        {
+	            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+	            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+	            displayMessage( 'error', mensaje, 'Error', '' );
+	        },
+	        timeout: 20000,
+	        type: "POST"
+	    } ); 
+}
+function openInfo(){
+	$('#ocw-info-box').dialog('open');
+}
+function openAdd(){
+	$('#ocw-add-header').dialog('open');
+}
+
+function openAddLabel(){
+	$('#ocw-add-label').dialog('open');
+}
+function removejoin(id){
+    $.ajax( {
+        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ocw', 'action'=> 'removeocwjoin'))?>",
+        data: { id: id }, 
+        dataType: "json", global: true, cache:false, ifModified: false, processData:true,
+        success: function(datos) { 
+        	$('#'+id).remove();
+        },
+        error: function(request, status, error)
+        {
+            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+            displayMessage( 'error', mensaje, 'Error', '' );
+        },
+        timeout: 20000,
+        type: "POST"
+    } ); 	
+}
+
+function viewAll(){
+	$("#chzn-select").change();
+}
+/**
+ * Agrega un Header
+ */
+function addHeader(){
+	var headerTitle = $("#headerTitle").val();
+    $.ajax( {
+        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ocw', 'action'=> 'addocwheader'))?>",
+        data: { ocwTitle: headerTitle } , 
+        dataType: "json",
+        global: true,
+        cache:false,
+        ifModified: false,
+        processData:true,
+        success: function(datos) { 
+        	var li = $('<li>').attr({ id: datos.id, 'class':'header ocwChild' });
+        	var h1 = '<h1>' + datos.ocwTitle + '</h1>';
+        	var a = $('<a>').attr({'class': 'smallButtonSep', title: 'Remove', href:"javascript:void(0)" }).html('&nbsp;x&nbsp;');
+        	var clear = $('<div>').attr({'class': 'clear'});
+        	li.append(h1).append(a).append(clear);
+        	$('#ocw-join').prepend(li);
+        },
+        error: function(request, status, error)
+        {
+            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+            displayMessage( 'error', mensaje, 'Error', '' );
+        },
+        timeout: 20000,
+        type: "POST"
+    } ); 
+}
+/**
+ * Agrega un Label
+ */
+function addLabel(){
+	var labelText = $('#labelText').html()
+    $.ajax( {
+        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ocw', 'action'=> 'addocwlabel'))?>",
+        data: { ocwDescription: labelText } , 
+        dataType: "json",
+        global: true,
+        cache:false,
+        ifModified: false,
+        processData:true,
+        success: function(datos) { 
+			/////
+			
+			var li = $('<li>').attr({ id: datos.id, 'class':'ocwChild', 'style':'width:98%; max-width:512px;' });
+			var h1 = '<h1>Label</h1>';
+			var a = $('<a>').attr({'class': 'smallButtonSep', title: 'Remove', href:"javascript:void(0)" }).html('&nbsp;x&nbsp;');
+			var clear = $('<div>').attr({'class': 'clear'});
+			li.append( $('<div class="topbar label" style="" >').append( h1 ).append( a ).append( clear ) );
+			li.append( $('<div class="inbar" style="padding: 25px 40px 10px 10px;">').append(datos.ocwDescription).append( clear ) );
+			
+			/////
+        	$('#ocw-join').prepend(li);
+        },
+        error: function(request, status, error)
+        {
+            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+            displayMessage( 'error', mensaje, 'Error', '' );
+        },
+        timeout: 20000,
+        type: "POST"
+    } ); 
+}
+</script>
+  <div class="topHeader" style="top:0px;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+				<div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>						
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ocw', 'action'=>'index') )?>">OCW list</a></li>
+						<li class="current"><a href="javascript:void(0)"><?php echo $this->OCW->ocwTitle ?></a></li>
+					</ul>
+				</div>				
+			</div>	
+		</div>
+	</div>
+</div>
+<div id="content">
+	<div class="wrapper">
+		<div id="mensajes"></div>
+		<div class="widgets">
+			<div class="oneThree" style="width: 30%;">
+		    	<div class="widget">
+		        	<div class="title">
+		        		<h6 class="infoTitle">Associated items</h6>	
+		        		<div class="topIcons">
+		        			<a class="tipS" href="javascript:openAddLabel()" original-title="Add label"><img alt="" src="/backend/images/icons/dark/tag.png"></a>
+		        			<a class="tipS" href="javascript:openAdd()" original-title="Add header"><img alt="" src="/backend/images/icons/dark/add.png"></a>
+                            <a class="tipS" href="javascript:openInfo()" original-title="More OCW Info"><img alt="" src="/backend/images/icons/dark/info.png"></a>
+                            <a class="tipS" href="javascript:save()" original-title="Save OCW joins"><img alt="" src="/backend/images/icons/dark/save.png"></a>
+                        </div>                		        	
+		        	</div>
+						<div class="infoBox">
+							<?php echo $this->OCW->ocwDescription? $this->escape( strip_tags($this->OCW->ocwDescription) ) :'&nbsp; ' ?>
+						</div>
+		        		<div class="widget-content-ocw column" style=" clear: both;">
+			            	<ul id="ocw-join" class="connectedSortable">
+
+			            	<?php foreach($this->joins as $join) {?>
+			            		<?php if ($join->idType == 5 ) { ?>
+			            		<li class="header ocwChild" id="<?php echo $join->id ?>">
+			            			<h1 ><?php echo $join->ocwTitle ?></h1>
+			            			<a class="smallButtonSep" title="Remove" href="javascript:void(0)">&nbsp;x&nbsp;</a>
+									<div class="clear"></div>
+			            		</li>			            		
+			            		<?php } elseif($join->idType == 7) { ?>
+								<li id="<?php echo $join->id ?>" class="ocwChild" style="width:98%; max-width: 512px;">
+									<div class="topbar label" style="" >
+										<h1>Label</h1>
+										<a class="smallButtonSep" title="Remove" href="javascript:void(0)">&nbsp;x&nbsp;</a>						
+										<div class="clear"></div>
+									</div>
+									<div class="inbar" style="padding: 25px 40px 10px 10px;">
+										<?php echo $join->ocwDescription ?>
+									</div>
+								</li>
+			            		<?php } else {?>
+								<li class="ocwChild" id="<?php echo $join->id ?>">
+									<div class="holder">
+										<div class="topbar <?php echo strtolower($join->typName)?>">
+											<h1 title="<?php echo $join->ocwTitle ?>"><?php echo $join->ocwTitle ?></h1>
+											<a class="smallButton" title="" href="javascript:void(0)">►</a>
+											<div class="clear"></div>
+										</div>
+										<div class="inbar">
+											<ul>
+												<li title="<?php echo $join->typName ?>"><p>Type: <?php echo $join->typName ?></p></li>
+												<li title="<?php echo $join->uniName ?>"><p><?php echo $join->uniName ? $join->uniName : '&nbsp; ' ?></p></li>
+												<li title="<?php echo $join->schName ?>"><p><?php echo $join->schName ? $join->schName : '&nbsp; ' ?></p></li>
+												<li title="<?php echo $join->depName ?>"><p><?php echo $join->depName ? $join->depName : '&nbsp; ' ?></p></li>
+											</ul>
+											<div style="clear:both"></div>
+										</div>
+									</div>		
+								</li>
+								<?php }?>
+							<?php }?>
+							</ul>
+							<div class="clear"></div>
+						</div>
+		        </div>
+		    </div>
+			<div class="twoOne">
+				<div class="widget">
+						<div class="title">
+							<h6>All published items</h6>
+							<div style="display: inline; float: right; width: 300px; margin-right: 5px;">
+								<div class="dataTables_filter"><label><span class="itemsPerPage" style="visibility: hidden;">Search:</span><input id="textFilterOCW" type="text" title="Enter keywords and press enter"><div class="srch"></div></label></div>
+							</div>
+						</div>
+						<div>
+							<form class="form" action="">
+								<fieldset>
+									<div class="formRow">
+				                        <label>OCW Type:</label>
+				                        <div class="formRight filtersType">
+                        					<input type="checkbox" name="check_Collection" id="check_Collection" value="4" /><label for="check_Collection" ><span class="collection_span">Collections</span></label>
+                        					<input type="checkbox" name="check_Course" id="check_Course" value="1" /><label for="check_Course"><span class="course_span">Courses</span></label>
+                        					<input type="checkbox" name="check_File" id="check_File" value="2" /><label for="check_File"><span class="file_span">Files</span></label>
+                        					<input type="checkbox" name="check_Lecture" id="check_Lecture" value="3" /><label for="check_Lecture"><span class="lecture_span">Lectures</span></label>		                        	
+				                        </div><div class="clear"></div>
+				                    </div>
+								</fieldset>
+							</form>
+						</div>
+						<div id="ocw-all-filters" style="background: url('/backend/images/backgrounds/titleBg.png') repeat-x scroll 0 0 #EFEFEF; border-bottom: 1px solid #CDCDCD; padding:5px;">
+							<select data-placeholder="select filter" id="chzn-select" style="width:350px;" class="chzn-select" multiple tabindex="6">
+							          <option value=""></option>
+							          <?php foreach($this->filtersList as $group => $filters ) {?>
+							          <optgroup label="<?php echo $group ?>">
+							          	<?php foreach ($filters as $filter) { ?>
+							            <option id="<?php echo $filter['filterGroup'].'_'.$filter['idFilter']?>" title="<?php echo $filter['filterName']?>"><?php echo $filter['filterName']?> </option>
+							            <?php }?>
+							          </optgroup>
+							          <?php }?>
+							        </select>						
+						</div>
+						<div class="widget-content-all column">
+							<div id="startMessage">
+								<h1>To start, select a filter. </h1>
+								<p><h2><a href="javascript:viewAll()">Click here if you want to see all</a></h2></p>
+							</div>
+			            	<ul id="ocw-all" class="connectedSortable"></ul>			                    
+			            </div>
+		            </div>
+		    </div>
+		    <div class="clear"></div>
+		</div>
+	</div>
+</div>	
+<div id="ocw-info-box" title="OCW info">
+	<p><b>Title: </b><?php echo $this->OCW->ocwTitle ?></p>
+	<p><b>University: </b><?php echo $this->OCW->uniName ?></p>	
+	<p><b>School: </b><?php echo $this->OCW->schName ?></p>
+	<p><b>Department: </b><?php echo $this->OCW->depName ?></p>	
+	<p><b>Description: </b><div style="width: 100%; max-height: 300px; overflow: auto;"><span ><?php echo $this->escape( strip_tags( $this->OCW->ocwDescription ) ) ?></span></div></p>
+</div>
+<div id="ocw-add-header" title="Add OCW Header">
+    <div class="">
+        <form id="validate" class="form" method="post" action="" class="dialog" id="formHeader" onsubmit="return false;">
+        	<fieldset>
+                <div class="formRow" style="margin-top: 25px;">
+                	<label for="headerTitle">Title:</label>
+                	<input type="text" class="validate[required]" name="headerTitle" id="headerTitle" value="" style="width: 275px; margin:0px;"/>
+                </div>
+            </fieldset>                  
+        </form>
+    </div>
+</div>
+<div id="ocw-add-label" title="Add OCW Label">
+    <div class="">
+    	<div class="editor" id="labelText" data-name="ocwDescription"></div>
+    </div>
+</div>
+

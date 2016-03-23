@@ -1,0 +1,360 @@
+<?php
+$this->jQuery()->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/form-builder/form-builder.js');
+$this->jQuery()->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/form-builder/form-render.js');
+$this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
+    ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
+    ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js')
+    ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
+    ->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js')
+;
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
+var_dump($this->contact[0]['title']);
+//$json = $this->contact[0]['educationalRole'];
+//$ar = json_decode($json, true);
+// access first element of $ar array
+//var_dump($ar[0]); // apple
+//die;
+?>
+<!-- Only include on form edit page -->
+<link rel="stylesheet" type="text/css" media="screen" href="/backend/js/plugins/form-builder/form-builder.min.css">
+<!-- Only include on form render page -->
+<link rel="stylesheet" type="text/css" media="screen" href="/backend/js/plugins/form-builder/form-render.min.css">
+
+<style>
+    .step h1 { display: none;}
+    .widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
+    .aimgdown { background-image:url("/backend/images/backgrounds/arrows.png"); background-repeat: no-repeat; display:block; height:10px; width:12px; float:right; -ms-transform: rotate(90deg);-moz-transform: rotate(90deg); -webkit-transform: rotate(90deg); -moz-transform: rotate(90deg);rotation: 90deg; filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);}
+    .aimgup { background-image:url("/backend/images/backgrounds/arrows.png"); display:block; height:10px; width:12px; float:right; background-position: 0 bottom;	}
+
+    div.checker span { vertical-align: top !important;}
+    .qq-upload-list{ display:none;}
+    .editor {
+        border: dashed 2px #DDDDDD !important;
+        background-color: white;
+        height: 150px;
+        overflow: auto;
+        padding:10px;
+    }
+</style>
+
+<div class="topHeader" style="top:0px;">
+    <div class="titleArea">
+        <div class="wrapper">
+            <div class="TopPageTitle">
+                <div class="bc">
+                    <ul id="breadcrumbs" class="breadcrumbs">
+                        <li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+                        <li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'frontend', 'action'=>'index') )?>">Frontend Dashboard</a></li>
+                        <li class="current"><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'fcontactus', 'action'=>'index') )?>">Contact us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- CODIGO NUEVO      *************************************************************************************** -->
+
+<script type="text/javascript">
+
+   
+    //Variable para contar la cantidad de libros que se agregaron
+    var cantbook = 0; //book add
+    var count = 0; //book add
+    $(function() {
+
+        var validStep = new Array();
+        var mensaje;
+
+
+        $('.editor').click(function() {
+            var name;
+            for(name in CKEDITOR.instances) {
+                var instance = CKEDITOR.instances[name];
+                if(this && this == instance.element.$) {
+                    return;
+                }
+            }
+            $(this).attr('contenteditable', true);
+            CKEDITOR.inline(this);
+        });
+        
+    });
+
+
+
+</script>
+
+
+<div id="content">
+    <div class="wrapper">
+        <div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+        <div id="mensajes" ></div>
+
+        <div class="widget">
+            <div class="title"><h6>Contact Us Edit</h6></div>
+            <form id="formContactUs" method="post" action="" class="form" >
+                <fieldset class="step" id="" style="width:100%;">
+                    <h1>General data</h1>
+                    <div class="formRow">
+                        <label>Title:<span class="req">*</span></label>
+                        <div class="formRight"><input type="text" name="title" id="txtContactUsTitle" class="campo" value="<?php echo $this->contact[0]['title'] ?>"/></div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <div class="formRow">
+                        <label>Description:</label>
+                        <div class="formRight">
+                            <div class="editor" id="txtDescription" data-name="description"><?php echo $this->contact[0]['description'] ?></div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <div class="formRow">
+                        <label>Educational role:<span class="req">*</span></label>
+                        <div class="formRight searchDrop">
+                            <table id="tableRoles" width="100%">
+                              
+                            </table>
+
+                            
+                            <button class="smallButton" id="addRole" style="line-height: 0; padding: 5px; float:left; margin-left:10px; margin-top:5px;" title="Add Role">
+                                <img alt="" src="/backend/images/icons/color/plus.png">
+                            </button>
+
+                            <div class="clear"></div>
+
+                            
+                        </div>
+                       <div class="clear"></div>
+                    </div>
+
+
+                    <div class="formRow">
+                        <label>Nature of Inquiry:<span class="req">*</span></label>
+                        <div class="formRight searchDrop">
+                             <table id="tableInquiry" width="100%">
+                              
+                            </table>                            
+                            <button class="smallButton" id="addInquiry" style="line-height: 0; padding: 5px; float:left; margin-left:10px; margin-top:5px;" title="Add Role">
+                                <img alt="" src="/backend/images/icons/color/plus.png">
+                            </button>
+
+                            <div class="clear"></div>
+
+                            
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <div class="formRow">
+                        <label>Help block:</label>
+                        <div class="formRight">
+                            <div class="editor" id="txtHelpBlock" data-name="helpBlock"><?php echo $this->contact[0]['helpBlock'] ?></div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <div class="formRow">
+                        <label>Contact info:</label>
+                        <div class="formRight">
+                            <div class="editor" id="txtContactInfo" data-name="contactInfo"><?php echo $this->contact[0]['contactInfo'] ?></div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                </fieldset>
+
+
+                <div class="wizButtons">
+                    <div class="status" id="status2"></div>
+					<span class="wNavButtons">
+                        <input class="basic" value="Cancel" type="button" onclick="cancel()"/>
+                        <input class="blueB ml10" id="submit" value="Save" onclick="valid()" type="button" />
+						
+                    </span>
+                </div>
+                <div class="clear"></div>
+            </form>
+            <div class="data" id="w2"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready( function() {
+        //get dates: educationalRole
+       var rol= '<?php echo $this->contact[0]['educationalRole'] ?>';
+       var contentTableRoles = $("#tableRoles"); 
+       var x = $("#tableRoles tr").length;
+
+       var FieldCount = x-1; //increment of fields 
+       if (rol != "") {
+           var arrayRoles = rol.split(",");
+           console.log(arrayRoles[2]);
+               for (var i = 0; i <= arrayRoles.length - 1; i++) {
+                    if (arrayRoles[i]!="") {
+                        FieldCount++;
+                        console.log(arrayRoles[i]);
+                        $(contentTableRoles).append('<tr><td width="99%"><input style="padding: 10px 5px;height: 14px;" type="text" id="txtRol['+ FieldCount +']" name="txtRoles" class="campo rol" value="' + arrayRoles[i] + '"></td><td width="1%" style="vertical-align: bottom;"><a class="smallButton delete" style="line-height: 0px;padding: 9px 5px; margin-left:2px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a></td></tr>'); 
+                    }
+               }
+       }else{
+             $(contentTableRoles).append('<tr><td width="99%"><input style="padding: 10px 5px;height: 14px;" type="text" id="txtRol['+ FieldCount +']" name="txtRoles" class="campo rol" value=""></td><td width="1%" style="vertical-align: bottom;"><a class="smallButton delete" style="line-height: 0px;padding: 9px 5px; margin-left:2px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a></td></tr>'); 
+       }
+
+       //get dates: NatureOfIntivy
+       var inquiry= '<?php echo $this->contact[0]['natureOfInquiry'] ?>';
+       var contentTableInquiry = $("#tableInquiry"); 
+       var y = $("#tableInquiry tr").length;
+      // alert("y= " + y);
+       var FieldCountInquiry = y-1; //increment of fields 
+       if (inquiry != "") {
+           var arrayInquiry = inquiry.split(",");
+           console.log(arrayInquiry[2]);
+               for (var i = 0; i <= arrayInquiry.length - 1; i++) {
+                    if (arrayInquiry[i]!="") {
+                        FieldCountInquiry++;
+                        console.log(arrayInquiry[i]);
+                        $(contentTableInquiry).append('<tr><td width="99%"><input style="padding: 10px 5px;height: 14px;" type="text" id="txtInquiry['+ FieldCountInquiry +']" name="txtInquiry" class="campo inquiry" value="' + arrayInquiry[i] + '"></td><td width="1%" style="vertical-align: bottom;"><a class="smallButton delete" style="line-height: 0px;padding: 9px 5px; margin-left:2px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a></td></tr>'); 
+                    }
+               }
+       }else{
+             $(contentTableInquiry).append('<tr><td width="99%"><input style="padding: 10px 5px;height: 14px;" type="text" id="txtInquiry['+ FieldCountInquiry +']" name="txtInquiry" class="campo inquiry" value=""></td><td width="1%" style="vertical-align: bottom;"><a class="smallButton delete" style="line-height: 0px;padding: 9px 5px; margin-left:2px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a></td></tr>'); 
+       }
+
+
+        //Educational role--------> config options    
+        var contenedor       = $("#tableRoles"); //ID del contenedor
+        var AddButton       = $("#addRole"); //ID of button add
+
+       $(AddButton).click(function (e) {
+             FieldCount++;       
+             $(contenedor).append('<tr> <td width="99%"><input style="padding: 10px 5px;height: 14px;" type="text" id="txtRol['+ FieldCount +']" name="txtRoles" class="campo rol" value=""></td><td width="1%" style="vertical-align: bottom;"><a class="smallButton delete" style="line-height: 0px;padding: 9px 5px; margin-left:2px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a></td></tr>');  
+            return false;
+        
+        });
+
+       //Nature of Inquiry--------> config options    
+        var contenedorInquiry       = $("#tableInquiry"); //ID contenedor
+        var AddButtonInquiry       = $("#addInquiry"); //ID of button add
+
+        
+
+       $(AddButtonInquiry).click(function (e) {
+             FieldCountInquiry++;   
+             //console.log(FieldCountInquiry);    
+             $(contenedorInquiry).append('<tr><td width="99%"><input style="padding: 10px 5px;height: 14px;" type="text" id="txtInquiry['+ FieldCountInquiry +']" name="txtInquiry" class="campo rol" value=""></td><td width="1%" style="vertical-align: bottom;"><a class="smallButton delete" style="line-height: 0px;padding: 9px 5px; margin-left:2px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a></td></tr>');        
+            return false;
+        
+        });
+       //Delete 
+       $(document).on("click",".delete",function(){
+            var parent = $(this).parents().parents().get(0);
+            var toDelete = $(this).parent().parents().find("input").find(".rol").val();
+            $.msgbox("Are you sure you want to remove this element? <br> You cannot undo this action", {
+                                  type: "confirm",
+                                  buttons : [
+                                    {type: "submit", value: "Yes"},
+                                    {type: "cancel", value: "No"}
+                                  ]
+                                }, function(result) {
+                                    if(result === 'Yes'){
+                                         $(parent).remove();
+                                         return false;
+                                    }
+             });
+    });
+   
+});
+//Validation of inputs
+function valid() {  
+$("html, body").animate({scrollTop:"0px"});    
+    var isEmpty = false;
+  //  alert("entro");
+    var inputsRol = $('#formContactUs :input[name=txtRoles]');
+    var valueRol ="";
+    inputsRol.each(function() { 
+        if($(this).val().length == 0 ){         //if input=""
+            displayMessage( 'error', 'Please complete fields empty.', '', '' );
+            isEmpty= true;
+        }else{
+            valueRol= valueRol + "," + $(this).val();
+        }
+    });
+
+    var inputsInquiry = $('#formContactUs :input[name=txtInquiry]');
+    //console.log(inputsRol);
+    var valueInquiry ="";
+    inputsInquiry.each(function() { 
+        if($(this).val().length == 0 ){         //if input=""
+            displayMessage( 'error', 'Please complete fields empty.', '', '' );
+            isEmpty= true;
+        }else{
+            valueInquiry= valueInquiry + $(this).val()+ ",";
+        }
+    });
+    if (inputsRol.length == 0 ) {  // if length of inputs == 0
+        displayMessage( 'error', 'Please complete at least one field of "Educational Role".', '', '' );
+        isEmpty= true;
+    }
+    if (inputsInquiry.length == 0 ){  // if length of inputs == 0
+        displayMessage( 'error', 'Please complete at least one field of "Nature Of Inquiry".', '', '' );
+        isEmpty= true;
+    }
+    if (!isEmpty) {
+        save(valueRol, valueInquiry);
+    }
+}
+//save of changes
+function save(valueRol, valueInquiry) {
+    var data = new Array();
+    //Add inputs for selects
+    $('.editor').each(function(index, element){
+        data.push( { campo:$(element).data('name'), valor: $(element).html()  } );
+   });
+
+    data.push( {campo: "title", valor: $("#txtContactUsTitle").val() } ); 
+    data.push( {campo: "educationalRole", valor: valueRol } );
+    data.push( {campo: "natureOfInquiry", valor: valueInquiry } );
+
+    $.ajax( {
+                url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'fcontactus', 'action'=> 'savecontactus'))?>",
+                data: { data: data } , 
+                async: false,
+                beforeSend: function(objeto){},
+                complete: function(objeto, exito) { },
+                dataType: "text",
+                global: true,
+                cache:false,
+                ifModified: false,
+                processData:true,
+                success: function(datos)
+                {
+                    if(datos != null){
+                        displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'frontend', 'action'=>'index'))?>' );
+                    }else{
+                        displayMessage( 'fail', 'Data saved fail', 'Fail', '<?php echo $this->url(array('module'=>'admin','controller'=>'frontend', 'action'=>'index'))?>' );
+                    }
+                    
+                },
+                error: function(request, status, error)
+                {
+                    var mensaje = request.responseText != '' ? request.responseText : 'Fail' ;
+                    $.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+                    displayMessage( 'error', mensaje, 'Error', '' );
+                },
+                timeout: 20000,
+                type: "POST"
+            } ); 
+
+}
+
+function cancel(){
+        document.location.href='<?php echo $this->url(array('module'=>'admin','controller'=>'frontend', 'action'=>'index'))?>';
+    }
+
+</script>
+
+

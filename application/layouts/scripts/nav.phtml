@@ -1,0 +1,55 @@
+<?php
+$OCW = new Table_OCW();
+$select = $OCW->select()->from( "OCW", array('ocwTitle', 'ocwTitleEncode') )->where("idType =?", 4)->where('ocwGolive=?', 1)->order('ocwTitle');
+
+$collections = $OCW->fetchAll( $select );
+
+?>
+<div class="navbar-inner" id="nav">
+	<div class="container" >
+		<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</a>
+		
+		<div class="nav-collapse collapse">
+			<ul class="nav">
+				<li <?php echo $this->section === 'index'        ? 'class="active"':'' ?> ><a href="<?php echo $this->baseUrl()?>/">Home</a></li>
+				<li class="dropdown <?php echo $this->section === 'collections'  ? 'active':'' ?>"> 
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Collections <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li><a href="<?php echo $this->baseUrl()?>/collections">What are Collections?</a></li>
+						<li class="divider"></li>
+						<?php if($collections): ?>
+							<?php foreach ($collections as $collection ):?>
+								<?php $titleEncode = is_null($collection->ocwTitleEncode) ? codificar_titulo($collection->ocwTitle) : $collection->ocwTitleEncode; ?>
+								<li><a href="<?php echo '/collections/'.$titleEncode.'.html'?>"><?php echo $this->escape( strip_tags( $collection->ocwTitle ) ) ?></a></li>
+							<?php endforeach;?>
+						<?php endif;?>
+					</ul>
+				</li>
+				<li <?php echo $this->section === 'courses'      ? 'class="active"':'' ?> ><a href="<?php echo $this->baseUrl()?>/courses">Courses</a></li>
+				<li <?php echo $this->section === 'lectures'     ? 'class="active"':'' ?> ><a href="<?php echo $this->baseUrl()?>/lectures">Lectures</a></li>
+				<li <?php echo $this->section === 'info'         ? 'class="active"':'' ?> ><a href="<?php echo $this->baseUrl()?>/info">About Us</a></li>
+				<li <?php echo $this->section === 'contact' 	 ? 'class="active"':'' ?> ><a href="<?php echo $this->baseUrl()?>/contact">Contact</a></li>
+				<li ><a href="http://sites.uci.edu/ucirvineocw">Support UCI OCW</a></li>
+			</ul>
+		    <form id="frmsrch" class="form-search pull-right navbar-search" method="post" action="<?php echo $this->baseUrl() ?>/search/results">
+			    <input type="text" class="input-medium search-query" placeholder="Search" name="keyword" id="keyword" value="<?php echo isset($this->keyword)? $this->keyword : '' ?>">
+			    <button type="submit" class="btn" style="padding-top: 0px; padding-bottom:0px ; margin-top: 0px; margin-left: -5px;"><i class="icon-search"></i></button>
+		    </form>			
+		</div>
+	</div>
+</div>
+<div id="search-aux" style="display: none"></div>
+<script>
+$(document).ready(function(){
+    $('#frmsrch').on('submit', function(e){
+        e.preventDefault();
+		var sstr = $('#keyword').val();
+		$('#search-aux').text(sstr);
+        $('#keyword').val( $('#search-aux').html() );
+        this.submit();
+    });
+});
+</script>

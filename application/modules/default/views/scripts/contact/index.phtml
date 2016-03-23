@@ -1,0 +1,180 @@
+<style>
+<!--
+.input-recaptcha {
+width:172px;
+}
+-->
+</style>
+<div class="span12" id="content">
+	<div style="padding:5px;">
+	<?php if($this->error): ?>
+	<div class="alert alert-block alert-error">
+	    <button type="button" class="close" data-dismiss="alert">&times;</button>
+	    <h4>Error!</h4>
+	    <?php echo $this->error ?>
+    </div>
+	<?php  endif; ?>
+	<?php if( $this->success ): ?>
+	<div class="alert alert-block alert-success">
+	    <button type="button" class="close" data-dismiss="alert">&times;</button>
+	    <h4>Success!</h4>
+	    <?php echo $this->success ?>
+    </div>
+	<?php  endif; ?>
+	</div>	
+	<div class="row" style="padding:10px 30px;">
+		<div class="span7" >
+			<h3><?php echo $this->contact[0]['title'] ?> </h3>
+			<p><?php echo $this->contact[0]['description'] ?></p>
+			
+			<form name="testimonial" action="<?php echo $this->url(array('module'=>'default', 'controller'=>'contact', 'action'=>'index' ) ) ?>" method="post">
+				<fieldset>
+					<label>Name</label>
+					<input type="text" name="conFirstName" required="required" placeholder="Type your first name..." value="<?php echo isset($this->conFirstName)? $this->conFirstName : '' ?>" >
+					
+					<label>Last Name</label>
+					<input type="text" name="conLastName" required="required" placeholder="Type your last name..." value="<?php echo isset($this->conLastName)? $this->conLastName : '' ?>" >					
+					
+					<label>Email Address</label>
+					<input type="text" name="conEmail" required="required" placeholder="Type your email..." value="<?php echo isset($this->conEmail)? $this->conEmail : '' ?>"  ><p class="help-block"></p>
+					
+					<label>Country</label>
+					<!-- Enter database for dropdown options -->
+					<div class="bfh-selectbox bfh-countries" data-country="US" data-flags="true">
+					  <input type="hidden" value="" name="conCountry">
+					  <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+					    <span class="bfh-selectbox-option input-medium" style="width: 200px;" data-option=""></span>
+					    <b class="caret"></b>
+					  </a>
+					  <div class="bfh-selectbox-options">
+					  	<input type="text" class="bfh-selectbox-filter">
+					    <div role="listbox">
+					    <ul role="option">
+					    </ul>
+					    </div>
+					  </div>
+					</div>
+					
+
+					<label>Educational role</label>
+					<div class="bfh-selectbox">
+					  <input type="hidden" name="conRole" value="<?php echo isset($this->conRole) ? $this->conRole : '' ?>">
+					  <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+					    <span class="bfh-selectbox-option input-medium" style="width: 200px;" data-option="<?php echo isset($this->conRole) ? $this->conRole : '0' ?>"></span>
+					    <b class="caret"></b>
+					  </a>
+					  <div class="bfh-selectbox-options">
+					  <div role="listbox">
+					    <ul role="option" id="optionRole">
+					      <li><a tabindex="-1" href="#" data-option="0"></a></li>
+					    
+					    </ul>
+					    </div>
+					  </div>
+					</div>					
+
+					
+					<label>Nature of Inquiry</label>
+					<div class="bfh-selectbox">
+					  <input type="hidden" name="conInquiriType" value="<?php  echo isset($this->conInquiriType) ? $this->conInquiriType : '' ?>">
+					  <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+					    <span class="bfh-selectbox-option input-medium" style="width: 200px;" data-option="<?php echo isset($this->conInquiriType)? $this->conInquiriType : '0' ?>"></span>
+					    <b class="caret"></b>
+					  </a>
+					  <div class="bfh-selectbox-options">
+					  <div role="listbox">
+					    <ul role="option" id="optionInquiry">
+					      <li><a tabindex="-1" href="#" data-option="0"></a></li>
+					    
+					    </ul>
+					    </div>
+					  </div>
+					</div>						
+
+					<label>Comments</label>
+					<textarea rows="10"  name="conComents" id="conComents" required="required" title="Please, enter a comment" style="width: 400px;"><?php echo isset($this->conComents)? $this->conComents : '' ?></textarea>
+					<p class="help-block"><?php echo $this->contact[0]['helpBlock'] ?></p>
+					<br>
+					<!-- RECAPTCHA -->
+					<script type="text/javascript">
+					/*var RecaptchaOptions = {
+						theme : 'custom',
+						custom_theme_widget: 'recaptcha_widget'
+					};*/
+					</script>
+					<!--
+					<div id="recaptcha_widget" style="display:none">
+						<div class="control-group">
+							<label class="control-label">Enter captcha</label>
+							<div class="controls">
+								<a id="recaptcha_image" href="#" class="thumbnail"></a>
+								<div class="recaptcha_only_if_incorrect_sol" style="color:red">Incorrect please try again</div>
+							</div>
+						</div>
+						 
+						<div class="control-group">
+							<label class="recaptcha_only_if_image control-label">Enter the words above:</label>
+							<label class="recaptcha_only_if_audio control-label">Enter the numbers you hear:</label>
+							 
+							<div class="controls">
+								<div class="input-append">
+								<input type="text" id="recaptcha_response_field" class="input-recaptcha" name="recaptcha_response_field" required="required"/>
+									<a class="btn" href="javascript:Recaptcha.reload()"><i class="icon-refresh"></i></a>
+									<a class="btn recaptcha_only_if_image" href="javascript:Recaptcha.switch_type('audio')"><i title="Get an audio CAPTCHA" class="icon-headphones"></i></a>
+									<a class="btn recaptcha_only_if_audio" href="javascript:Recaptcha.switch_type('image')"><i title="Get an image CAPTCHA" class="icon-picture"></i></a>
+									<a class="btn" href="javascript:Recaptcha.showhelp()"><i class="icon-question-sign"></i></a>
+								</div>
+							</div>
+						</div>
+					</div>
+					 
+					<script type="text/javascript" src="https://www.google.com/recaptcha/api/challenge?k=<?php //echo $this->pubkey?>"></script>
+					 
+					<noscript>
+						<iframe src="http://www.google.com/recaptcha/api/noscript?k=<?php //echo $this->pubkey?>"	height="300" width="500" frameborder="0"></iframe><br>
+						<textarea name="recaptcha_challenge_field" rows="3" cols="40">
+						</textarea>
+						<input type="hidden" name="recaptcha_response_field" value="manual_challenge">
+					</noscript> -->
+					<!-- Inser reCaptcha code here -->
+					<button type="submit" class="btn">Submit</button>
+				</fieldset>
+			</form>
+		</div>
+		<div class="span4">
+			<h3> &nbsp; </h3>
+			<div class="alert alert-info">
+				<address>
+					<?php echo $this->contact[0]['contactInfo'] ?>
+				</address>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(document).ready( function() {
+		//educationalRole
+		var rol= '<?php echo $this->contact[0]['educationalRole'] ?>';
+		console.log(rol);
+		var arrayRol = rol.split(",");
+		var contentOptionRoles = $("#optionRole"); 
+     	for (var i = 0; i <= arrayRol.length - 1; i++) {
+            if (arrayRol[i]!="") {
+                console.log(arrayRol[i]);
+                $(contentOptionRoles).append('<li><a tabindex="-1" href="#" data-option="'+arrayRol[i]+'">'+arrayRol[i]+'</a></li>'); 
+            }
+        }
+        //NatureOfInquiry
+		var inquiry= '<?php echo $this->contact[0]['natureOfInquiry'] ?>';
+		console.log(inquiry);
+		var arrayInquiry = inquiry.split(",");
+		var contentOptionInquiry = $("#optionInquiry"); 
+
+     	for (var i = 0; i <= arrayInquiry.length - 1; i++) {
+            if (arrayInquiry[i]!="") {
+                console.log(arrayInquiry[i]);
+                $(contentOptionInquiry).append('<li><a tabindex="-1" href="#" data-option="'+arrayInquiry[i]+'">'+arrayInquiry[i]+'</a></li>'); 
+            }
+        }
+	});
+</script>

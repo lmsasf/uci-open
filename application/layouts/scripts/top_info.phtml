@@ -1,0 +1,33 @@
+<?php
+if (Table_User::isLoggedIn()){	$info = Table_User::getIdentity(); }else{ $info = null; }
+?>
+<div class="wrapper">
+	<?php if(!is_null($info)): ?>
+    <div class="welcome"><a href="#" title=""><img src="<?php echo $this->baseUrl()."/backend/"?>images/userPic.png" alt="" /></a><span><?php echo is_null($info) ? '' : $info->perName?> (<?php echo is_null($info) ? '' : $info->usrName . ', '. $info->roleName?>) </span></div>
+    <div class="userNav">
+        <ul>
+            <li class="dd1"><a title=""><img src="<?php echo $this->baseUrl()."/backend/"?>images/icons/topnav/tasks.png" alt="" /><span>Modules</span></a>
+                <ul class="userDropdown">
+                    <li><img class="navSubmenuIcon" alt="" src="/backend/images/icons/light/files.png"><a href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'ocw', 'action'=>'index'))?>" title="" class="">OCW</a></li>
+                    <li><img class="navSubmenuIcon" alt="" src="/backend/images/icons/light/puzzle.png"><a href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'category', 'action'=>'index'))?>" title="" class="">Categories</a></li>
+                    <li><img class="navSubmenuIcon" alt="" src="/backend/images/icons/light/users2.png"><a href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'person', 'action'=>'index'))?>" title="" class="">Persons</a></li>
+                    <li><img class="navSubmenuIcon" alt="" src="/backend/images/icons/light/suitcase.png"><a href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'degree', 'action'=>'index'))?>" title="" class="">Degrees</a></li>
+                    <li><img class="navSubmenuIcon" alt="" src="/backend/images/icons/light/books.png"><a href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'university', 'action'=>'index'))?>" title="" class="">Universities</a></li>
+                    <li><img class="navSubmenuIcon" alt="" src="/backend/images/icons/light/bubbles.png"><a href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'testimonial', 'action'=>'index'))?>" title="" class="">Testimonials</a></li>
+                    <li><img class="navSubmenuIcon" alt="" src="/backend/images/icons/light/mail.png"><a href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'contact', 'action'=>'index'))?>" title="" class="">Contact Requests</a></li>
+                </ul>
+            </li>
+            <li class="dd2"><a title=""><img src="<?php echo $this->baseUrl()."/backend/"?>images/icons/topnav/settings.png" alt="" /><span>Settings</span></a>
+                <ul class="adminDropdown">
+                    <li><img class="navSubmenuIcon" alt="" src="/backend/images/icons/light/user.png"><a href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'user', 'action'=>'index'))?>" title="" class="">Users</a></li>
+                    <li><img class="navSubmenuIcon" alt="" src="/backend/images/icons/light/users.png"><a href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'role', 'action'=>'index'))?>" title="" class="">Roles</a></li>
+                    <li><img class="navSubmenuIcon" alt="" src="/backend/images/icons/light/archive.png"><a href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'cache', 'action'=>'index'))?>" title="manage data cached" class="">Cache</a></li>
+                    <li><img class="navSubmenuIcon" alt="" src="/backend/images/icons/light/link2.png"><a href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'blc', 'action'=>'index'))?>" title="manage broken links" class="">Broken links</a></li>
+                </ul> 
+            </li>           
+            <li><a href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'auth', 'action'=>'logout'))?>" title=""><img src="<?php echo $this->baseUrl()."/backend/"?>images/icons/topnav/logout.png" alt="" /><span>Logout</span></a></li>
+        </ul>
+    </div>
+    <?php endif;?>
+    <div class="clear"></div>
+</div>

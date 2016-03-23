@@ -1,0 +1,29 @@
+<?php if ($this->pageCount): ?>
+<div class="pagination pagination-right">
+	<?php if($this->label === true ): ?>
+	<span class="pull-left"><h1>Search results for "<?php echo $this->keyword ?>" ( <?php echo $this->totalItemCount?> records found )</h1></span>
+	<?php endif;?>
+	<ul>
+		<?php if (isset($this->previous)): ?> 
+    	<li class=""><a href="<?php echo $this->url(array( 'module'=>'default', 'controller'=>'search' ,'action' => 'results', 'keyword'=>$this->keyword,  'page' => $this->previous )); ?>">&laquo;</a></li>
+    	<?php else: ?>  
+    	<li class="disabled"><span>&laquo;</span></li>
+    	<?php endif; ?>  
+    	
+		<?php foreach ($this->pagesInRange as $page): ?>  
+		  <?php if ($page != $this->current): ?>  
+		  	<li class=""><a href="<?php echo $this->url(array( 'module'=>'default', 'controller'=>'search' ,'action' => 'results', 'keyword'=>$this->keyword, 'page' => $page)); ?>"><?php echo $page; ?></a></li>
+		  <?php else: ?>  
+		    <li class="disabled"><span><?php echo $page; ?></span></li>  
+		  <?php endif; ?>  
+		<?php endforeach; ?>      	
+    	
+		<?php if (isset($this->next)): ?>  
+		  <li class=""><a href="<?php echo $this->url(array('module'=>'default', 'controller'=>'search' ,'action' => 'results', 'keyword'=>$this->keyword, 'page' => $this->next)); ?>">&raquo;</a></li>
+		<?php else: ?>  
+		  <li class="disabled"><span>&raquo;</span></li>
+		<?php endif; ?>  
+		</div>  
+    </ul>
+</div>
+<?php endif; ?>  

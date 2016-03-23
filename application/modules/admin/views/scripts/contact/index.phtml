@@ -1,0 +1,377 @@
+<?php
+$this->jQuery()->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/datatable.fnReloadAjax.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/TableTools/media/js/TableTools.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/TableTools/media/js/ZeroClipboard.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/advancedFilter.js')
+;
+$this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools.css')
+->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools_JUI.css')
+;
+?>
+<style>
+
+.ui-dialog form {
+    text-align: left;
+}
+form.dialog > div.row {
+    float: right;
+    width: 60%;
+    padding-top: 9px;
+}
+.ui-dialog form label {
+    cursor: pointer;
+    float: left;
+    margin: 9px 0 0 10px;
+}
+</style>
+<div class="topHeader" style="top:0px;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+				<div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>						
+						<li class="current"><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'contactrequestsgrid', 'action'=>'index') )?>">Contact Requests</a></li>
+					</ul>
+				</div>	
+			</div>
+		</div>
+	</div>
+</div>
+<div id="content">
+	<div class="wrapper">
+	 	<div id="mensajes"></div>
+	 	
+		<div class="filterDetailed" id="f1" style="display:none;">
+                    <div class="filterContent">
+                        <div class="advancedFilterButons">
+                        	<a class="button basic" title="" href="javascript:reloadFilters();" id="reload-table">
+								<img class="icon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/refresh2.png">
+								<span title="Reload Filters">Reload</span>
+							</a>
+                        	<a class="button basic"  title="" href="javascript:clarFilters();" id="clean-filters">
+								<img class="icon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/smallBrush.png">
+								<span title="Clean filters">Clean</span>
+							</a>		                            
+                        </div>
+                        <span class="line"></span>
+                        <div class="advancedFilterToggle">
+							<div class="toggle acc">
+                    			<div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>First Name</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="TEXT" >
+			                    		<input type="hidden" name="op" value="LIKE" >
+			                    		<input type="hidden" name="label" value="First Name" >
+			                    		<div class="formRow">
+											<label for="conFirstName">First Name:</label>
+											<div class="formRight">
+												<input id="conFirstName" name="conFirstName" type="text" value="" >
+											</div>
+											<div class="clear"></div>
+										</div>
+									</form>	
+			                    </div>
+                    			<div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>Last Name</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="TEXT" >
+			                    		<input type="hidden" name="op" value="LIKE" >
+			                    		<input type="hidden" name="label" value="Last Name" >
+			                    		<div class="formRow">
+											<label for="conLastName">Last Name:</label>
+											<div class="formRight">
+												<input id="conLastName" name="conLastName" type="text" value="" >
+											</div>
+											<div class="clear"></div>
+										</div>
+									</form>	
+			                    </div>			                    
+			                    <div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>Country</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="TEXT" >
+			                    		<input type="hidden" name="op" value="LIKE" >
+			                    		<input type="hidden" name="label" value="Country" >
+			                    		<div class="formRow">
+											<label for="r3.name">Country:</label>
+											<div class="formRight">
+												<input id="r3.name" name="r3.`name`" type="text" value="" >
+											</div>
+											<div class="clear"></div>
+										</div>
+									</form>	
+			                    </div>
+	                    		<div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>E-Mail</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="TEXT" >
+			                    		<input type="hidden" name="op" value="LIKE" >
+			                    		<input type="hidden" name="label" value="E-Mail" >
+			                    		<div class="formRow">
+											<label for="conEmail">E-Mail:</label>
+											<div class="formRight">
+												<input id="conEmail" name="conEmail" type="text" value="" >
+											</div>
+											<div class="clear"></div>
+										</div>
+									</form>	
+			                    </div>
+			                    
+                    
+			                    <div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/check.png" alt="" class="titleIcon" /><h6>Read</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" id="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="MULTIPLE" >
+			                    		<input type="hidden" name="op" value="IN" >
+			                    		<input type="hidden" name="label" value="Visible" >
+			                    		<div class="formRow">
+											<label for="conRead">Read:</label>
+											<div class="formRight">
+												<input type="radio" name="conRead" id="Yes" value="1" alt="Yes" /><label for="Yes">Yes</label>
+											</div>
+											<div class="formRight">
+												<input type="radio" name="conRead" id="No" value="0" alt="No" /><label for="No">No</label>
+											</div>
+										</div>														
+									</form>	
+			                    </div>
+			                    
+			                    <div class="title"><img src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/dayCalendar.png" alt="" class="titleIcon" /><h6>Post Date</h6></div>
+			                    <div class="menu_body">
+			                    	<form class="form" action="" onsubmit="return false;">
+			                    		<input type="hidden" name="type" value="DATE" >
+			                    		<input type="hidden" name="op" value="BETWEEN" >
+			                    		<input type="hidden" name="label" value="Post Date" >
+										<div class="formRow">
+											<label>From:</label>
+											<div class="formRight">
+												<input name="conDate" class="datepicker" type="text" size="10" value="" />
+											</div>
+											<div class="clear"></div>
+										</div>
+										<div class="formRow">
+											<label>To:</label>
+											<div class="formRight">
+												<input name="conDate" class="datepicker" type="text" size="10" value="" />
+											</div>
+											<div class="clear"></div>
+										</div>													
+									</form>						                    
+			                    </div>
+
+			                </div>
+                        </div>
+                 </div>
+        </div>	 	
+	 	
+	    <div class="dataTables_wrapper">
+	        <!-- Dynamic table -->
+	        <div class="widget">
+	            <div class="title">
+	            	<a href="" style="visibility: hidden;"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/add.png"></a>
+		            <a href="javascript:displayFilter()">
+		            	<img style="margin-left: 243px;border:none;" class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/filter.png">
+		            </a>
+				 	<div id="breadcrumbs-wrapper" style="" >
+				       <div class="fbc">
+				            <ul id="fbreadcrumbs" class="fbreadcrumbs">
+				            </ul>
+				            <div class="clear"></div>    
+				        </div> 
+				    </div>
+	            	<div class="clear"></div>
+	            </div>                          
+	            <table class="display dTable">
+	                <thead>
+	                    <tr>
+							<th>Functions</th>
+							<th>First Name</th>
+							<th>Last Name</th>
+							<th>E-Mail</th>
+							<th>Role</th>
+							<th>Country</th>
+							<th>Inquiry type</th>
+							<th>Coments</th>
+							<th>Post Date</th>
+							<th></th>
+	                    </tr>
+	                </thead>
+	                <tbody>	                    
+	                </tbody>
+	            </table>
+	        </div>  
+	    </div>
+    </div>
+</div>
+<div id="contact-info-box" title="Contact request info">
+	<form onsubmit="return false" class="dialog" style="text-align: left;" action="">
+		<label>Name:</label>
+	    <div class="row">
+	    	<span id="name-label"></span>
+	    </div>	
+	    <div class="clear"></div>  
+		<label>E-mail:</label>
+	    <div class="row">
+	    	<span id="email-label"></span>
+	    </div>	
+	    <div class="clear"></div>   
+		<label>Country:</label>
+	    <div class="row">
+	    	<span id="country-label"></span>
+	    </div>
+	    <div class="clear"></div>	
+	    	      
+		<label>Educational role:</label>
+	    <div class="row">
+	    	<span id="role-label"></span>
+	    </div>
+	    <div class="clear"></div>  
+		<label>Nature of Inquiry:</label>
+	    <div class="row">
+	    	<span id="inquiryType-label"></span>
+	    </div>
+	    <div class="clear"></div> 
+		<label>Comments:</label>
+	    <div class="row">
+	    	<span id="comments-label" style="display:block; max-height: 200px; overflow:auto"></span>
+	    </div>
+	    <div class="clear"></div>
+    
+    </form>	
+</div>
+<script type="text/javascript">
+    var oTable;
+    $(document).ready(function() {
+
+	   	 $( "#contact-info-box" ).dialog({
+			 modal: true,
+			 autoOpen: false,
+			 width: $(window).width() < 600 ? ($(window).width() - 10) : 500,
+			 open: function( event, ui ) {
+				// actualizar el estado a read
+				   $.ajax( {
+				        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'contact', 'action'=> 'updatestatus'))?>",
+				        data: { id: $( "#contact-info-box" ).data('contactID') } , 
+				        async: true,
+				        beforeSend: function(objeto){},
+				        complete: function(objeto, exito) { },
+				        dataType: "json",
+				        global: true,
+				        cache:false,
+				        ifModified: false,
+				        processData:true,
+				        success: function(datos)
+				        {
+				        	//$.jGrowl('Marked as read', { header: 'Info', sticky: false, theme: 'success' });
+				        },
+				        error: function(request, status, error)
+				        {
+				            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+				             $.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+				        },
+				        timeout: 200000,
+				        type: "POST"
+				    } ); 						
+			 },
+			 buttons: {
+				 Ok: function() {
+				 		$( this ).dialog( "close" );
+				 	}
+				 }
+		 });
+
+    	var calcDataTableHeight = function() {
+            return $(window).height()-300 ; 
+            // la altura de la tabla se calcula en base 
+        };
+    	oTable = $('.dTable').dataTable( { 
+            "bJQueryUI": true, // soporte para temas UI
+            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+            "bRetrieve"  : true,
+            "bProcessing": true,
+        	"bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+        	"sDom": '<""flT>rt<"F"ip>',
+    		"aoColumns": [    { "sWidth": "90px", "bSortable": false }
+    						, { "sWidth": "300px" }
+    						, { "sWidth": "50px"  }
+    						, { "sWidth": "100px" }
+    						, { "sWidth": "200px" }
+    						, { "sWidth": "100px" }
+    						, { "sWidth": "100px" }
+    						, { "sWidth": "200px" }
+    						, { "sWidth": "150px" }
+    						, { "sWidth": "150px" } // read
+    						],
+    		"aaSorting":[[8,'desc']], 
+        	"iDisplayLength": 50,           
+            "sScrollY": calcDataTableHeight() ,
+            "bScrollCollapse": true,
+            "sScrollX": "100%",
+            "bSortClasses": false, // no muestra las clases de ordenamiento
+            //"bDeferRender": true, // similar al smartrendering de DHTMLX
+            "sAjaxSource": '<?php echo $this->url(array( 'controller'=>'contact', 'action'=>'contactrequestsgrid'))?>',
+            "fnServerParams": function ( aoData ) {
+                var filters = getAdvancedFilters();
+                aoData.push( { "name": "filters", "value": JSON.stringify(filters.filters) } );
+            } , 
+            "sServerMethod": "POST",
+            "bDestroy": true,
+            "oTableTools": {
+                "sSwfPath": "<?php echo $this->baseUrl()?>/backend/js/plugins/tables/TableTools/media/swf/copy_csv_xls_pdf.swf"
+            },
+
+            "oTableTools": { "aButtons": [ ] },
+            "fnCreatedRow": function( nRow, aData, iDataIndex ) {
+                // botones 
+                 var view = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="View" href="#"><img alt="" src="/backend/images/icons/control/16/search.png"></a>');    
+	                 view.on('click',function(){
+		                 
+						$('#name-label').html(aData[1] + ' ' + aData[2] );
+						$('#email-label').html(aData[3]);
+						$('#country-label').html(aData[5]);
+						$('#role-label').html(aData[4]);
+						$('#inquiryType-label').html(aData[6]);
+						$('#comments-label').html(aData[7]);
+						$('td:eq(9)', nRow).empty();
+						$('td:eq(9)', nRow).append('<img alt="" src="/backend/images/icons/email_open.png">');
+						$( "#contact-info-box" ).data('contactID', aData[0]);
+						$( "#contact-info-box" ).dialog('open');
+	              	 }); 
+	              	                        
+                     $('td:eq(0)', nRow).empty();
+                     $('td:eq(0)', nRow).append(view); 
+					var read;
+					if(aData[9] == 0) { //unread
+						read = $('<img alt=""  src="/backend/images/icons/email.png">');	
+					} else { // read
+						read = $('<img alt="" src="/backend/images/icons/email_open.png">');
+					}
+     				
+                        
+					 $('td:eq(9)', nRow).empty();
+					 $('td:eq(9)', nRow).append(read);
+					 // conComents body
+ 					 var conComents = aData[7].substring(0,100) + '...';
+ 					 $('td:eq(7)', nRow).empty();
+                     $('td:eq(7)', nRow).append(conComents);
+              }
+            ,"oLanguage": { "sUrl": "<?php echo $this->baseUrl()?>/backend/js/plugins/tables/en.txt"}
+        });
+        
+
+       $(window).resize(function () {
+	        var oSettings = oTable.fnSettings();
+	        oSettings.oScroll.sY = calcDataTableHeight(); 
+	        oTable.fnDraw();
+        }); 
+		// dibujar los filtros si los hubiese
+		drawfbreadcrumbs(getAdvancedFilters()); 
+
+    } );
+
+    function reloadFilters(){
+		oTable.fnReloadAjax( '<?php echo $this->url(array( 'module'=>'admin',  'controller'=>'contact', 'action'=>'contactrequestsgrid'))?>' );
+		drawfbreadcrumbs(getAdvancedFilters()); 
+	}
+</script>

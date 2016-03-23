@@ -1,0 +1,184 @@
+<?php
+$this->jQuery()->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/datatable.fnReloadAjax.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/TableTools/media/js/TableTools.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/TableTools/media/js/ZeroClipboard.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/advancedFilter.js')
+;
+$this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools.css')
+->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools_JUI.css')
+;
+?>
+
+<div class="topHeader" style="top:0px;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+				<!-- <h5>Degrees</h5>
+				<span>List</span> -->
+				<div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>						
+						<li class="current"><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'degree', 'action'=>'index') )?>">Degree list</a></li>
+					</ul>
+				</div>	
+			</div>
+		</div>
+	</div>
+</div>
+<div id="content">
+	<div class="wrapper">
+		<!-- <div id="mensajes">
+			<?php //$this->success ? $this->messages()->success($this->success . ' [Click to hide]', 'Success'): null; ?>
+			<?php //$this->error ? $this->messages()->error($this->error . ' [Click to hide]', 'Error:'): null; ?>
+	 		<?php //$this->messages()->warning('La tabla esta mostrando los &uacute;ltimos 5000 registros, para trabajar con el conjunto de datos diferente pulse el &iacute;cono "filtrar" del men&uacute; de opciones', 'IMPORTANTE') ?>
+	 	</div>-->
+	 	<div id="mensajes"></div>
+	 	<div id="breadcrumbs-wrapper" style="display: none;" >
+	       <div class="fbc">
+	            <ul id="fbreadcrumbs" class="fbreadcrumbs">
+	            </ul>
+	            <div class="clear"></div>    
+	        </div> 
+	    </div>	
+	    <div class="dataTables_wrapper">
+	        <!-- Dynamic table -->
+	        <div class="widget">
+	            <div class="title">
+	            	<a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'degree', 'action'=>'editdegree') )?>"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/add.png"></a>
+	            	<div class="clear"></div>
+	            </div>                          
+	            <table class="display dTable">
+	                <thead>
+	                    <tr>
+							<th>Functions</th>
+							<th>Description</th>
+							<th>Short Description</th>
+	                    </tr>
+	                </thead>
+	                <tbody>	                    
+	                </tbody>
+	            </table>
+	        </div>  
+	    </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var oTable;
+    $(document).ready(function() {
+
+    	$.jGrowl.defaults.closerTemplate = '<div>[close all]</div>';
+    	var calcDataTableHeight = function() {
+            return $(window).height()-300 ; 
+            // la altura de la tabla se calcula en base 
+        };
+    	oTable = $('.dTable').dataTable( { 
+            "bJQueryUI": true, // soporte para temas UI
+            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+            "bRetrieve"  : true,
+            "bProcessing": true,
+        	"bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+        	"sDom": '<""flT>rt<"F"ip>',
+    		"aoColumns": [{ "sWidth": "90px","bSortable": false }, { "sWidth": "auto" }, { "sWidth": "auto" }],
+    		"aaSorting":[[1,'asc']], 
+        	"iDisplayLength": 50,
+            //"sScrollY": "400px", // altura
+            "sScrollY": calcDataTableHeight() ,
+            "bScrollCollapse": true,
+            "bSortClasses": false, // no muestra las clases de ordenamiento
+            //"bDeferRender": true, // similar al smartrendering de DHTMLX
+            "sAjaxSource": '<?php echo $this->url(array( 'controller'=>'degree', 'action'=>'degreegrid'))?>',
+
+            "fnServerParams": function ( aoData ) {
+                var filters = getAdvancedFilters();
+                aoData.push( { "name": "filters", "value": JSON.stringify(filters.filters) } );
+            } , 
+            
+            "sServerMethod": "POST",
+            "bDestroy": true,
+            
+            "oTableTools": {
+                "sSwfPath": "<?php echo $this->baseUrl()?>/backend/js/plugins/tables/TableTools/media/swf/copy_csv_xls_pdf.swf"
+            },
+
+            "oTableTools": {
+            	"aButtons": [ 
+   			    		  /*{
+			                    "sExtends":    "text",
+			                    "sButtonText": "",
+			                    "fnClick": function ( nButton, oConfig, oFlash ) {
+			                        window.location = '<?php //echo $this->url( array( 'module'=>'admin', 'controller'=>'degree', 'action'=>'editdegree') )?>';			                       
+			                    }
+			                }*/
+   			    		]
+    		},
+    		
+            "fnCreatedRow": function( nRow, aData, iDataIndex ) {
+                // botones
+               	var editar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Edit" href="#"><img alt="" src="/backend/images/icons/color/pencil.png"></a>');
+                var borrar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
+                editar.on('click',function(){
+                   	 var form = $('<form>').attr({
+                          name:'editform', 
+                          method: 'post', 
+                          action: '<?php echo $this->url(array('module'=>'admin','controller'=>'degree', 'action'=>'editdegree'))?>'
+                      });
+                      $('<input>').attr({
+                           type: 'hidden',
+                           id: 'id',
+                           name: 'id',
+                           value: aData[0]
+                       }).appendTo(form);
+                       form.appendTo($('body'));
+                       form.submit();
+                       return false;
+                     });
+                     borrar.on('click',function(){
+                    		$.msgbox("Are you sure you want to remove this degree? <br> You cannot undo this action", {
+                    			  type: "confirm",
+                    			  buttons : [
+                    			    {type: "submit", value: "Yes"},
+                    			    {type: "cancel", value: "No"}
+                    			  ]
+                    			}, function(result) {
+                    				if(result === 'Yes'){
+                                      	 var form = $('<form>').attr({
+                                             name:'deleteform', 
+                                             method: 'post', 
+                                             action: '<?php echo $this->url(array('module'=>'admin','controller'=>'degree', 'action'=>'delete'))?>'
+                                         });
+                                         $('<input>').attr({
+                                             type: 'hidden',
+                                             id: 'Id',
+                                             name: 'Id',
+                                             value: aData[0]
+                                         }).appendTo(form);
+                                         form.appendTo($('body'));
+                                         form.submit();
+                                         return false;
+                    				}
+                    			});
+                     });                     
+                     $('td:eq(0)', nRow).empty();
+                     $('td:eq(0)', nRow).append(editar); 
+                     $('td:eq(0)', nRow).append(borrar);                      
+              }
+            ,"oLanguage": { "sUrl": "<?php echo $this->baseUrl()?>/backend/js/plugins/tables/en.txt"}
+        });
+        
+
+       $(window).resize(function () {
+	        var oSettings = oTable.fnSettings();
+	        oSettings.oScroll.sY = calcDataTableHeight(); 
+	        oTable.fnDraw();
+        }); 
+		// dibujar los filtros si los hubiese
+		drawfbreadcrumbs(getAdvancedFilters()); 
+
+    } );
+
+    function reloadFilters(){
+		oTable.fnReloadAjax( '<?php echo $this->url(array( 'module'=>'admin',  'controller'=>'degree', 'action'=>'degreegrid'))?>' );
+		drawfbreadcrumbs(getAdvancedFilters()); 
+	}
+</script>

@@ -1,0 +1,464 @@
+<?php $section = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();?>
+<?php echo $this->doctype('XHTML1_RDFA') ?>
+<html lang="en">
+	<head>
+		<?php echo $this->headTitle('UC Irvine, OpenCourseWare')->setSeparator(' :: '); ?>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta property="og:image" content="<?php echo 'http://'.$_SERVER['SERVER_NAME']?>/frontend/img/fb-logo.jpg"/>
+		<?php echo $this->headMeta(); ?>
+		<!-- Bootstrap -->
+		<?php echo $this->headLink()->appendStylesheet($this->baseUrl().'/frontend/css/bootstrap.css','screen')
+									->appendStylesheet($this->baseUrl().'/frontend/css/bootstrap-responsive.css','screen')
+									->appendStylesheet($this->baseUrl().'/frontend/css/bootstrap-formhelpers.css','screen')
+									->appendStylesheet($this->baseUrl().'/frontend/css/bootstrap-formhelpers-countries.flags.css','screen')
+									->appendStylesheet($this->baseUrl().'/frontend/css/bootstrap-formhelpers-currencies.flags.css','screen')
+									->appendStylesheet($this->baseUrl().'/frontend/css/style.css','screen')
+									->appendStylesheet($this->baseUrl().'/frontend/css/ovp.css','screen')
+									->appendStylesheet($this->baseUrl().'/frontend/css/prettify.css','screen')
+									->appendStylesheet($this->baseUrl().'/frontend/css/pace-theme-center-atom.css','screen')
+									
+		;
+
+		?>
+		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<script src="http://code.jquery.com/jquery.js"></script>
+
+		<?php echo $this->inlineScript()->appendFile($this->baseUrl()."/frontend/js/jquery.zrssfeed.min.js",'text/javascript')
+										->appendFile($this->baseUrl()."/frontend/js/holder.js",'text/javascript')
+										->appendFile($this->baseUrl()."/frontend/js/bootstrap.min.js",'text/javascript')
+										->appendFile($this->baseUrl()."/frontend/js/prettify.js",'text/javascript')
+										->appendFile($this->baseUrl()."/frontend/js/bootstrap-formhelpers-selectbox.js",'text/javascript')
+										->appendFile($this->baseUrl()."/frontend/js/bootstrap-formhelpers-countries.en_US.js",'text/javascript')
+										->appendFile($this->baseUrl()."/frontend/js/bootstrap-formhelpers-countries.js",'text/javascript')
+										->appendFile($this->baseUrl()."/frontend/js/jquery.expander.min.js",'text/javascript')
+										->appendFile($this->baseUrl()."/frontend/js/custom.js",'text/javascript')
+										->appendFile($this->baseUrl()."/frontend/js/bootstrap-tour.min.js",'text/javascript')
+										//->appendFile($this->baseUrl()."/frontend/js/pace.min.js",'text/javascript')
+		;
+		?>
+		<!-- Self Stylesheet -->
+		<link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic|Noto+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+	</head>
+  
+	<body>
+		<div class="container">		
+			<div class="row">
+				<?php 
+					if($this->Mode == "preview"){
+				?>
+					<div id="acceptbox" class="span12" style="background-color: #F7F9BD;">
+						<div style="padding: 5px;text-align: center;">
+							Page Preview – Click “Accept” to save it.
+							<a id="accept" class="btn btn-success" href="#">Accept</a>
+						</div>
+					</div>
+				<?php 
+					}
+				?>
+				<div class="span12" id="header">
+
+				</div>
+			</div>
+			<div class="row">
+				<div class="span12" id="navi">
+					<div class="navbar">
+						<?php echo $this->partial("nav.phtml", array('section'=>$section, 'keyword'=>$this->keyword)); ?>
+					</div>
+				</div>
+				<!-- breadcrumbs -->
+				<?php echo ($section != 'info' && $section != 'index' && $section != 'file' && $section != 'error' ) ? $this->partial("breadcrumb.phtml", array('section'=>$section, 'title'=> $this->title )) : ''; ?>
+				<?php echo $this->layout()->content; ?>
+			</div>
+		</div>		<br/>
+		<footer id="footer-head">
+			<div class="container">
+				<div class="row">
+					<div class="span12" >                                                                     
+						<p></p>
+					</div>
+					<div> <class="span1"></div>
+					<div id="footer_container">
+					</div>
+					<div class="span1"></div>
+				</div>
+			</div>
+		</footer>
+	</body>
+	
+	<script type="text/javascript">
+	
+	var strcont = '<?php echo $this->aContent?>';
+	var promoloc = '<?php echo $this->prmLoc?>';
+	var fooDesign = '';
+	var headDesign = '';
+
+	$.ajax({
+		url: "/default/frontend/getfooterdesign",
+		data: {},
+		dataType: "json",
+		global: true,
+		cache: false,
+		ifModified: false,
+		processData: true,
+		success: function (datos) {
+			fooDesign = datos;
+		},
+		error: function (request, status, error) {
+			mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+			$('#acceptbox div').html(mensaje);
+			$('#acceptbox').css('background-color', '#E8747D');
+		},
+		timeout: 20000,
+		type: "POST"
+	});
+
+	$.ajax({
+		url: "/default/frontend/getheaderdesign",
+		data: {},
+		dataType: "json",
+		global: true,
+		cache: false,
+		ifModified: false,
+		processData: true,
+		success: function (datos) {
+			headDesign = datos;
+		},
+		error: function (request, status, error) {
+			mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+			$('#acceptbox div').html(mensaje);
+			$('#acceptbox').css('background-color', '#E8747D');
+		},
+		timeout: 20000,
+		type: "POST"
+	});
+
+	$.ajax({
+		url: "/default/frontend/getfooterdata",
+		data: {},
+		dataType: "json",
+		global: true,
+		cache: false,
+		ifModified: false,
+		processData: true,
+		success: function (datos) {
+
+			var fooAdd = new Array();
+			var areaAnterior = '';
+			var areaSequenceAnterior = '';
+
+			for (data in datos) {
+				if(datos[data]['fooArea']!=areaAnterior) {
+					if(areaAnterior != '') {
+						fooAdd[areaSequenceAnterior] += '</ul>';
+						fooAdd[areaSequenceAnterior] += '</div>';
+					}
+					if(fooDesign!='3'&&fooDesign!='4')
+						fooAdd[datos[data]['areaSequence']] = '<div class="span2" id="sitemap">';
+					else
+						fooAdd[datos[data]['areaSequence']] = '<div>';
+
+					if(datos[data]['idArea']!=1) {
+						fooAdd[datos[data]['areaSequence']] += '<p>' + datos[data]['fooArea'] + '</p>';
+						fooAdd[datos[data]['areaSequence']] += '<ul>';
+					}
+				}
+				if(datos[data]['idArea']==1) {
+					fooAdd[datos[data]['areaSequence']] += '<p>'
+					if(datos[data]['fooDescription']!="") {
+						fooAdd[datos[data]['areaSequence']] += datos[data]['fooDescription'];
+					}
+					if(datos[data]['fooImageUrl']!="") {
+						fooAdd[datos[data]['areaSequence']] += '<a href="'+datos[data]['fooUrl']+'"><img src="'+datos[data]['fooImageUrl']+'"></a>';
+					}
+					fooAdd[datos[data]['areaSequence']] += '</p>';
+
+					if(datos[data]['fooImageUrl'].indexOf("donate")!=-1) {
+						fooAdd[datos[data]['areaSequence']] += '</div>';
+
+						if(fooDesign!='3'&&fooDesign!='4')
+							fooAdd[datos[data]['areaSequence']] += '<div class="span2" id="sitemap">';
+						else
+							fooAdd[datos[data]['areaSequence']] += '<div>';
+
+						//fooAdd[datos[data]['areaSequence']] += '<div class="span2" id="sitemap">';
+					}
+				}else {
+					fooAdd[datos[data]['areaSequence']] += '<li><a href="' + datos[data]['fooUrl'] + '">' + datos[data]['fooDescription'] + '</a></li>';
+				}
+				areaAnterior = datos[data]['fooArea'];
+				areaSequenceAnterior = datos[data]['areaSequence'];
+			}
+			fooAdd[areaSequenceAnterior] += '</div>';
+
+			switch (fooDesign){
+				case '1':
+					$("#footer_container").html(fooAdd.filter(Boolean));
+					break;
+				case '2':
+					$("#footer_container").html(fooAdd.sort(function(a, b){return b-a}));
+					break;
+				case '3':
+					var container = '<div class="span2" id="sitemap">';
+					var i=1;
+					for(foo in fooAdd){
+						container += fooAdd[foo];
+						if(i % 2 == 0){
+							container += '</div>';
+							container += '<div class="span2" id="sitemap">';
+						}
+						i++;
+					}
+					container += '</div>';
+					$("#footer_container").html(container);
+					document.getElementById('footer_container').style='padding-left: 24%;';
+					break;
+				case '4':
+					var container = '<div class="span2" id="sitemap">';
+					var i=1;
+					for(foo in fooAdd.sort(function(a, b){return b-a})){
+						container += fooAdd[foo];
+						if(i % 2 != 0){
+							container += '</div>';
+							container += '<div class="span2" id="sitemap">';
+						}
+						i++;
+					}
+					container += '</div>';
+					$("#footer_container").html(container);
+					document.getElementById('footer_container').style='padding-left: 30%;';
+					break;
+				default:
+					$("#footer_container").html(fooAdd.filter(Boolean));
+					break;
+			}
+		},
+		error: function (request, status, error) {
+			mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+			$('#acceptbox div').html(mensaje);
+			$('#acceptbox').css('background-color', '#E8747D');
+		},
+		timeout: 20000,
+		type: "POST"
+	});
+
+	$.ajax({
+		url: "/default/frontend/getheaderdata",
+		data: {},
+		dataType: "json",
+		global: true,
+		cache: false,
+		ifModified: false,
+		processData: true,
+		success: function (datos) {
+			var headAdd = new Array();
+			var areaAnterior = '';
+			var areaSequenceAnterior = '';
+			headAdd[1]='';
+			headAdd[2]='';
+
+			for (data in datos) {
+				if ((datos[data]['fooDescription']).toUpperCase() == 'logo'.toUpperCase()) {
+					headAdd[1] = '<a href="' + datos[data]['fooUrl'] + '"><img class="logo" src="' + datos[data]['fooImageUrl'] + '" alt="Logo"></a>';
+				} else {
+					if(headAdd[2]==''||headAdd[2]==null)
+						if(datos[data]['idArea']==4)
+							headAdd[2] = '<a href="' + datos[data]['fooUrl'] + '"><img src="' + datos[data]['fooImageUrl'] + '" id="" alt="" style="margin-top:35px;width:32px;height:32px;"></a>';
+						else
+							headAdd[2] = '<a href="' + datos[data]['fooUrl'] + '"><img src="' + datos[data]['fooImageUrl'] + '" id="" alt="" style="margin-top:35px;width:90px;height:32px;"></a>';
+					else
+						headAdd[2] += '<a href="' + datos[data]['fooUrl'] + '"><img src="' + datos[data]['fooImageUrl'] + '" id="" alt="" style="margin-top:35px;width:32px;height:32px;"></a>';
+				}
+			}
+
+			var span_right = '<span style="float:right; margin-right:10px;">';
+			var span_left  = '<span style="float:left;  margin-left:10px;">';
+			var close_span = '</span>';
+			switch (headDesign){
+				case '1':
+					$("#header").html(headAdd[1]+span_right+headAdd[2]+close_span);
+					break;
+				case '2':
+					$("#header").html(span_left+headAdd[2]+close_span+span_right+headAdd[1]+close_span);
+					break;
+				case '3':
+					$("#header").html(headAdd[1]);
+					document.getElementById('header').style='text-align:center;';
+					break;
+				default:
+					$("#header").html(headAdd[1]+span_right+headAdd[2]+close_span);
+					break;
+			}
+		},
+		error: function (request, status, error) {
+			mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+			$('#acceptbox div').html(mensaje);
+			$('#acceptbox').css('background-color', '#E8747D');
+		},
+		timeout: 20000,
+		type: "POST"
+	});
+
+	$(function() {
+	    $("iframe[src^='http://www.youtube.com'], iframe[src^='//www.youtube.com']" ).each(function(){
+	          var url = $(this).attr("src");
+	          var char = "?";
+	          if(url.indexOf("?") != -1){
+	                  var char = "&";
+	           }
+	          $(this).attr("src",url+char+"wmode=opaque");
+	    });
+
+	    // resize videos
+	    $("object, embed, iframe[src^='//www.youtube.com'],iframe[src^='http://www.youtube.com']").each(function() {
+			var orig = $(this);
+			var ratio = orig.attr("height") / orig.attr("width");
+			var parWidth = orig.parent().width();
+			if(parWidth > 0) {
+				if(orig.attr("width")> parWidth) {
+					orig
+						.attr("width", parWidth)
+						.attr("height", (parWidth * ratio));
+				}
+			}
+		}); 
+		$('#myTab a').click(function (e) {
+			  e.preventDefault();
+			  $(this).tab('show');
+		});
+		$("[rel='popover']").popover();
+	});
+	$(document).ready(function() {
+		$('.expand').expander({ slicePoint: 350, expandText: ' Read more', userCollapseText: ' Less' });
+		
+		//Arbitrary content generation
+		if(strcont.length > 58){
+			var arrcont = JSON.parse( strcont );
+			$.each(arrcont.AC , function( side, sideval ) {
+				$.each(sideval, function( i, acitem ) {
+					if(acitem){
+						$.each(acitem, function( actype, acsrc ){
+							insertArbitraryContent(side, actype, acsrc);
+						});
+					}
+				});
+				
+			});
+		}
+		relocatePromotions();
+		
+		$('#accept').click(function(e){
+			e.preventDefault();
+			saveOCW();
+		});
+	});
+	
+
+	function insertArbitraryContent(side, actype, acsrc){
+		
+		var side_secc = $("#side"+side);
+
+		// Sino existe la columna especificada utiliza la central
+		if(side_secc.length == 0)
+			side_secc = $("#sidec"); // Usa la columna central
+
+		var add_id = 'ac'+side+'_'+side_secc.children().length;
+		var add;
+		if( actype == 'vid' ){
+			
+			add = '<div id="'+add_id+'" class="well-small acont-pub" style="margin-bottom: 20px;padding: 0;text-align: center;"><iframe src="'+acsrc+'" frameborder="0" allowfullscreen="" width="100%"></iframe></div>';
+		}
+		else if( actype == 'img' ){
+			
+			add = '<div id="'+add_id+'" class="well-small acont-pub" style="margin-bottom: 20px;padding: 0;text-align: center;"><img src="'+acsrc+'" class="img-polaroid" style="border: 0;padding: 2px;"></div>';
+		}
+		else if( actype == 'txt' ){
+			
+			add = '<div id="'+add_id+'" class="well-small acont-pub" style="margin-bottom: 20px;padding: 0;"><div class="well editor" style="padding: 10px;">'+acsrc+'</div></div>';
+		}
+		side_secc.append(add);
+		
+		if(side=='c' && !!$('.testimbox').length)
+			$('.testimbox').appendTo($("#sidec"));
+		
+		//Scale aspect ratio player
+		if( actype == 'vid' ){
+			var height = parseInt( $("#"+add_id+" iframe").width()/1.333 );
+			$("#"+add_id+" iframe").prop("height", height+'px');			
+		}
+	}
+	
+	function relocatePromotions(){ 
+		if(!!$('#sidel .promobox').length){
+			if(promoloc=='1')
+				$('.promobox').prependTo('#sidel');
+			else 
+				$('.promobox').appendTo('#sidel');
+		}
+
+		if(!!$('#sider .promobox').length){
+			if(promoloc=='1')
+				$('.promobox').prependTo('#sider');
+			else 
+				$('.promobox').appendTo('#sider');		
+		}
+	}
+	</script>
+
+<?php 
+	if($this->Mode == "normal"){
+?>
+	<script type="text/javascript">
+	    var _gaq = _gaq || [];
+	    _gaq.push(['_setAccount', 'UA-19047581-1']);
+	    _gaq.push(['_setDomainName', '.uci.edu']);
+	    _gaq.push(['_trackPageview']);
+	
+	    (function () {
+	        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	    })();
+	
+	</script>
+<?php 
+	}
+?>
+<?php 
+	if($this->Mode == "preview"){
+?>
+	<script type="text/javascript">
+	function saveOCW(){
+		var inputs = new Array();
+		inputs.push ( { campo: 'ocwTemplate', valor: strcont } );
+		var data = { campos: inputs, accion: "edit", id: "<?php if(!empty($this->idPage)) echo $this->idPage; else null; ?>"};
+
+		$.ajax( {
+			url: "/admin/ocw/save",
+			data: data ,
+			dataType: "json",global: true, cache:false,
+			ifModified: false, processData:true,
+			success: function(datos)
+			{
+				$('#acceptbox div').html("Done!");
+				$('#acceptbox').css('background-color', '#D5F9BD');
+			},
+			error: function(request, status, error)
+			{
+				mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+				$('#acceptbox div').html(mensaje);
+				$('#acceptbox').css('background-color', '#E8747D');
+			},
+			timeout: 20000,
+			type: "POST"
+		} );
+		return true;
+	}
+	</script>
+<?php 
+	}
+?>		
+</html>

@@ -1,0 +1,894 @@
+<?php
+$this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
+				->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditorac/ckeditor.js')
+				->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditorac/adapters/jquery.js')
+				->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
+				->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js')
+				->addJavascriptFile( $this->baseUrl() . '/backend/js/alertify/alertify.min.js')
+;
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/alertify/alertify.core.css');
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/alertify/alertify.bootstrap.css');
+?>
+
+<style>
+<!--
+.step h1 { display: none;}
+.widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
+.aimgdown { background-image:url("/backend/images/backgrounds/arrows.png"); background-repeat: no-repeat; display:block; height:10px; width:12px; float:right; -ms-transform: rotate(90deg);-moz-transform: rotate(90deg); -webkit-transform: rotate(90deg); -moz-transform: rotate(90deg);rotation: 90deg; filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);}
+.aimgup { background-image:url("/backend/images/backgrounds/arrows.png"); display:block; height:10px; width:12px; float:right; background-position: 0 bottom;	}
+#listAuthors_chzn{float:left;}
+#listCategories_chzn {float: left;}
+.liLeft {float: left; width: 70%; padding: 5px;}
+.liRight{float: right;}
+.buttonLi{padding: 5px; line-height: 0;}
+.placeholder { background-color: white; border:1px dashed #c5c5c5; margin:5px; height: 25px;}
+.degreeItem {padding: 3px;border: solid 1px lime;}
+#sortable-categories li{ cursor: pointer; margin: 0 0 4px; padding: 3px;}
+#sortable-author li{ cursor: pointer; margin: 0 0 4px; padding: 0px; height: 37px;}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { background: url("/backend/images/jquery/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6; border: 1px solid #D3D3D3;}
+
+#sortable-categories .ui-state-default a { color: #555555; margin-top: 0px; text-decoration: none;}
+#sortable-author .ui-state-default a { color: #555555; margin-top: 3px; text-decoration: none;}
+#sortable-categories {margin-top:5px;}
+#sortable-categories li {height:28px;}
+.dd3-handle {height: 34px;}
+#sortable-author {margin-top:5px;}
+#sortable-author li {height:34px;}
+div.checker span { vertical-align: top !important;}
+.qq-upload-list{ display:none;}
+.editor {
+	border: dashed 2px #DDDDDD !important;
+	background-color: white;
+	height: 150px;
+	overflow: auto;
+	padding:10px;
+
+ }
+.ui-dialog{padding:1px;}
+.ui-dialog form { text-align: left; }
+.ui-dialog .ui-dialog-content { overflow:visible;}
+
+#license-editor .formRight {margin-right: 0px;width: 45%;}
+#license-editor label {	width: 50%;	margin: 3px 3px 0;}
+.TopPageTitle { width: 100%;}
+.bc { display: flex;background: 0;}
+.wizButtons { margin-top: -12px;margin-bottom: -10px;margin-left: auto;}
+.bt_ac { padding: 10px;}
+.inpt_ac { border-radius: 4px 4px 4px 4px;}
+
+-->
+</style>
+<div class="topHeader" style="top:0px;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+				<div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index'), null, true )?>">Home</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ocw', 'action'=>'index'), null, true )?>">OCW list</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ocw', 'action'=>'edit') )?>"><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></a></li>
+						<li class="current"><span><a>Arbitrary content</a></span></li>
+					</ul>
+					<div class="wizButtons">
+						<span class="wNavButtons">
+							<a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ocw', 'action'=>'edit') )?>"><input class="basic" id="back2" value="Back" type="reset" /></a>
+							<a href="#"><input class="greenB ml10" id="preview" value="Preview" type="submit" /></a>
+							<a href="#"><input class="blueB ml10" id="save2" value="Save" type="submit" /></a>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div id="content">
+	<div class="wrapper">
+	 	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+	 	<div id="mensajes" ></div>
+	 	<input type="hidden" id="ocwTemplate" value="<?php echo $this->escape($this->Ocw->ocwTemplate);?>"/>
+        <div class="widget" style="width: 100%;border: none;display:none;">
+			<iframe id="acframe" src="<?php echo $this->url( array( 'module'=>'default', 'controller'=>$this->contentType, 'action'=>'view', 'adm'=>'y' , 'id'=>$this->escape($this->Ocw->ocwTitleEncode) ) )?>" allowfullscreen="" style="width: 100%;">
+				<p>Your browser does not support iframes.</p>
+			</iframe>
+        </div>
+    </div>
+</div>
+<script>
+var urlImage = "<?php echo 'http://'.$_SERVER['SERVER_NAME'].'/upload/images/'?>";
+var urlPreview = "<?php echo $this->url( array( 'module'=>'default', 'controller'=>$this->contentType, 'action'=>'view', 'adm'=>'y' , 'prv'=>'y' , 'id'=>$this->escape($this->Ocw->ocwTitleEncode) ) )?>";
+var autosave = false;
+var time;
+$(document).ready( function() {
+	
+	displayMessage( 'info', 'Please wait.', 'Loading', '' );
+	$(".loader").show();
+
+	$("#acframe").load(function() {
+		var ifrm = $(this).contents();
+
+		ifrm.find('#header, #navi, .breadcrumb, #footer-head, .acont-pub').remove(); //remove current arbitrary content and others
+        ifrm.find('a').prop("href","javascript:void(0)");
+        ifrm.find('a').prop("onclick","javascript:void(0)");
+
+		//insert arbitrary content
+		var strcont = $("#ocwTemplate").val();
+		if(strcont.length > 58){
+			var arrcont = JSON.parse( strcont );
+			$.each(arrcont.AC , function( side, sideval ) {
+				$.each(sideval, function( i, acitem ) {
+					if(acitem){
+						$.each(acitem, function( actype, acsrc ){
+							insertSavedAC(ifrm, side, actype, acsrc)
+						});
+					}
+				});
+			});
+		}
+
+		var addbt = '<div id="addr" class="well-small" style="margin-bottom: 20px;height: 45px;text-align: center;background-color: rgb(172, 226, 172);border-style: dashed;"><h3>Add element</h3></div>';
+		ifrm.find("#sider").append(addbt);
+
+		var addbt = '<div id="addl" class="well-small" style="margin-bottom: 20px;height: 45px;text-align: center;background-color: rgb(172, 226, 172);border-style: dashed;"><h3>Add element</h3></div>';
+		ifrm.find("#sidel").append(addbt);
+
+		var addbt = '<div id="addc" class="well-small" style="margin-bottom: 20px;height: 45px;text-align: center;background-color: rgb(172, 226, 172);border-style: dashed;"><h3>Add element</h3></div>';
+		ifrm.find("#sidec").append(addbt);
+		
+		if(!!ifrm.find('.testimbox').length){
+			var sidec = ifrm.find("#sidec");
+			ifrm.find('.testimbox').appendTo(sidec);
+		}
+		
+		$('.widget').show();
+
+		setTimeout(function(){
+			scaleSavedVideo(ifrm);
+			$("#acframe").height( ifrm.height() );
+			$(".loader").hide();
+		}, 1000);
+
+		ifrm.find('#addr, #addl, #addc').css( 'cursor', 'pointer' );
+		ifrm.find('#addr, #addl, #addc').click(function(e) {
+			var side = this.id.split('add');
+			$('#acontent_select').data( "ac_side", side[1] );
+			$('#acontent_select').dialog('open');
+			acSelectReset();
+		});		
+		
+		ifrm.on( "click", function() {
+			autosave = true;
+		});			
+
+	});
+	
+
+    $('.bt_ac').css( 'cursor', 'pointer' );
+    $('.bt_ac').click(function() {
+		$('#tab_ac_menu').hide();
+		$('#bt_ac_bck').show();
+		if( this.id.indexOf('vid')!=-1 ){
+			$('#tab_ac_vid').show();
+			$('.ui-dialog-title').text('Youtube video');
+			$('#acontent_select').data( "ac_type", "vid" );
+		}
+		else if( this.id.indexOf('img')!=-1 ){
+			$('#tab_ac_img').show();
+			$('.ui-dialog-title').text('Image');
+			$('#acontent_select').data( "ac_type", "img" );
+		}
+		else if( this.id.indexOf('txt')!=-1 ){
+			$( "#acontent_select" ).dialog('close');
+			$('#acontent_select').data( "ac_type", "txt" );
+
+			insertTextbox();
+
+		}
+		$('#btns_ac').show();
+		$('#acontent_select').data( "ac_edit", "" );
+    });
+
+
+    $('#bt_ac_ok').click(function() {
+		var actype = $('#acontent_select').data("ac_type");
+		var go = acSelectValidate(actype);
+		if(go){
+
+			insertMediabox(actype);
+
+		}
+    });
+
+	$( "#sort_overlay" ).dialog({
+		autoOpen: false,
+		width: 1,
+		height: 1,
+		resizable: false,
+		modal: true,
+		open: function(event,ui){},
+		close: function() {	}
+	});
+
+    $('#bt_ac_bck').click(function() {
+		acSelectReset();
+    });
+
+
+    $('#save2').click(function() {
+		saveOCW('');
+    });
+	
+	$('#preview').click(function(e){
+		e.preventDefault();
+		autosave = false;
+		saveOCW('ocwDraft');
+	});	
+
+	$( "#acontent_select" ).dialog({
+		autoOpen: false,
+		width: 470,
+		minHeight: 320,
+		resizable: false,
+		modal: true,
+		open: function(event,ui){},
+		close: function() {	}
+	});
+
+    $('#image-upload').fineUploader({
+    	request: {
+    	endpoint: '/admin/ocw/uploadfile/target/images'
+    	},
+    	multiple: false,
+    	validation: {
+    		allowedExtensions: ['jpeg', 'jpg', 'png', 'gif']
+    	},
+    	text: {
+    		uploadButton: 'Select or drop here, a image file to upload'
+    	},
+    	showMessage: function(message) {
+    		displayMessage( 'error', message, 'Error', '' );
+    	}
+    }).on('complete', function(event, id, fileName, responseJSON) {
+		 if (responseJSON.success) {
+	        	displayMessage( 'success', 'Data saved successfully', 'Success', '' );
+	        	 $('#thumbnail').val(urlImage + responseJSON.nameFile);
+		 }
+    })
+     .on('error', function(event, id, filName, mensaje) {
+        mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+    	displayMessage( 'error', mensaje, 'Error', '' );
+    });
+
+    $('#thumbnail').change(function() {
+    	var cadena = $(this).val().split("/");
+    	for (var i=0; i < cadena.length; i++) {
+        	if( (i + 1) == cadena.length){
+           	 	var nombre = cadena[i];
+        	}
+       }
+    });
+
+	$('.ui-dialog-titlebar-close').click(function() {
+		resetVideoForm();
+    });
+
+	time = setInterval(function(){ if(autosave) saveOCW('') }, 90000); // autoguardado
+});
+
+function scaleSavedVideo(ifrm){
+
+	ifrm.find("iframe[src^='http://www.youtube.com']" ).each(function(){
+		var vplyr = $(this);
+
+		var height = parseInt( vplyr.width()/1.333 );
+		vplyr.prop("height", height+'px');
+	});
+}
+
+function insertSavedAC(ifrm, side, actype, acsrc){
+	var side_secc = ifrm.find("#side"+side);
+
+	// Sino existe la columna especificada utiliza la central
+	// ignore = false;
+	if(side_secc.length == 0){
+		side_secc = ifrm.find("#sidec"); // Usa la columna central
+	}
+
+	var add_id = 'ac'+side+'_'+side_secc.children().length;
+	var add;
+	if( actype == 'vid' ){
+
+		add = '<div id="'+add_id+'" class="well-small acont" style="margin-bottom: 20px;padding: 0;text-align: center;"><div style="text-align: center;"><i class="icon-pencil"></i>&nbsp;<i class="icon-move"></i>&nbsp;<i class="icon-trash"></i></div><iframe src="'+acsrc+'" frameborder="0" allowfullscreen="" width="100%"></iframe></div>';
+	}
+	else if( actype == 'img' ){
+
+		add = '<div id="'+add_id+'" class="well-small acont" style="margin-bottom: 20px;padding: 0;text-align: center;"><div style="text-align: center;"><i class="icon-pencil"></i>&nbsp;<i class="icon-move"></i>&nbsp;<i class="icon-trash"></i></div><img src="'+acsrc+'" class="img-polaroid" style="border: 0;padding: 2px;"></div>';
+	}
+	else if( actype == 'txt' ){
+
+		add = '<div id="'+add_id+'" class="well-small acont" style="margin-bottom: 20px;padding: 0;"><div style="text-align: center;"><i class="icon-move"></i>&nbsp;<i class="icon-trash"></i></div><div class="well editor" style="padding: 10px;">'+acsrc+'</div></div>';
+	}
+
+	//if(ignore)
+	//	add = $(add).attr("ignore", "true");
+
+	side_secc.append(add);
+
+	side_secc.sortable({
+		items: ".acont",
+		handle: ".icon-move",
+		axis: "y",
+		cursorAt: { top: 150, left: 0 }
+	});
+
+	ifrm.find('#'+add_id+' .icon-move').css( 'cursor', 'pointer' );
+	ifrm.find('#'+add_id+' .icon-move').click(function() {
+		$('#sort_overlay').dialog('open');
+		$('.ui-widget-content').hide();
+		$('.ui-widget-overlay').css('opacity', '0.1');
+
+		makeOverlayEvent();
+
+	});
+
+	ifrm.find('#'+add_id+' .icon-trash').css( 'cursor', 'pointer' );
+	ifrm.find('#'+add_id+' .icon-trash').click(function() {
+		$(this).parent().parent().remove();
+	});
+
+	ifrm.find('#'+add_id+' .icon-pencil').css( 'cursor', 'pointer' );
+	ifrm.find('#'+add_id+' .icon-pencil').click(function() {
+
+		var acont = $(this).parent().parent();
+		$('[id^=tab_ac_]').hide();
+		$('#bt_ac_bck').hide();
+
+		if( actype == 'img' ){
+			var acsrc = $(acont).find('img').prop('src');
+			$('#tab_ac_img').show();
+			$('.ui-dialog-title').text('Image');
+			$('#thumbnail').val(acsrc);
+			$('#acontent_select').data( "ac_type", "img" );
+			$('#acontent_select').data( "ac_edit", add_id );
+		}
+		else if( actype == 'vid' ){
+			var acsrc = $(acont).find('iframe').prop('src');
+			parseYoutubeUrl(acsrc);
+			$('#tab_ac_vid').show();
+			$('.ui-dialog-title').text('Youtube video');
+			$('#acontent_select').data( "ac_type", "vid" );
+			$('#acontent_select').data( "ac_edit", add_id );
+		}
+
+		$('#acontent_select').data( "ac_side", side );
+		$('#acontent_select').dialog('open');
+	});
+
+	ifrm.find('#'+add_id+' .editor').click(function() {
+		var name;
+		for(name in CKEDITOR.instances) {
+			var instance = CKEDITOR.instances[name];
+			if(this && this == instance.element.$) {
+				return;
+			}
+		}
+		$(this).attr('contenteditable', true);
+		CKEDITOR.inline(this);
+	});
+
+	return true;
+}
+
+function insertMediabox(actype){
+	var ifrm = $('#acframe').contents();
+	var acid = $('#acontent_select').data("ac_edit");
+
+	var side = $('#acontent_select').data( "ac_side");
+	var side_secc = ifrm.find("#side"+side);
+	var add;
+	var add_id = 'ac'+side+'_'+side_secc.children().length;
+	if( actype == 'vid' ){
+
+		var acsrc = makeYoutubeUrl();
+
+		if( acid.indexOf('ac')==-1 ){
+			add = '<div id="'+add_id+'" class="well-small acont" style="margin-bottom: 20px;padding: 0;text-align: center;"><div style="text-align: center;"><i class="icon-pencil"></i>&nbsp;<i class="icon-move"></i>&nbsp;<i class="icon-trash"></i></div><iframe src="'+acsrc+'" frameborder="0" allowfullscreen="" width="100%"></iframe></div>';
+			side_secc.append(add);
+			ifrm.find("#add"+side).appendTo(side_secc);
+			
+			//Scale aspect ratio player
+			var height = parseInt( ifrm.find("#"+add_id+" iframe").width()/1.333 );
+			ifrm.find("#"+add_id+" iframe").prop("height", height+'px');
+		}
+		else{
+			var ac_mod = ifrm.find("#"+acid);
+			$(ac_mod).find('iframe').prop( "src", acsrc );
+
+			$('#acontent_select').data( "ac_edit", "" );
+		}
+		resetVideoForm();
+	}
+	else if( actype == 'img' ){
+
+		var acsrc = $('#thumbnail').val().trim();
+
+		if( acid.indexOf('ac')==-1 ){
+			add = '<div id="'+add_id+'" class="well-small acont" style="margin-bottom: 20px;padding: 0;text-align: center;"><div style="text-align: center;"><i class="icon-pencil"></i>&nbsp;<i class="icon-move"></i>&nbsp;<i class="icon-trash"></i></div><img src="'+acsrc+'" class="img-polaroid" style="border: 0;padding: 2px;"></div>';
+			side_secc.append(add);
+			ifrm.find("#add"+side).appendTo(side_secc);
+		}
+		else{
+			var ac_mod = ifrm.find("#"+acid);
+			$(ac_mod).find('img').prop( "src", acsrc );
+
+			$('#acontent_select').data( "ac_edit", "" );
+		}
+	}
+	
+	if(side=='c' && !!ifrm.find('.testimbox').length){
+		var sidec = ifrm.find("#sidec");
+		ifrm.find('.testimbox').appendTo(sidec);
+	}
+	
+	side_secc.sortable({
+		items: ".acont",
+		handle: ".icon-move",
+		axis: "y",
+		cursorAt: { top: 150, left: 0 }
+	});
+
+	$('#acontent_select').data( "ac_side", "" );
+	$( "#acontent_select" ).dialog('close');
+
+	ifrm.find('#'+add_id+' .icon-move').css( 'cursor', 'pointer' );
+	ifrm.find('#'+add_id+' .icon-move').click(function() {
+		$('#sort_overlay').dialog('open');
+		$('.ui-widget-content').hide();
+		$('.ui-widget-overlay').css('opacity', '0.1');
+
+		makeOverlayEvent();
+
+	});
+
+	ifrm.find('#'+add_id+' .icon-trash').css( 'cursor', 'pointer' );
+	ifrm.find('#'+add_id+' .icon-trash').click(function() {
+		$(this).parent().parent().remove();
+	});
+
+	ifrm.find('#'+add_id+' .icon-pencil').css( 'cursor', 'pointer' );
+	ifrm.find('#'+add_id+' .icon-pencil').click(function() {
+
+		var acont = $(this).parent().parent();
+		$('[id^=tab_ac_]').hide();
+		$('#bt_ac_bck').hide();
+		
+		if( actype == 'img' ){
+			var acsrc = $(acont).find('img').prop('src');
+			$('#tab_ac_img').show();
+			$('.ui-dialog-title').text('Image');
+			$('#thumbnail').val(acsrc);
+			$('#acontent_select').data( "ac_type", "img" );
+			$('#acontent_select').data( "ac_edit", add_id );
+		}
+		else if( actype == 'vid' ){
+			var acsrc = $(acont).find('iframe').prop('src');
+			parseYoutubeUrl(acsrc);
+			$('#tab_ac_vid').show();
+			$('.ui-dialog-title').text('Youtube video');
+			$('#acontent_select').data( "ac_type", "vid" );
+			$('#acontent_select').data( "ac_edit", add_id );
+		}
+
+		$('#acontent_select').data( "ac_side", side );
+		$('#acontent_select').dialog('open');
+	});
+
+	setTimeout(function(){
+		$("#acframe").height( ifrm.height() );
+	}, 400);
+
+	return true;
+}
+
+function insertTextbox(){
+
+	var ifrm = $('#acframe').contents();
+	var side = $('#acontent_select').data( "ac_side");
+	var side_secc = ifrm.find("#side"+side);
+	var add_id = 'ac'+side+'_'+side_secc.children().length;
+	var add = '<div id="'+add_id+'" class="well-small acont" style="margin-bottom: 20px;padding: 0;"><div style="text-align: center;"><i class="icon-move"></i>&nbsp;<i class="icon-trash"></i></div><div class="well editor" style="padding: 10px;"></div></div>';
+
+	side_secc.append(add);
+	ifrm.find("#add"+side).appendTo(side_secc);
+
+	if(side=='c' && !!ifrm.find('.testimbox').length){
+		var sidec = ifrm.find("#sidec");
+		ifrm.find('.testimbox').appendTo(sidec);
+	}	
+	
+	side_secc.sortable({
+		items: ".acont",
+		handle: ".icon-move",
+		axis: "y",
+		cursorAt: { top: 150, left: 0 }
+	});
+
+	$('#acontent_select').data( "ac_side", "" );
+
+	ifrm.find('#'+add_id+' .icon-move').css( 'cursor', 'pointer' );
+	ifrm.find('#'+add_id+' .icon-move').click(function() {
+		$('#sort_overlay').dialog('open');
+		$('.ui-widget-content').hide();
+		$('.ui-widget-overlay').css('opacity', '0.1');
+
+		makeOverlayEvent();
+	});
+
+	ifrm.find('#'+add_id+' .icon-trash').css( 'cursor', 'pointer' );
+	ifrm.find('#'+add_id+' .icon-trash').click(function() {
+		$(this).parent().parent().remove();
+	});
+
+
+	ifrm.find('#'+add_id+' .editor').click(function() {
+		var name;
+		for(name in CKEDITOR.instances) {
+			var instance = CKEDITOR.instances[name];
+			if(this && this == instance.element.$) {
+				return;
+			}
+		}
+		$(this).attr('contenteditable', true);
+		CKEDITOR.inline(this);
+	});
+
+	setTimeout(function(){
+		$("#acframe").height( ifrm.height() );
+	}, 400);
+
+	return true;
+}
+
+function makeYoutubeUrl(){
+	var vcod = "";
+	var usr = $('#videosrc').val().trim();
+	if(usr.indexOf('/embed/')==-1){
+		if(usr.indexOf('?v=')!=-1){
+			var prs = usr.split('?v=');
+			vcod = prs[1];
+		}
+		else if(usr.indexOf('.be/')!=-1){
+			var prs = usr.split('.be/');
+			vcod = prs[1];
+		}
+	}
+	else{
+		var prs = usr.split('embed/');
+		vcod = prs[1];
+	}
+	var fltr = vcod.split('?');
+	vcod = fltr[0];
+
+	var vtime = "";
+	var time = $('#videotime').val().split(':');
+	if(time.length==1){
+		vtime = parseInt(time);
+	}
+	else if(time.length==2){
+		vtime = parseInt(time[0])*60 + parseInt(time[1]);
+	}
+	else if(time.length==3){
+		vtime = (parseInt(time[0])*60)*60 + parseInt(time[1])*60 + parseInt(time[2]);
+	}
+
+	var vsrc = "http://www.youtube.com/embed/"+vcod+"?fs=1";
+	if(!isNaN(vtime))
+		vsrc += "&start="+vtime;
+	if(!$('#opt_rel').is(':checked'))
+		vsrc += "&rel=0";
+	if($('#opt_ctr').is(':checked'))
+		vsrc += "&controls=0";
+	if($('#opt_apl').is(':checked'))
+		vsrc += "&autoplay=1";
+	if($('#opt_loo').is(':checked'))
+		vsrc += "&loop=1&playlist="+vcod;
+
+	return vsrc;
+}
+
+function parseYoutubeUrl(edsrc){
+
+	var aprs = edsrc.split('?');
+	$('#videosrc').val(aprs[0]);
+
+	var bprs = aprs[1].split('&');
+
+	$.each(bprs , function( i, opt ) {
+		if(opt.indexOf('rel')!=-1){
+			var cprs = opt.split('=');
+			var vopt = $('#opt_rel');
+			if(cprs[1]=='1'){
+				vopt.prop('checked', true);vopt.parent().addClass("checked");
+			}
+			else{
+				vopt.prop('checked', false);vopt.parent().removeClass("checked");
+			}
+		}
+		else if(opt.indexOf('controls')!=-1){
+			var cprs = opt.split('=');
+			var vopt = $('#opt_ctr');
+			if(cprs[1]=='1'){
+				vopt.prop('checked', false);vopt.parent().removeClass("checked");
+			}
+			else{
+				vopt.prop('checked', true);vopt.parent().addClass("checked");
+			}
+		}
+		else if(opt.indexOf('autoplay')!=-1){
+			var cprs = opt.split('=');
+			var vopt = $('#opt_apl');
+			if(cprs[1]=='1'){
+				vopt.prop('checked', true);vopt.parent().addClass("checked");
+			}
+			else{
+				vopt.prop('checked', false);vopt.parent().removeClass("checked");
+			}
+		}
+		else if(opt.indexOf('loop')!=-1){
+			var cprs = opt.split('=');
+			var vopt = $('#opt_loo');
+			if(cprs[1]=='1'){
+				vopt.prop('checked', true);vopt.parent().addClass("checked");
+			}
+			else{
+				vopt.prop('checked', false);vopt.parent().removeClass("checked");
+			}
+		}
+		else if(opt.indexOf('start')!=-1){
+			var cprs = opt.split('=');
+			$('#videotime').val(formatTime(cprs[1]));
+		}
+	});
+
+	return true;
+}
+
+function formatTime(sec)
+{
+    var date = new Date(1970,0,1);
+    date.setSeconds(sec);
+    return date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+}
+
+function resetVideoForm()
+{
+	$('#videosrc').val("");
+	$('#videotime').val("");
+
+	var vopt = $('#opt_rel');
+	vopt.prop('checked', true);vopt.parent().addClass("checked");
+
+	vopt = $('#opt_ctr');
+	vopt.prop('checked', false);vopt.parent().removeClass("checked");
+
+	vopt = $('#opt_apl');
+	vopt.prop('checked', false);vopt.parent().removeClass("checked");
+
+	vopt = $('#opt_loo');
+	vopt.prop('checked', false);vopt.parent().removeClass("checked");
+
+	return true;
+}
+
+function makeOverlayEvent(){
+
+    $('.ui-widget-overlay').click(function() {
+		$('#sort_overlay').dialog('close');
+    });
+	return true;
+}
+
+function acSelectValidate(id){
+
+	if( id == 'vid' ){
+		var fld = $('#videosrc').val().trim();
+		if( fld.indexOf('youtube.com/')==-1 && fld.indexOf('youtu.be/')==-1 ){
+			$("#videosrc").focus();
+			return false;
+		}
+	}
+	else if( id == 'img' ){
+		var fld = $('#thumbnail').val().trim();
+		if( fld=="" || fld.length<11 || fld.indexOf('.')==-1 || fld.indexOf('/')==-1 ){
+			$("#thumbnail").focus();
+			return false;
+		}
+	}
+	return true;
+}
+
+function acSelectReset(){
+
+	$('#acontent_select').data( "ac_type", "" );
+	$('.ui-dialog-title').text('Select content');
+	$('[id^=tab_ac_]').hide();
+	$('#tab_ac_menu').show();
+	return true;
+}
+
+function saveOCW(trgtfield){
+	var ifrm = $("#acframe").contents();
+
+	if(ifrm.find("#sider")){
+		var sider = {};
+		ifrm.find("#sider .acont").each(function(index, element){
+
+			var item = $(element).find('img');
+			if(item.length>0){
+				sider[index] = {'img': item.prop('src')};
+			}
+
+
+			var item = $(element).find('iframe');
+			if(item.length>0){
+				sider[index] = {'vid': item.prop('src')};
+			}
+
+			var item = $(element).find('.editor');
+			if(item.length>0){
+				sider[index] = {'txt': item.html()};
+			}
+
+		});
+	}
+
+	if(ifrm.find("#sidel")){
+		var sidel = {};
+		ifrm.find("#sidel .acont").each(function(index, element){
+
+			var item = $(element).find('img');
+			if(item.length>0){
+				sidel[index] = {'img': item.prop('src')};
+			}
+
+
+			var item = $(element).find('iframe');
+			if(item.length>0){
+				sidel[index] = {'vid': item.prop('src')};
+			}
+
+			var item = $(element).find('.editor');
+			if(item.length>0){
+				sidel[index] = {'txt': item.html()};
+			}
+
+		});
+	}
+
+	if(ifrm.find("#sidec")){
+		var sidec = {};
+		ifrm.find("#sidec .acont").each(function(index, element){
+
+			var item = $(element).find('img');
+			if(item.length>0){
+				sidec[index] = {'img': item.prop('src')};
+			}
+
+
+			var item = $(element).find('iframe');
+			if(item.length>0){
+				sidec[index] = {'vid': item.prop('src')};
+			}
+
+			var item = $(element).find('.editor');
+			if(item.length>0){
+				var itmstr = item.html();
+				itmstr = itmstr.replace(/\"/, "");
+				sidec[index] = {'txt': itmstr};
+			}
+		});
+	}
+
+	var acont = {};
+
+	acont['c'] = sidec;
+	acont['r'] = sider;
+	acont['l'] = sidel;
+
+	if($("#ocwTemplate").val().length == 0)
+		$("#ocwTemplate").val('{"T":"1"}');
+
+	var acontent = JSON.parse( $("#ocwTemplate").val() );
+	acontent["AC"] = acont;
+
+	var datafield = trgtfield!='' ? trgtfield : 'ocwTemplate';
+	
+	var inputs = new Array();
+	inputs.push ( { campo: datafield, valor: JSON.stringify(acontent) } );
+	var data = { campos: inputs, accion: "edit", id: "<?php if(!empty($this->Ocw->id)) echo $this->Ocw->id; else null; ?>"};
+
+	$.ajax( {
+		url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ocw', 'action'=> 'save'))?>",
+		data: data ,
+		dataType: "json",global: true, cache:false,
+		ifModified: false, processData:true,
+		success: function(datos)
+		{
+			if(datafield=='ocwTemplate'){
+				alertify.log("Saving data...");
+				window.setTimeout(function() {
+					alertify.success("Done!");
+				}, 2000);
+			}
+			else{
+				window.open(urlPreview,'_blank');
+			}
+		},
+		error: function(request, status, error)
+		{
+			mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+			displayMessage( 'error', mensaje, 'Error', '' );
+		},
+		timeout: 20000,
+		type: "POST"
+	} );
+	return true;
+}
+
+</script>
+
+<div id="acontent_select" title="Select content">
+	<div id="tab_ac_menu" style="text-align: center;margin-top: 65px;">
+		<img id="bt_ac_txt" src="/backend/images/ico_ac_txt.png" class="bt_ac">
+		<img id="bt_ac_img" src="/backend/images/ico_ac_img.png" class="bt_ac">
+		<img id="bt_ac_vid" src="/backend/images/ico_ac_vid.png" class="bt_ac">
+	</div>
+
+	<div id="tab_ac_vid" style="display: none;">
+		<div>
+			<div><label>Paste Youtube Video URL</label></div>
+			<div><input type="text" name="videosrc"  id="videosrc" class="inpt_ac" value=""/></div>
+		</div>
+		<div style="display: flex;">
+			<div style="margin: 5px;">
+				<div><span id="cke_62" class=""><input class="opt_ac_vid" type="checkbox" checked="checked" id="opt_rel"> <label>Show suggested videos at the video's end</label></span></div>
+
+				<div><span id="cke_65" class=""><input class="opt_ac_vid" type="checkbox" id="opt_loo"> <label>Loop video</label></span></div>
+			</div>
+			<div style="margin: 5px;">
+				<div><span id="cke_69" class=""><input class="opt_ac_vid" type="checkbox" id="opt_ctr"> <label>Hide controls</label></span></div>
+
+				<div><span id="cke_72" class=""><input class="opt_ac_vid" type="checkbox" id="opt_apl"> <label>Autoplay</label></span></div>
+			</div>
+		</div>
+		<div>
+			<div><label>Start at (ss or mm:ss or hh:mm:ss)</label></div>
+			<div><input class="inpt_ac" type="text" name="videotime" id="videotime" value=""></div>
+		</div>
+	</div>
+
+	<div id="tab_ac_img" style="display: none;">
+		<div>
+			<div><label>Upload image:</label></div>
+			<div>
+				<input type="hidden" name="imaFileName" id="imaFileName" value="">
+				<div id="image-upload"></div>
+			</div>
+		</div>
+		<span>or</span>
+		<div>
+			<div><label>Paste image URL:</label></div>
+			<div><input type="text" name="thumbnail"  id="thumbnail" class="inpt_ac" value=""/></div>
+		</div>
+	</div>
+	<div id="btns_ac" style="text-align: right;margin-top: 70px;">
+		<span>
+			<input class="basic" id="bt_ac_bck" value="Back" type="reset" />
+			<input class="greenB ml10" id="bt_ac_ok" value="OK" type="submit" />
+		</span>
+	</div>
+</div>
+<div id="sort_overlay"></div>

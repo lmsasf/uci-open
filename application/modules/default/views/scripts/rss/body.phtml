@@ -1,0 +1,78 @@
+<table border="0" cellpadding="10">
+  <tr>
+    <td width="65%" valign="top">		
+    	<p>
+			<?php if($this->thumbnail) : ?>
+			<img width="200" hspace="10" align="left" style="padding-right: 10px;" src="<?php echo $this->thumbnail ?>"></img>
+			<?php else: ?>
+			<img width="200" hspace="10" align="left" style="padding-right: 10px;" src="/frontend/img/no-image.jpg" >
+			<?php endif; ?>
+			<?php echo removeHtmlAttribute($this->description) ?>
+		</p>
+	</td>
+	
+	<?php if( $this->joins->count()> 0):?>
+    <td valign="top">
+    	<b>Related resources</b>
+		<ul>
+		<?php foreach ($this->joins as $join):  ?>
+		    <?php 
+			    $titleEncode = is_null($join->ocwTitleEncode) ? codificar_titulo($join->ocwTitle) : $join->ocwTitleEncode;
+			    $target = '';
+			    $external ='';
+			    switch ($join->idType) {
+			    	case 1: // courses
+			    		if(is_null($join->ocwBypassUrlCourse) || empty($join->ocwBypassUrlCourse)){
+				    		$target='/courses/'.$titleEncode.'.html'; 
+			    		} else {
+							$external = 'target="_blank"';
+							$target = $join->ocwBypassUrlCourse;
+						}
+						break;
+			    	case 2: // files
+			    		$target=$join->ocwUrlFile;
+			    		$external = 'target="_blank"';
+			    		break;					    	
+			    	case 3: // lectures
+			    		if(is_null($join->ocwBypassUrlLecture) || empty($join->ocwBypassUrlLecture)){
+			    			$target='/lectures/'.$titleEncode.'.html'; 
+			    		} else {
+			    			$external = 'target="_blank"';
+			    			$target = $join->ocwBypassUrlLecture;
+			    		}
+			    		break;
+			    	case 4: // Collections
+			    		$target='/collections/'.$titleEncode.'.html'; break;
+		    		case 6: // Conferences
+		    			$target='/conferences/'.$titleEncode.'.html'; break;
+			    	default:
+			    		;
+			    	break;
+			    } 
+			    ?>
+			    <?php if ($join->idType != 5): // Header?>
+					<li><a href="<?php echo $target ?>" <?php echo $external ?> > <?php echo $this->escape( $join->ocwTitle ) ?></a></li>
+				<?php else: ?>
+					</ul><b><?php echo $this->escape($join->ocwTitle) ?></b><ul>
+				<?php endif;?>
+		<?php endforeach; ?>	
+		</ul>
+	</td>
+	<?php endif;?>
+  </tr>
+  <tr>
+  	<td colspan="2">		
+  		<p>
+			<p><b>Author/s: </b><?php echo $this->author ?></p>
+			<p><b>Category: </b><?php echo $this->category ?></p>
+			<p><b>Tags: </b><?php echo $this->tags ?></p>
+			<p><b>See more at: </b><a href="<?php echo $this->link ?>"><?php echo $this->link ?></a></p>
+		</p>
+		<p>
+		<?php echo $this->license ?>
+		</p>
+	</td>
+  </tr>
+</table>
+<hr>
+<br /><br />

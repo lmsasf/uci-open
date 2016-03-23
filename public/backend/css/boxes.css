@@ -1,0 +1,20 @@
+.holder {width: 200px; overflow: hidden;}
+.topbar {border: 1px solid rgba(0,0,0,0.2);box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.5),inset 0px -3px 15px -1px rgba(0,0,0,0.2);-webkit-border-top-left-radius: 5px;-webkit-border-top-right-radius: 5px;-moz-border-radius-topleft: 5px;-moz-border-radius-topright: 5px;border-top-left-radius: 5px;border-top-right-radius: 5px;-webkit-background-clip: padding-box;cursor: pointer;}
+.topbar h1 {text-align: left;margin: 4px;color: #fff;font-size: 12px;text-shadow: 1px 1px 0px rgba(0,0,0,0.3);letter-spacing: 1px;width: 155px;float: left;padding-left: 4px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;}
+.inbar {background-color: white;border: 1px solid rgba(0,0,0,0.2);box-shadow: inset 0px 0px 10px -2px rgba(0,0,0,0.2);padding: 5px 0;}
+.inbar ul {margin: 0;padding: 0;list-style-type: none;}
+.inbar ul li {margin: 0 !important;padding: 0;clear: both;}
+.inbar ul li p {padding: 0px 10px 0px 10px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;width: 190px;}
+/* Colors */
+.course {background: rgb(255,175,75);}
+.course_span { background: none; border-bottom: solid 2px rgb(255,175,75); }
+.file {background: rgb(234,0,0);}
+.file_span { background: none; border-bottom: solid 2px rgb(234,0,0); }
+.collection {background: rgb(138,182,107);}
+.collection_span { background: none; border-bottom: solid 2px rgb(138,182,107); }
+.lecture {background: rgb(64,150,238);}
+.lecture_span { background: none; border-bottom: solid 2px rgb(64,150,238); }
+.image {background: rgb(95, 95, 95);}
+.image_span { background: none; border-bottom: solid 2px rgb(95, 95, 95); }
+.conference {background: #9A2EFE;}
+.conference_span { background: none; border-bottom: solid 2px #9A2EFE; }

@@ -1,0 +1,307 @@
+<?php
+$this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js');
+
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
+?>
+<style>
+	.step h1 { display: none;}
+	.widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
+	div.checker span { vertical-align: top !important;}
+	.editor {
+		border: dashed 2px #DDDDDD !important;
+		background-color: white;
+		height: 150px;
+		overflow: auto;
+		padding:10px;
+
+	}
+	.ui-dialog form { text-align: left; }
+	.ui-dialog .ui-dialog-content { overflow:visible;}
+
+	#license-editor .formRight {margin-right: 0px;width: 45%;}
+	#license-editor label {	width: 50%;	margin: 3px 3px 0;}
+</style>
+<div class="topHeader" style="top: 0;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+	            <div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'frontend', 'action'=>'index') )?>">Frontend Dashboard</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ffooter', 'action'=>'index') )?>">Pages Design list</a></li>
+						<li class="current"><a href="javascript:void(0)"><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></a></li>
+					</ul>
+				</div>
+	        </div>
+		</div>
+	</div>
+</div>
+<!-- CONTENIDO -->
+<div id="content">
+	<div class="wrapper">
+	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+	<div id="mensajes"></div>
+
+		<div class="widgets">
+			<div class="oneTwo">
+	        <!-- Validation form -->
+		        <form id="validate" class="form" method="post" action="" onsubmit="return false;">
+		        	<input type="hidden" name="id" id="id" value="<?php echo is_null($this->footer) && $this->accion ==='add' ? '' : $this->footer->id ?>" />
+		        	<input type="hidden" name="accion" id="accion" value="<?php echo $this->accion ?>" />
+		        	<fieldset>
+		                <div class="widget">
+		                    <div class="title"><h6>Details</h6></div>
+		                    <div class="formRow">
+		                        <label for="Area">Area:<span class="req">*</span></label>
+								<div class="formRight searchDrop">
+									<select data-placeholder="Choose an area..." name="idArea" id="idArea" class="chzn-select" style="width:350px;" tabindex="2">
+										<option value=""></option>
+										<?php foreach($this->areas AS $areas ) { ?>
+											<option value="<?php echo $areas["id"]?>" <?php if(!empty($this->footer) && $this->footer->idArea == $areas["id"]){ echo "selected";}?>><?php echo $areas["areaDescription"]?></option>
+										<?php } ?>
+									</select>
+								</div>
+		                        <div class="clear"></div>
+		                    </div>
+							<div class="formRow">
+								<label for="description">Description:</label>
+								<div class="formRight">
+									<input type="text" name="fooDescription" id="fooDescription" value="<?php echo is_null($this->footer) ? '' : $this->footer->fooDescription; ?>"/>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<div class="formRow">
+								<label for="order">Order<span id="orderComment"></span>:</label>
+								<div class="formRight">
+									<input type="text" name="fooSequence" id="fooSequence" value="<?php echo is_null($this->footer) ? '' : $this->footer->fooSequence; ?>"/>
+								</div>
+								<div class="clear"></div>
+							</div>
+
+							<!-- Imagen -->
+							<div class="formRow courseForm">
+								<label for="footerImageURL">Upload image:</label>
+								<div class="formRight">
+									<input type="hidden" name="footerImageURL" placeholder="http://" id="footerImageURL" value="">
+									<div id="image-upload-footer"></div>
+								</div>
+								<div class="clear"></div>
+							</div>
+
+							<div class="formRow courseForm">
+								<label>Image URL:</label>
+								<div class="formRight"><input type="text" name="fooImageUrl"  placeholder="http://" id="fooImageUrl"  value="<?php  if($this->footer){ echo $this->footer->fooImageUrl; }?>"/></div>
+								<div class="clear"></div>
+							</div>
+
+							<div class="formRow courseForm">
+								<label>Preview:</label>
+								<div class="formRight">
+									<div id="simg_target"><img id="urlimagen-footer" style="width:100px;" src="<?php  if($this->footer){ echo $this->footer->fooImageUrl; }else{?>/backend/images/not-available.jpg<?php }?>"></div>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<!-- FIN Imagen -->
+
+							<div class="formRow">
+								<label for="title">Url:<span class="req"></span></label>
+								<div class="formRight">
+									<input type="text" name="fooUrl" id="fooUrl" placeholder="http;//" value="<?php echo is_null($this->footer) ? '' : $this->footer->fooUrl; ?>"/>
+								</div>
+								<div class="clear"></div>
+							</div>
+		                    <div class="formRow">
+								<label>Include on footer?:</label>
+								<div class="formRight">
+									<span class=""><input id="fooInclude" type="checkbox" name="fooInclude" value="" <?php if(!empty($this->footer->fooInclude) && $this->footer->fooInclude == 1) echo "checked"; else echo ""?> style="float: left; margin-top: 5px; margin-right: 5px; opacity: 0;"></span>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<div class="formRow">
+								<label>Include on header?:</label>
+								<div class="formRight">
+									<span class=""><input id="headerInclude" type="checkbox" name="headerInclude" value="" <?php if(!empty($this->footer->headerInclude) && $this->footer->headerInclude == 1) echo "checked"; else echo ""?> style="float: left; margin-top: 5px; margin-right: 5px; opacity: 0;"></span>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<div class="formSubmit">
+		                    	<input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancel()" />
+		                    	<input type="button" value="Save" class="blueB" onclick="save()" />
+		                    </div>
+		                    <div class="clear"></div>
+		                </div>
+
+		            </fieldset>
+		        </form>
+	        </div>
+        </div>
+	</div>
+</div>
+<script type="text/javascript">
+	var urlImage = "<?php echo 'http://'.$_SERVER['SERVER_NAME'].'/upload/images/'?>";
+	$(function() {
+		$('#validate').submit(function() {
+			save();
+			return false;
+		});
+
+		/*Cargar Imagen*/
+		$('#image-upload-footer').fineUploader({
+			request: {
+				endpoint: '/admin/ocw/uploadfile/target/images'
+			},
+			multiple: false,
+			validation: {
+				allowedExtensions: ['jpeg', 'jpg', 'png', 'gif']//,
+			},
+			text: {
+				uploadButton: 'Select or drop here, a image file to upload'
+			},
+			showMessage: function(message) {
+				displayMessage( 'error', message, 'Error', '' );
+			}
+		}).on('complete', function(event, id, fileName, responseJSON) {
+			if (responseJSON.success) {
+				$('#fooImageUrl').val(urlImage + responseJSON.nameFile);
+				$(".footerImageformError").remove();
+				$('#urlimagen-footer').attr('src', urlImage + responseJSON.nameFile);
+			}
+		}).on('error', function(event, id, filName, mensaje) {
+			mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+			displayMessage( 'error', mensaje, 'Error', '' );
+		});
+
+
+		$('#fooImageUrl').change(function() {
+			var cadena = $(this).val().split("/");
+			for (var i=0; i < cadena.length; i++) {
+				if( (i + 1) == cadena.length){
+					var nombre = cadena[i];
+				}
+			}
+			$('#urlimagen-footer').attr('src', $(this).val());
+		});
+		/*FIN Cargar Imagen*/
+
+		$('#idArea').on('change', function(){
+			var area = $(this).val();
+
+			$.ajax({
+				url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ffooter', 'action'=> 'getnextsequence'))?>",
+				data: {area: area},
+				dataType: "json",
+				global: true,
+				cache: false,
+				ifModified: false,
+				processData: true,
+				success: function (datos) {
+					if($("#accion").val() == 'add') {
+						$("#fooSequence").val(datos);
+					}else {
+						$("#orderComment").html(' <i>(last: ' + (datos-1) + ')</i>');
+					}
+				},
+				error: function (request, status, error) {
+					mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network';
+					displayMessage('error', mensaje, 'Error', '');
+				},
+				timeout: 20000,
+				type: "POST"
+			});
+
+		});
+	});
+
+	function save(){
+		// recorro los campos del formulario
+		if (jQuery('#validate').validationEngine('validate') ) {
+			if( $('#fooUrl').val()!='' && $('#fooUrl').val().indexOf("https://")<0 && $('#fooUrl').val().indexOf("http://")<0 && $('#fooUrl').val().indexOf("/")!=0){
+				$('#fooUrl').val('http://'+$('#fooUrl').val());
+			}
+
+			if($('#idArea').val()==''){
+				displayMessage( 'error', 'Area selections is required.', 'Error', '' );
+				return false;
+			}
+
+			var data = new Array();
+
+			$('#fooDescription').each(function(index, value){
+				data.push( { campo:$(this).attr('name'), valor: $(this).val()  } );
+			});
+
+			$('#fooSequence').each(function(index, value){
+				data.push( { campo:$(this).attr('name'), valor: $(this).val()  } );
+			});
+
+			$('#fooImageUrl').each(function(index, value){
+				data.push( { campo:$(this).attr('name'), valor: $(this).val()  } );
+			});
+
+			$('#fooUrl').each(function(index, value){
+				data.push( { campo:$(this).attr('name'), valor: $(this).val()  } );
+			});
+
+			var headerInclude = $('#headerInclude').is(':checked') ? '1' : '0';
+			data.push ( { campo: 'headerInclude', valor: headerInclude } );
+
+			var fooInclude = $('#fooInclude').is(':checked') ? '1' : '0';
+			data.push ( { campo: 'fooInclude', valor: fooInclude } );
+
+			$('#idArea').each(function(index, value){
+				data.push( { campo:$(this).attr('name'), valor: $(this).val()  } );
+			});
+
+			var id = $('#id').val();
+			var accion = $('#accion').val();
+			var area = $('#idArea').val();
+			var order = $('#fooSequence').val();
+
+		   $.ajax( {
+		        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ffooter', 'action'=> 'savefooter'))?>",
+		        data: { data: data, accion: accion, id: id, area: area,order: order } ,
+		        async: false,
+		        beforeSend: function(objeto){},
+		        complete: function(objeto, exito) { },
+		        dataType: "json",
+		        global: true,
+		        cache:false,
+		        ifModified: false,
+		        processData:true,
+		        success: function(datos)
+		        {
+		        	$('#id').val(datos.id);
+		        	$('#accion').val('edit');
+
+		        	$(".loader").show();
+		        	window.setTimeout(function() {
+		        		$(".loader").hide();
+		        		displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'ffooter', 'action'=>'index'))?>' );
+		        	}, 2000);
+		        },
+		        error: function(request, status, error)
+		        {
+		        	var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+		            displayMessage( 'error', mensaje, 'Error', '' );
+		        },
+		        timeout: 20000,
+		        type: "POST"
+		    } );
+		} else {
+			return false;
+		}
+	}
+
+	function cancel(){
+		document.location.href='<?php echo $this->url(array('module'=>'admin','controller'=>'ffooter', 'action'=>'index'))?>';
+	}
+
+
+
+</script>
+

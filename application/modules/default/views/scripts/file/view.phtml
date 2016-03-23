@@ -1,0 +1,14 @@
+<div class="span12" id="content">
+	<h1><?php echo $this->escape( $this->File->ocwTitle )?></h1>
+	<div class="clearfix" style="marin-top:10px; margin-bottom: 25px;">
+		<div class="span9" >
+			<p><?php echo empty($this->File->ocwDescription) ? 'No description for this file' : $this->File->ocwDescription ?></p>
+		</div>
+		<div class="span2" >
+			<a href="<?php echo $this->File->ocwUrlFile?>" target="_blank" class="btn btn-large btn-success">
+				<i class="icon-download icon-white"></i> DOWNLOAD
+			</a>
+		</div>	
+	</div>
+</div>
+	

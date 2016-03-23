@@ -1,0 +1,193 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/frontend/js/testimonials.js')
+;
+$ads_actives = $this->ads;
+
+$ads = json_encode($ads_actives);
+?>
+<style>
+<!--
+.img300 { width: 100%;}
+-->
+</style>
+<div class="span12" id="content">
+	<div class="tabbable tabs-left" style="margin-left: 3%;">
+		<div class="tab-content">
+			<div class="tab-pane active" id="info">
+				<div class="" style="margin:0px;">
+					<div class="span3" style="margin-top: 10px;">
+					<!-- 1-->
+<div class="well well-small">
+		<div class="media">
+			<!-- Media object (image, video, etc.) -->
+			<a href="#">
+				<?php if($this->Collection->thumbnail) : ?>
+				<img class="img300" src="<?php echo $this->Collection->thumbnail ?>"/>
+				<?php else: ?>
+				<img class="pull-left" style="width: 300px;" src="<?php echo $this->baseUrl()?>/frontend/img/no-image.jpg" >
+				<?php endif; ?>
+			</a>
+
+			<!-- Description of media object -->
+			<div class="media-body">
+				<h3 class="media-heading"><?php echo $this->escape( strip_tags($this->Collection->ocwTitle) )?></h3>
+				<p><?php echo removeHtmlAttribute($this->Collection->ocwDescription) ?></p>
+				<div style="text-align: left; clear:both;" class="pull-right">
+			    	<a href="javascript:void(0)" title="Share on Facebook" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),'Share on Facebook','width=626,height=436');return false;"><img alt="Share on Facebook" src="/frontend/img/social/facebook-btn.png"></a>
+			    	<a href="javascript:void(0)" title="Share on Twitter" onclick="window.open('http://twitter.com/?status=<?php echo $this->escape( strip_tags($this->Collection->ocwTitle) ) ?> --> '+encodeURIComponent('<?php echo $this->shortUrl?>'),'Share on Twitter','width=626,height=500')"><img alt="Share on Twitter" src="/frontend/img/social/twitter-btn.png"></a>
+			    </div>
+			</div>
+		</div>
+	</div>
+
+	<div id="sidel" class="span4" style="width:100%; margin-left:0px">
+		<?php foreach ($this->Joins as $join):  ?>
+				<?php
+				$titleEncode = is_null($join->ocwTitleEncode) ? codificar_titulo($join->ocwTitle) : $join->ocwTitleEncode;
+				$target = '';
+				$external ='';
+				switch ($join->idType) {
+					case 1: // courses
+						if(is_null($join->ocwBypassUrlCourse) || empty($join->ocwBypassUrlCourse)){
+							$target='/courses/'.$titleEncode.'.html';
+							//d(is_null($join->ocwBypassUrlCourse));
+						} else {
+							$external = 'target="_blank"';
+							$target = $join->ocwBypassUrlCourse;
+						}
+						break;
+					case 2: // files
+						//$target='/getfile/'.$titleEncode.'.html';
+						$target=$join->ocwUrlFile;
+						$external = 'target="_blank"';
+						break;
+					case 3: // lectures
+						if(is_null($join->ocwBypassUrlLecture) || empty($join->ocwBypassUrlLecture)){
+							$target='/lectures/'.$titleEncode.'.html';
+						} else {
+							$external = 'target="_blank"';
+							$target = $join->ocwBypassUrlLecture;
+						}
+						break;
+					case 4: // Collections
+						$target='/collections/'.$titleEncode.'.html'; break;
+					case 6: // Conferences
+						$target='/conferences/'.$titleEncode.'.html'; break;
+					default:
+						;
+					break;
+				}
+				?>
+				<?php if($join->idType == 7): // LABEL?>
+					<p><?php echo $join->ocwDescription ?></p>
+				<?php else:?>
+					<?php if ($join->idType != 5): // Header?>
+						<p><i class="icon-chevron-right"> </i><a href="<?php echo $target ?>" <?php echo $external ?> > <?php echo $this->escape( $join->ocwTitle ) ?></a></p>
+					<?php else: ?>
+						<h3><?php echo $this->escape($join->ocwTitle) ?></h3>
+					<?php endif;?>
+				<?php endif;?>
+		<?php endforeach; ?>
+		<br />
+
+		<?php if($this->count_ads > 0){?>
+		<div class="promobox" id="content_right" style="margin-top: 10px;margin-left: 0;margin-right: 0;">
+			<div class="well well-small" style="text-align: center;">
+				<div id="imgAMostrar1" class="img-polaroid"></div>
+			</div>
+		</div>	
+		<?php }?>
+
+	</div>
+						<!--1-->
+					</div>
+					<div class="span8" style="margin-top: 10px;">
+					<!--2 -->
+
+	<!-- Required for all collection pages -->
+	<div id="sidec" class="span7">
+		<?php if($this->Collection->colfrequentlyQuest): ?>
+		<?php echo removeHtmlAttribute($this->Collection->colfrequentlyQuest); ?>
+		<?php endif;?>
+	</div>
+					<!--2-->
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		upPromotions();
+	});
+
+
+    function array_rand(input, num_req) {
+        var indexes = [];
+        var ticks = num_req || 1;
+        var checkDuplicate = function(input, value) {
+            var exist = false,
+                index = 0,
+                il = input.length;
+            while (index < il) {
+                if (input[index] === value) {
+                    exist = true;
+                    break;
+                }
+                index++;
+            }
+            return exist;
+        };
+
+        if (Object.prototype.toString.call(input) === '[object Array]' && ticks <= input.length) {
+            while (true) {
+                var rand = Math.floor((Math.random() * input.length));
+                if (indexes.length === ticks) {
+                    break;
+                }
+                if (!checkDuplicate(indexes, rand)) {
+                    indexes.push(rand);
+                }
+            }
+        } else {
+            indexes = null;
+        }
+
+        var id_random = ((ticks == 1) ? indexes.join() : indexes);
+
+        var publish = new Array();
+
+        for(var i in input) {
+            if(i == id_random[0]){
+                publish.push(input[i])
+            }
+            else if(i == id_random[1]){
+                publish.push(input[i])
+            }
+        }
+
+        $('#imgAMostrar1').html('<a href="'+ publish[0]['adsRedirectURL'] +'"><img src="'+ publish[0]['adsImageURL'] +' " style="border: 0px;"></a>');
+        $('#imgAMostrar2').html('<a href="'+ publish[1]['adsRedirectURL'] +'"><img src="'+ publish[1]['adsImageURL'] +' " style="border: 0px;"></a>');
+
+    }
+
+    function upPromotions(){
+        var json = <?php echo $ads; ?>;
+        var count = JSON.parse(json);
+        if(count){
+            var cantElementos = Object.keys(count).length;
+            var arr = $.map(count, function(el) { return el; });
+
+            if(cantElementos > 1){
+                array_rand(arr,2);
+            }else{
+                $('#imgAMostrar1').html('<a href="'+ count[0]['adsRedirectURL'] +'"><img src="'+ count[0]['adsImageURL'] +' " style="border: 0px;"></a>');
+            }
+        }
+    }
+
+</script>

@@ -1,0 +1,45 @@
+<style>
+  .center {text-align: center; margin-left: auto; margin-right: auto; margin-bottom: auto; margin-top: auto;}
+</style>
+<div class="span12" id="content">
+  <div class="hero-unit center">
+    <h1><?php echo $this->escape($this->title)?> <small><font face="Tahoma" color="red">Error <?php echo $this->escape($this->code)?></font></small></h1>
+    <br />
+    <p><?php echo $this->escape($this->message)?></p>
+    <p><b>Or you can click one of the following buttons:</b></p>
+    <a href="/" class="btn btn-large btn-info"><i class="icon-home icon-white"></i> Take Me Home</a>
+    <?php if(APPLICATION_ENV != 'production'):?>
+    <a href="#debug" role="button" class="btn btn-large btn-danger" data-toggle="modal"><i class="icon-info-sign icon-white"></i> Error details</a>
+    <?php endif;?>
+  </div>
+</div>
+<div id="debug" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">Error details</h3>
+	</div>
+	<div class="modal-body">
+		<?php if(isset($this->exception)):?>
+			<p><?php echo $this->exception->getMessage() ?></p>
+			<?php if(APPLICATION_ENV != 'production'):?>
+			<p>
+				<h4>Trace</h4>
+				<pre><?php echo $this->exception->getTraceAsString() ?></pre>
+			</p>
+			<p>
+				<h4>Parameters</h4>
+				<pre><?php echo $this->escape(var_export($this->request->getParams(), true)) ?></pre>
+			</p>
+			<p>
+				<h4>Referer</h4>
+				<pre><?php echo $this->referer ? '': $this->referer ?></pre>
+			</p>
+			<?php endif;?>
+		<?php else:?>
+			<p>No error details to show</p>
+		<?php endif;?>
+	</div>
+	<div class="modal-footer">
+	<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+</div>

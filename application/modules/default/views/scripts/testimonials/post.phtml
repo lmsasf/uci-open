@@ -1,0 +1,188 @@
+<style>
+<!--
+.input-recaptcha {
+width:172px;
+}
+-->
+</style>
+<div class="span12" id="content">
+	<div style="padding:5px;">
+	<?php if($this->error): ?>
+	<div class="alert alert-block alert-error">
+	    <button type="button" class="close" data-dismiss="alert">&times;</button>
+	    <h4>Error!</h4>
+	    <?php echo $this->error ?>
+    </div>
+	<?php  endif; ?>
+	<?php if( $this->success ): ?>
+	<div class="alert alert-block alert-success">
+	    <button type="button" class="close" data-dismiss="alert">&times;</button>
+	    <h4>Success!</h4>
+	    <?php echo $this->success ?>
+    </div>
+	<?php  endif; ?>
+	</div>	
+	<div class="row" style="padding:10px 20px;">
+		<div class="span7" >
+			<h3>Provide a testimonial for "<?php echo $this->escape($this->OCW->ocwTitle) ?>"</h3>
+			<p>As a visitor and user of the UC Irvine OpenCourseWare portal, your opinion of the functionality and content of the site is extremely important to us.</p>
+
+			<p>Please take a moment to complete a brief user survey below.  Your feedback will be critical as we continue to make enhancements to our site.  All information provided will be held confidential by UC Irvine staff.  Thank you for your feedback.</p>
+			
+			<form name="testimonial" action="<?php echo $this->url(array('module'=>'default', 'controller'=>'testimonials', 'action'=>'post' ) ) ?>" method="post">
+				<fieldset>
+					<input type="hidden" name="idOCW" value="<?php echo $this->OCW->id ?>" >
+					<input type="hidden" name="ocwTitleEncode" value="<?php echo $this->OCW->ocwTitleEncode ?>" >
+					<label>Name</label>
+					<input type="text" name="tesName" placeholder="Type your name..." value="<?php echo isset($this->tesName)? $this->tesName : '' ?>" >
+					<label>Country</label>
+					
+					<!-- Enter database for dropdown options -->
+					<div class="bfh-selectbox bfh-countries" data-country="US" data-flags="true">
+					  <input type="hidden" value="" name="tesCountry">
+					  <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+					    <span class="bfh-selectbox-option input-medium" style="width: 200px;" data-option=""></span>
+					    <b class="caret"></b>
+					  </a>
+					  <div class="bfh-selectbox-options">
+					  	<input type="text" class="bfh-selectbox-filter">
+					    <div role="listbox">
+					    <ul role="option">
+					    </ul>
+					    </div>
+					  </div>
+					</div>
+					
+					<label>Email</label>
+					<input type="text" name="tesEmail" placeholder="Type your email..." value="<?php echo isset($this->tesEmail)? $this->tesEmail : '' ?>"  ><p class="help-block"></p>
+					<label>Which best represents your role in continuing education?</label>
+					<div class="bfh-selectbox">
+					  <input type="hidden" name="tesQuestion1" value="<?php echo isset($this->tesQuestion1)? $this->tesQuestion1 : '' ?>">
+					  <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+					    <span class="bfh-selectbox-option input-medium" style="width: 200px;" data-option="<?php echo isset($this->tesQuestion1)? $this->tesQuestion1 : '0' ?>"></span>
+					    <b class="caret"></b>
+					  </a>
+					  <div class="bfh-selectbox-options">
+					  <div role="listbox">
+					    <ul role="option">
+					      <li><a tabindex="-1" href="#" data-option="0"></a></li>
+					      <?php foreach ($this->group1 as $opcion ):?>
+					      <li><a tabindex="-1" href="#" data-option="<?php echo $opcion->tesOption?>"><?php echo $this->escape($opcion->tesOption) ?></a></li>
+					      <?php endforeach; ?>
+					    </ul>
+					    </div>
+					  </div>
+					</div>					
+
+					
+					<label>How did you learn about UC Irvine OpenCourseWare?</label>
+					<div class="bfh-selectbox">
+					  <input type="hidden" name="tesQuestion2" value="<?php echo isset($this->tesQuestion2)? $this->tesQuestion2 : '' ?>">
+					  <a class="bfh-selectbox-toggle" role="button" data-toggle="bfh-selectbox" href="#">
+					    <span class="bfh-selectbox-option input-medium" style="width: 200px;" data-option="<?php echo isset($this->tesQuestion2)? $this->tesQuestion2 : '0' ?>"></span>
+					    <b class="caret"></b>
+					  </a>
+					  <div class="bfh-selectbox-options">
+					  <div role="listbox">
+					    <ul role="option">
+					      <li><a tabindex="-1" href="#" data-option="0"></a></li>
+					      <?php foreach ($this->group2 as $opcion ):?>
+					      <li><a tabindex="-1" href="#" data-option="<?php echo $opcion->tesOption?>"><?php echo $this->escape($opcion->tesOption) ?></a></li>
+					      <?php endforeach; ?>
+					    </ul>
+					    </div>
+					  </div>
+					</div>						
+
+					
+					<label>What type of course topics or materials would you like made available on our site?</label>
+					<textarea rows="3" name="tesQuestion3"  style="width: 400px;"><?php echo isset($this->tesQuestion3)? $this->tesQuestion3 : '' ?></textarea>
+					
+					<label>Testimonial</label>
+					<textarea rows="10"  name="tesTestimonial" id="tesTestimonial" required="required" title="Please, enter a testimonial" style="width: 400px;"><?php echo isset($this->tesTestimonial)? $this->tesTestimonial : '' ?></textarea>
+					<p class="help-block">Please provide your comments on an OpenCourseWare lecture, course, conference or collection or general comments about UCI OpenCourseWare</p>
+					
+					<!-- Multiple Radios -->
+					<div class="control-group">
+					  <label class="control-label" for="marketing">Can we use your comments for marketing and publication purposes?</label>
+					  <div class="controls">
+						<label class="radio inline" for="marketing-0">
+						  <input name="tesMarketing" id="marketing-0" value="1" checked="checked" type="radio">
+						  Yes
+						</label>
+						<label class="radio inline" for="marketing-1">
+						  <input name="tesMarketing" id="marketing-1" value="0" type="radio">
+						  No
+						</label>
+					  </div>
+					</div>
+
+					<!-- Multiple Radios -->
+					<div class="control-group">
+					  <label class="control-label" for="contact">Can we contact you as a testimonial source for reporters and press?</label>
+					  <div class="controls">
+						<label class="radio inline" for="contact-0">
+						  <input name="tesContact" id="contact-0" value="1" checked="checked" type="radio">
+						  Yes
+						</label>
+						<label class="radio inline" for="contact-1">
+						  <input name="tesContact" id="contact-1" value="0" type="radio">
+						  No
+						</label>
+					  </div>
+					</div>
+					<br>
+					<!-- RECAPTCHA -->
+					<script type="text/javascript">
+					var RecaptchaOptions = {
+						theme : 'custom',
+						custom_theme_widget: 'recaptcha_widget'
+					};
+					</script>
+					 
+					<div id="recaptcha_widget" style="display:none">
+						<div class="control-group">
+							<label class="control-label">Enter captcha</label>
+							<div class="controls">
+								<a id="recaptcha_image" href="#" class="thumbnail"></a>
+								<div class="recaptcha_only_if_incorrect_sol" style="color:red">Incorrect please try again</div>
+							</div>
+						</div>
+						 
+						<div class="control-group">
+							<label class="recaptcha_only_if_image control-label">Enter the words above:</label>
+							<label class="recaptcha_only_if_audio control-label">Enter the numbers you hear:</label>
+							 
+							<div class="controls">
+								<div class="input-append">
+								<input type="text" id="recaptcha_response_field" class="input-recaptcha" name="recaptcha_response_field" required="required"/>
+									<a class="btn" href="javascript:Recaptcha.reload()"><i class="icon-refresh"></i></a>
+									<a class="btn recaptcha_only_if_image" href="javascript:Recaptcha.switch_type('audio')"><i title="Get an audio CAPTCHA" class="icon-headphones"></i></a>
+									<a class="btn recaptcha_only_if_audio" href="javascript:Recaptcha.switch_type('image')"><i title="Get an image CAPTCHA" class="icon-picture"></i></a>
+									<a class="btn" href="javascript:Recaptcha.showhelp()"><i class="icon-question-sign"></i></a>
+								</div>
+							</div>
+						</div>
+					</div>
+					 
+					<script type="text/javascript" src="https://www.google.com/recaptcha/api/challenge?k=<?php echo $this->pubkey?>"></script>
+					 
+					<noscript>
+						<iframe src="http://www.google.com/recaptcha/api/noscript?k=<?php echo $this->pubkey?>"	height="300" width="500" frameborder="0"></iframe><br>
+						<textarea name="recaptcha_challenge_field" rows="3" cols="40">
+						</textarea>
+						<input type="hidden" name="recaptcha_response_field" value="manual_challenge">
+					</noscript>					
+					<!-- Inser reCaptcha code here -->
+					<button type="submit" class="btn">Submit</button>
+				</fieldset>
+			</form>
+		</div>
+		
+		<div class="span4">
+			<?php if($this->pastTestimonials->count() > 0): ?>
+			<?php $this->pasttestimonials()->render($this->pastTestimonials)?>
+			<?php endif; ?>
+		</div>
+	</div>
+</div>

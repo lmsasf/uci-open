@@ -1,0 +1,583 @@
+<style>
+<!--
+.liLeft {float: left; width: 70%; padding: 5px;}
+.liRight { float: left;}
+.buttonLi{padding: 5px; line-height: 0;}
+.placeholder { background-color: white; border:1px dashed #c5c5c5; margin:5px;}
+.degreeItem { padding: 3px;	border: solid 1px lime;}
+#sortable { float: left; list-style-type: none; margin: 0; padding: 0 0 1em; width: 100%;}
+#sortable li { cursor: pointer; margin: 0 0 4px; padding: 3px;}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { background: url("/backend/images/jquery/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;  border: 1px solid #D3D3D3;}
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #555555; text-decoration: none;}
+.ui-dialog-buttonset button { margin: 6px !important;}
+.itemDescription { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 72%; float:left;}
+-->
+</style>
+<div class="topHeader" style="top: 0;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+	        	<!-- <h5>University</h5>
+	            <span><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></span> -->
+	            <div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'university', 'action'=>'index') )?>">University list</a></li>
+						<li class="current"><a href="javascript:void(0)"><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></a></li>
+					</ul>
+				</div>
+	        </div>
+		</div>
+	</div>
+</div>
+<!-- CONTENIDO -->
+<div id="content">
+	<div class="wrapper">
+	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+	<div id="mensajes"></div>
+		<div class="widgets">
+			<div class="oneTwo">
+		        <form id="validate" class="form" method="post" action="" onsubmit="return false;">	
+		        	<input type="hidden" name="id" id="universityId" value="<?php echo is_null($this->id) && $this->accion ==='add' ? '' : $this->University->id ?>" />
+		        	<input type="hidden" name="accion" id="accion" value="<?php echo $this->accion ?>" />
+		        	<fieldset>
+		                <div class="widget">
+		                    <div class="title"><h6>University details</h6></div>
+		                    <div class="formRow">
+		                       <label for="uniName">University name:<span class="req"></span></label>
+		                        <div class="formRight" style="margin-right:0px;">
+		                        	<span id="span_uni" style="float:left; padding: 4px 0;"><?php echo is_null($this->University) ? '' : $this->escape($this->University->uniName) ?></span>
+		                        	<a style="float:right; margin-left:10px;" id="aedituni_<?php echo $this->University->id ?>" class="smallButton buttonLi" title="edit university" href="javascript:editUni('<?php echo $this->University->id?>', '<?php echo $this->escape($this->University->uniName)?>')"><img alt="" src="/backend/images/icons/color/pencil.png"></a>
+		                        </div>
+		                        <div class="clear"></div>	                        	
+		                    </div>
+		                   	 <div class="title"><h6>Schools</h6>
+                    			 	<a class="smallButton" style="float:right; margin: 4px 14px 0 0; line-height: 0;position: relative; padding: 5px; " title="New school" href="javascript:addschools()">
+									<img alt="New School" title="New School" src="/backend/images/icons/color/plus.png">
+								</a>
+							</div>
+		                   	 <div class="formRow">
+		                   	 			<div style="padding-top:5px;">			                        	                        	
+				                        	<table id="table" class="display sTable">
+				                        	<thead>
+				                        		<th>Schools</th><th>Schools Actions</th><th>Departments</th><th style="text-align: right;">Departments Actions</th>
+				                        	</thead>
+				                        	<tbody id ="tbody">
+				                        	<style>
+				                        	.sTable tbody td {
+												    border-left: 0px solid #FFFFFF  !important;
+												    padding: 4px 5px;
+												}
+				                        	</style>
+							                     <?php if(!empty($this->School)){ ?>
+		                   	 						<?php foreach($this->School as $key=>$sch){ ?> 
+		                   	 							<?php foreach($sch as $namesch=>$school){ ?> 
+															<tr id="Degree_<?php echo $key?>">
+																<td style="width:200px;border-left: 0px solid #FFFFFF  !important; vertical-align: top;" id="nameschool_<?php echo $key?>">
+																<?php echo $this->escape($namesch)?></td>
+																<td  style="text-align: center;vertical-align: top;" id="edit_<?php echo $key?>">																
+																	<a  id="aedit_<?php echo $key?>" class="smallButton buttonLi" title="edit school" href="javascript:editSchool('<?php echo $key?>','<?php echo $this->escape($namesch)?>')"><img alt="" src="/backend/images/icons/color/pencil.png"></a>
+																	<a  id="adel_<?php echo $key?>" class="smallButton buttonLi" title="delete school" href="javascript:deleteSchool(<?php echo $key?>)"><img alt="" src="/backend/images/icons/color/cross.png"></a>
+																	<a class="smallButton buttonLi" style="margin: 0px; line-height: 0;position: relative; padding: 5px; text-align:center;" title="New department" href="javascript:addDepp('<?php echo $key?>')">
+																		
+																		<img alt="" src="/backend/images/icons/color/plus.png">
+																	</a>																	
+																</td>																   
+																<td id ="deppartments_<?php echo $key?>" colspan="2" style="vertical-align: top;">		
+																	<?php foreach($school as $kd=>$val){?>																	
+																		<?php foreach($val as $valor){?>	
+																				<?php if(!empty($valor)){ ?>																			
+																					<div id="deppartment_<?php echo $kd?>" style="padding:1px;clear: both;">
+																						<div class="itemDescription"> - <?php echo $valor;?></div>
+																						<a style="float:right;margin-left:5px;" id="adeldep_<?php echo $kd?>" class="smallButton buttonLi" title="delete department" href="javascript:deleteDep('<?php echo $kd?>','<?php echo $key?>')"><img alt="" src="/backend/images/icons/color/cross.png"></a>
+																						<a style="float:right; margin-left:10px;" id="aeditdep_<?php echo $kd?>" class="smallButton buttonLi" title="edit department" href="javascript:editDep('<?php echo $kd?>','<?php echo $this->escape($valor)?>','<?php echo $key?>')"><img alt="" src="/backend/images/icons/color/pencil.png"></a>
+																						<div class="clear"></div>
+																					</div>
+																				<?php } ?>
+																		<?php }?>																	
+																	<?php }?>
+																</td>
+															</tr>  
+														<?php } ?>                	
+							                     	<?php } ?>
+							                     <?php } ?>
+							                    </tbody>
+										    </table>   										    																			
+				                        </div>
+				                        <div class="clear"></div>			                        		                   	 
+							 </div>				 							
+		                    <div class="clear"></div>
+		                </div>		                
+		            </fieldset>
+		           
+		        </form>  
+	        </div>	        
+        </div>	
+	</div>
+</div>	        
+<script type="text/javascript">
+	function save(){
+		if (jQuery('#validate').validationEngine('validate') ) {
+			var data = new Array();
+			$('#validate input[type="text"], #validate input[type="hidden"], #validate textarea').each(function(index, value){
+				//console.debug(this);
+				if($(this).attr('name') !=='' && $(this).val() !==''){
+					data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+				}
+			});
+			var Id = $('#universityId').val();
+			var accion = $('#accion').val();
+			var degrees		= new Array();
+			$('#sortable li').each(function (index) {
+				var stringId 	= $(this).attr('id')
+				var arrayId 	= stringId.split('_');
+				degrees.push({ id : parseInt(arrayId[1]), order: index });
+			});
+		   $.ajax( {
+		        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'university', 'action'=> 'saveuniversity'))?>",
+		        data: { data: data, accion: accion, id:Id } ,
+		        async: false,
+		        beforeSend: function(objeto){},
+		        complete: function(objeto, exito) { },
+		        dataType: "json",
+		        global: true,
+		        cache:false,
+		        ifModified: false,
+		        processData:true,
+		        success: function(datos)
+		        {
+		        	$.jGrowl('Data saved successfully', { header: 'Success', sticky: false, theme: 'success' });
+		        	$('#universityId').val(datos.id);
+		        	$('#accion').val('edit');
+		        },
+		        error: function(request, status, error)
+		        {
+		            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+		            $.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+		        },
+		        timeout: 20000,
+		        type: "POST"
+		    } ); 
+		} else {
+			return false;
+		}
+	}	
+	function cancel(){
+		document.location.href='<?php echo $this->url(array('module'=>'admin','controller'=>'University', 'action'=>'index'))?>';
+	}
+	function deleteSchool(id){
+			$.msgbox("Are you sure you want to remove this school? <br> You cannot undo this action", {
+			  type: "confirm",
+			  buttons : [
+			    {type: "submit", value: "Yes"},
+			    {type: "cancel", value: "No"}
+			  ]
+			}, function(result) {
+				if(result == 'Yes'){
+				    $.ajax( {
+				        url: "<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=> 'deleteschool'))?>",
+				        data: { Id : id } , 
+				        //async: false,
+				        beforeSend: function(objeto){},
+				        complete: function(objeto, exito) { },
+				        dataType: "json",
+				        global: true,
+				        cache:false,
+				        ifModified: false,
+				        processData:true,
+				        success: function(datos)
+				        {
+				        	var row = document.getElementById("Degree_"+datos.Id);
+    						var table = document.getElementById("tbody");
+						   
+						   /* $(".loader").show();
+				        	window.setTimeout(function() {
+				        		$(".loader").hide();
+				        		displayMessage( 'success', 'Data deleted successfully', 'Success', '' );
+				        	}, 2000); */
+				        	 table.removeChild(row);
+				        },
+				        error: function(request, status, error)
+				        {
+				           /* var mensaje = request.responseText != '' ? request.responseText : 'Tiempo de espera agotado o sesión interrumpida, puede que se estén presentando problemas en la red' ;
+				            $.jGrowl(mensaje, { header: 'ERROR', sticky: true, theme: 'error' });*/
+				        	 var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+					         //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+					         displayMessage( 'error', mensaje, 'Error', '' );
+				        },
+				        timeout: 20000,
+				        type: "POST"
+				    } ); 
+				}
+			});
+		
+	}
+
+	function deleteDep(id, schoolid){
+		$.msgbox("Are you sure you want to remove this department? <br> You cannot undo this action", {
+			  type: "confirm",
+			  buttons : [
+			    {type: "submit", value: "Yes"},
+			    {type: "cancel", value: "No"}
+			  ]
+			}, function(result) {
+				if(result === 'Yes'){
+				    $.ajax( {
+				        url: "<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=> 'deletedepp'))?>",
+				        data: { Id : id } , 
+				        //async: false,
+				        beforeSend: function(objeto){},
+				        complete: function(objeto, exito) { },
+				        dataType: "json",
+				        global: true,
+				        cache:false,
+				        ifModified: false,
+				        processData:true,
+				        success: function(datos)
+				        {
+					        var td = document.getElementById("deppartments_"+schoolid);
+				    		var div = document.getElementById("deppartment_"+id);
+				    		
+				    		/* $(".loader").show();
+					        	window.setTimeout(function() {
+					        		$(".loader").hide();
+					        		displayMessage( 'success', 'Data deleted successfully', 'Success', '' );
+					        	}, 2000); */
+					        	td.removeChild(div);
+				        },
+				        error: function(request, status, error)
+				        {
+				           /* var mensaje = request.responseText != '' ? request.responseText : 'Tiempo de espera agotado o sesión interrumpida, puede que se estén presentando problemas en la red' ;
+				            $.jGrowl(mensaje, { header: 'ERROR', sticky: true, theme: 'error' });*/
+				        	 var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+					         //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+					         displayMessage( 'error', mensaje, 'Error', '' );
+				        },
+				        timeout: 20000,
+				        type: "POST"
+				    } ); 
+				}
+			});		
+	}
+	
+	function editUni(id, name){
+		$("#universityId").val(id);
+		$("#uniName").val(name);
+		$( "#dialog-messageuni" ).dialog( "open" );
+	}
+	
+	function editSchool(id, name){
+		$("#schoolId").val(id);
+		$("#schName").val(name);
+		$( "#dialog-message" ).dialog( "open" );
+	}
+
+	function editDep(id, name, idSchool){
+		$("#deppId").val(id);
+		$("#depName").val(name);
+		$("#idSchool").val(idSchool);
+		$( "#dialog-messagedep" ).dialog( "open" );
+	}
+	
+	function addschools(unid){
+		$("#schoolId").val('');
+		$("#schName").val('');
+		$( "#dialog-message" ).dialog( "open" );
+	}
+
+	function addDepp(schid){
+		$("#deppId").val('');
+		$("#depName").val('');
+		$("#idSchool").val(schid);
+		$( "#dialog-messagedep" ).dialog( "open" );
+	}
+
+	
+	$(function() {
+		$( "#sortable" ).sortable({
+			placeholder: "placeholder",
+			forcePlaceholderSize: true,
+            opacity: 0.4
+		});
+		$( "#sortable" ).disableSelection();
+		$( '.buttonLi' ).on('click', function(){
+			$(this).parents('li').remove();
+		});
+
+		
+		$( "#dialog-messageuni" ).dialog({
+			autoOpen: false,
+			height : 200,
+			width: $(window).width() < 600 ? ($(window).width() - 10) : 500,
+			resizable: false,
+			modal: true,
+			open: function(event,ui){
+				$('.dialog').validationEngine({
+		    		prettySelect : true,
+		    		useSuffix: "_chzn"
+		    });
+			},
+			buttons: {				
+				'Cancel': function() {
+					$( this ).dialog( "close" );
+				},
+				"Accept": function() {
+					if (jQuery('.dialog').validationEngine('validate')) {
+						
+							if (jQuery('#validateuni').validationEngine('validate')) {
+								guardarUni(true);
+								$( this ).dialog( "close" );					
+							}
+					}
+				}
+			},
+			close: function() {
+				$('.dialog').validationEngine('hideAll');
+			}
+		});
+
+		
+		$( "#dialog-message" ).dialog({
+			autoOpen: false,
+			height : 200,
+			width: $(window).width() < 600 ? ($(window).width() - 10) : 500,
+			resizable: false,
+			modal: true,
+			open: function(event,ui){
+				$('.dialog').validationEngine({
+		    		prettySelect : true,
+		    		useSuffix: "_chzn"
+		    });
+			},
+			buttons: {
+				'Cancel': function() {
+					$( this ).dialog( "close" );
+				},
+				"Accept": function() {
+					if (jQuery('.dialog').validationEngine('validate')) {
+						
+							if (jQuery('#validatesch').validationEngine('validate')) {
+								guardarSchool(true);
+								$( this ).dialog( "close" );					
+							}											
+					}					
+				}
+
+			},
+			close: function() {
+				$('.dialog').validationEngine('hideAll');
+			}
+		});
+
+		$( "#dialog-messagedep" ).dialog({
+			autoOpen: false,
+			height : 200,
+			width: $(window).width() < 600 ? ($(window).width() - 10) : 500,
+			resizable: false,
+			modal: true,
+			open: function(event,ui){
+				$('.dialog').validationEngine({
+		    		prettySelect : true,
+		    		useSuffix: "_chzn"
+		    });
+			},
+			buttons: {
+				'Cancel': function() {
+					$( this ).dialog( "close" );
+				},
+				"Accept": function() {
+					if (jQuery('.dialog').validationEngine('validate')) {
+						
+							if (jQuery('#validatedep').validationEngine('validate')) {
+								guardarDepp(true);
+								$( this ).dialog( "close" );					
+							}					
+					}					
+				}
+
+			},
+			close: function() {
+				$('.dialog').validationEngine('hideAll');
+			}
+		});		
+
+	});	
+<?php if(!empty($this->University->id )){?>
+		var Iduni = <?php echo $this->University->id ?>;
+<?php }else{?>
+		var Iduni = 0;
+<?php }?>
+
+function guardarUni(callback){
+	if (jQuery('#validateuni').validationEngine('validate') || callback === true) {
+		var data = new Array();
+		$('#validateuni input[type="text"]').each(function(index, value){ 
+			if($(this).attr('name') !=='' && $(this).val() !=='' && $(this).attr('name') == 'uniName'){
+				data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+			}
+		});
+		var Id = Iduni;
+		$.ajax( {
+		        url: "<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=> 'saveuniversity'))?>",
+		        data: { id:Id, data:data, accion: 'add' } , 
+		        async: false,
+		        beforeSend: function(objeto){},
+		        complete: function(objeto, exito) { },
+		        dataType: "json",
+		        global: true,
+		        cache:false,
+		        ifModified: false,
+		        processData:true,
+		        success: function(datos)
+		        {
+			        var span = document.getElementById("span_uni");
+		        	span.innerHTML = datos.uniName;
+					var a = document.getElementById("aedituni_"+datos.id);
+					a.setAttribute('href', 'javascript:editUni('+datos.id+', "'+datos.uniName+'")');
+		        },
+		       /* error: function(request, status, error)
+		        {
+		            var mensaje = request.responseText != '' ? request.responseText : 'Tiempo de espera agotado o sesión interrumpida, puede que se estén presentando problemas en la red' ;
+		            $.jGrowl(mensaje, { header: 'ERROR', sticky: true, theme: 'error' });
+		        },
+		        timeout: 20000,*/
+		        type: "POST"
+		    } ); 
+	} 
+}
+	function guardarSchool(callback){
+		if (jQuery('#validatesch').validationEngine('validate') || callback === true) {
+			var data = new Array();
+			$('#validatesch input[type="text"]').each(function(index, value){ 
+				if($(this).attr('name') !=='' && $(this).val() !=='' && $(this).attr('name') == 'schName'){
+					data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+				}
+			});
+			var Id = Iduni;
+			var schoolId = $( "#schoolId" ).val();
+		   $.ajax( {
+		        url: "<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=> 'saveschool'))?>",
+		        data: { data:data, Id:Id, schoolId:schoolId  } , 
+		        async: false,
+		        beforeSend: function(objeto){},
+		        complete: function(objeto, exito) { },
+		        dataType: "json",
+		        global: true,
+		        cache:false,
+		        ifModified: false,
+		        processData:true,
+		        success: function(datos)
+		        { 
+			       	if(schoolId== null || schoolId=='')	 {    	
+			        	var tds = '<tr id="Degree_'+datos.schoolId+'">';
+					    var nombre = "'"+datos.schName+"'";
+					    tds += '<td style="width:200px;border-left: 0px solid #FFFFFF  !important; vertical-align: top;" id="nameschool_'+datos.schoolId+'">'+datos.schName+'</td><td  style="text-align: center;vertical-align: top;" id="edit_'+datos.schoolId+'">	<a  id="aedit_'+datos.schoolId+'" class="smallButton buttonLi" title="edit school" href="javascript:editSchool('+datos.schoolId+','+nombre+')"><img alt="" src="/backend/images/icons/color/pencil.png"></a>	<a  id="adel_'+datos.schoolId+'" class="smallButton buttonLi" title="delete school" href="javascript:deleteSchool('+datos.schoolId+')"><img alt="" src="/backend/images/icons/color/cross.png"></a>	<a class="smallButton buttonLi" style="margin: 0px; line-height: 0;position: relative; padding: 5px; text-align:center;" title="New department" href="javascript:addDepp('+datos.schoolId+')">	<img alt="" src="/backend/images/icons/color/plus.png">	</a></td><td id ="deppartments_'+datos.schoolId+'" colspan="2"></td>';
+					    tds += '</tr>';
+						$("#tbody").append(tds);					
+			       	}else{
+						//aca es cuando ya existe, actualizo el input
+						document.getElementById("nameschool_"+schoolId).innerHTML = datos.schName;
+						var aedit = document.getElementById("aedit_"+schoolId)
+						aedit.setAttribute("href", 'javascript:editSchool('+schoolId+', "'+datos.schName+'")');			
+				    }
+		        },
+		       /* error: function(request, status, error)
+		        {
+		            var mensaje = request.responseText != '' ? request.responseText : 'Tiempo de espera agotado o sesión interrumpida, puede que se estén presentando problemas en la red' ;
+		            $.jGrowl(mensaje, { header: 'ERROR', sticky: true, theme: 'error' });
+		        },
+		        timeout: 20000,*/
+		        type: "POST"
+		    } ); 
+		} 
+	}
+
+	function guardarDepp(callback){
+		if (jQuery('#validatedep').validationEngine('validate') || callback === true) {
+			var data = new Array();
+			$('#validatedep input[type="text"]').each(function(index, value){ 
+				if($(this).attr('name') !=='' && $(this).val() !=='' && $(this).attr('name') == 'depName'){
+					data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+				}
+			});
+			var deppId = $( "#deppId" ).val();
+			var Id = $( "#idSchool" ).val();
+		   $.ajax( {
+		        url: "<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=> 'savedeppartment'))?>",
+		        data: { data:data, Id:Id, deppId:deppId  } , 
+		        async: false,
+		        beforeSend: function(objeto){},
+		        complete: function(objeto, exito) { },
+		        dataType: "json",
+		        global: true,
+		        cache:false,
+		        ifModified: false,
+		        processData:true,
+		        success: function(datos)
+		        { 
+			       	if(deppId== null || deppId=='')	 {    
+			       		var nombre = "'"+datos.depName+"'";
+						var div = '<div id="deppartment_'+datos.deppId+'" style="padding:1px;clear: both;">  <div class="itemDescription"> - '+datos.depName+' </div><a style="float:right;margin-left:5px;" id="adeldep_'+datos.deppId+'" class="smallButton buttonLi" title="delete department" href="javascript:deleteDep('+datos.deppId+','+Id+')"><img alt="" src="/backend/images/icons/color/cross.png"></a><a style="float:right; margin-left:10px;" id="aeditdep_'+datos.deppId+'" class="smallButton buttonLi" title="edit department" href="javascript:editDep('+datos.deppId+','+nombre+','+Id+')"><img alt="" src="/backend/images/icons/color/pencil.png"></a></div>';
+						$("#deppartments_"+Id).append(div);
+			       	}else{						
+						var nombre = "'"+datos.depName+"'";
+						$("#deppartment_"+deppId).html("");
+						var div = '<div class="itemDescription"> - '+datos.depName+' </div><a style="float:right;margin-left:5px;" id="adeldep_'+deppId+'" class="smallButton buttonLi" title="delete department" href="javascript:deleteDep('+deppId+','+Id+')"><img alt="" src="/backend/images/icons/color/cross.png"></a><a style="float:right; margin-left:10px;" id="aeditdep_'+deppId+'" class="smallButton buttonLi" title="edit department" href="javascript:editDep('+deppId+','+nombre+','+Id+')"><img alt="" src="/backend/images/icons/color/pencil.png"></a><div class="clear"></div>';
+						$("#deppartment_"+deppId).html(div);
+				    }
+
+		        },
+		       /* error: function(request, status, error)
+		        {
+		            var mensaje = request.responseText != '' ? request.responseText : 'Tiempo de espera agotado o sesión interrumpida, puede que se estén presentando problemas en la red' ;
+		            $.jGrowl(mensaje, { header: 'ERROR', sticky: true, theme: 'error' });
+		        },
+		        timeout: 20000,*/
+		        type: "POST"
+		    } ); 
+		} 
+	}
+	
+</script>
+	<div id="dialog-messageuni" title="Edit university" style="display:none;">
+        <div class="">
+	        <form id="validateuni" class="form" method="post" action="" class="dialog" id="formUni" onsubmit="return false;">
+	        		<input type="hidden" name="universityId" id="universityId" value="" />
+	        		&nbsp;               
+                    <div class="clear"></div>	        
+                    <label style="margin-top:14px;margin-right:10px;">Name:  </label>
+                    <div class="row" style="width:400px;">
+                    	<input type="text" class="validate[required]" name="uniName" id="uniName" value=""/>
+                    </div>                  
+            </form>
+        </div>
+	</div>
+	
+	<div id="dialog-message" title="School" style="display:none;">
+        <div class="">
+	        <form id="validatesch" class="form" method="post" action="" class="dialog" id="formSchool" onsubmit="return false;">
+	        		<input type="hidden" name="schoolId" id="schoolId" value="" />
+	        		&nbsp;               
+                    <div class="clear"></div>	        
+                    <label style="margin-top:14px;margin-right:10px;">Name:  </label>
+                    <div class="row" style="width:400px;">
+                    	<input type="text" class="validate[required]" name="schName" id="schName" value=""/>
+                    </div>                  
+            </form>
+        </div>
+	</div>
+
+	<div id="dialog-messagedep" title="Department" style="display:none;">
+        <div class="">
+	        <form id="validatedep" class="form" method="post" action="" class="dialog" id="formDep" onsubmit="return false;">
+	        		<input type="hidden" name="deppId" id="deppId" value="" />
+	        		<input type="hidden" name="idSchool" id="idSchool" value="" />
+	        		&nbsp;               
+                    <div class="clear"></div>	        
+                    <label style="margin-top:14px;margin-right:10px;">Name:  </label>
+                    <div class="row" style="width:400px;">
+                    	<input type="text" class="validate[required]" name="depName" id="depName" value=""/>
+                    </div>                  
+            </form>
+        </div>
+	</div>

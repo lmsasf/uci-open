@@ -1,0 +1,324 @@
+<?php
+    if($this->homeDesign=='5'){
+        $pagina_inicio = file_get_contents('./frontend/home.html');
+        echo $pagina_inicio;
+    }else{
+?>
+<script type='text/javascript'>
+    var slideCount;
+    $.ajax({
+        url: "/default/frontend/getslidecount",
+        data: {},
+        dataType: "json",
+        global: true,
+        cache: false,
+        ifModified: false,
+        processData: true,
+        success: function (datos) {
+            slideCount = datos;
+        },
+        error: function (request, status, error) {
+            mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+        },
+        timeout: 20000,
+        type: "POST"
+    });
+
+    var homeDesign;
+    $.ajax({
+        url: "/default/frontend/gethomedesign",
+        data: {},
+        dataType: "json",
+        global: true,
+        cache: false,
+        ifModified: false,
+        processData: true,
+        success: function (datos) {
+            homeDesign = datos;
+        },
+        error: function (request, status, error) {
+            mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+            $('#acceptbox div').html(mensaje);
+            $('#acceptbox').css('background-color', '#E8747D');
+        },
+        timeout: 20000,
+        type: "POST"
+    });
+
+    var homeAdd = new Array();
+
+    $.ajax({
+        url: "/default/frontend/gethomedata",
+        data: {},
+        dataType: "json",
+        global: true,
+        cache: false,
+        ifModified: false,
+        processData: true,
+        success: function (datos) {
+
+            homeAdd[2] =    '<div class="span7">'+
+                            '  <div id="mainCarousel" class="carousel slide">'+
+                            '    <ol class="carousel-indicators">';
+
+            if(slideCount>1) {
+                for (i = 0; i < slideCount; i++) {
+                    homeAdd[2] += ' <li data-target="#mainCarousel" data-slide-to="' + i + '" ';
+                    if (i == 0)
+                        homeAdd[2] += 'class="active"';
+                    homeAdd[2] += ' ></li>';
+                }
+            }
+
+            homeAdd[2] +=   '    </ol>'+
+                            '   <div class="carousel-inner">';
+
+            var i=0;
+
+            for (data in datos) {
+                if(datos[data]['homeType']=='banner'){
+                    homeAdd[datos[data]['homeSquare']] =    '<div class="span12">'+
+                                                            '<div class="alert alert-info">'+
+                                                            '<img src="'+datos[data]['homeImageUrl']+'"></img>'+
+                                                            '</div>'+
+                                                            '</div>';
+                }
+
+                if(datos[data]['homeType']=='text'){
+                    if(datos[data]['homeSquare']=='3'){
+                        homeAdd[datos[data]['homeSquare']] =    '<h4 class="text-center">'+datos[data]['homeTitle']+'</h4>'+
+                                                                 datos[data]['homeText'];
+                    }
+
+                }
+
+                if(datos[data]['homeType']=='text'){
+                    if(datos[data]['homeSquare']=='4'){
+                        homeAdd[datos[data]['homeSquare']] =    '<div class="span7 expander" id="content">'+
+                                                                '    <h2 class="text-center">'+datos[data]['homeTitle']+'</h2>'+
+                                                                    datos[data]['homeText']+
+                                                                '</div>';
+                    }
+                }
+
+                if(datos[data]['homeType']=='text'){
+                    if(datos[data]['homeSquare']=='5'){
+                        homeAdd[datos[data]['homeSquare']] =    '<div class="span4" id="content">'+
+                                                                '   <h2 class="text-center">'+datos[data]['homeTitle']+'</h2>'+
+                                                                    datos[data]['homeText']+
+                                                                '</div>';
+                    }
+                }
+
+                if(datos[data]['homeType']=='slide_i'||datos[data]['homeType']=='slide_v'){
+                    var item_active = '';
+                    if(i==0)
+                        item_active = 'active';
+
+                    homeAdd[datos[data]['homeSquare']] += '<div class="item '+item_active+'">';
+
+                    if(datos[data]['homeImageUrl']!='') {
+                        homeAdd[datos[data]['homeSquare']] += '<img width="680" height="400" src="'+datos[data]['homeImageUrl']+'" class="img-polaroid">';
+                    }
+
+                    if(datos[data]['homeUrl']!='') {
+                        homeAdd[datos[data]['homeSquare']] += '<iframe id="player" width="670" height="400" src="'+datos[data]['homeUrl']+'" frameborder="0" allowfullscreen></iframe>';
+                    }
+
+                    if(datos[data]['homeTitle']!='') {
+                        homeAdd[datos[data]['homeSquare']] +=   '<div class="carousel-caption">'+
+                                                                '<p>'+datos[data]['homeTitle']+'</p>'+
+                                                                '</div>';
+                    }
+
+                    homeAdd[datos[data]['homeSquare']] += '</div>';
+
+                    i++;
+                }
+
+            }
+
+            homeAdd[2] +=   '</div>';
+            if(slideCount>1){
+                homeAdd[2] +=   '<a id="left_arrow" class="carousel-control left" href="#mainCarousel" data-slide="prev">&lsaquo;</a>'+
+                                '<a id="right_arrow" class="carousel-control right" href="#mainCarousel" data-slide="next">&rsaquo;</a>';
+            }
+            homeAdd[2] += '</div>'+
+                        '</div>';
+
+
+            switch (homeDesign){
+                case '1':
+                    $('#block_1').html(homeAdd[1]);
+                    $('#block_2_1').html(homeAdd[2]);
+                    $('#block_2_2').attr('class','span4 expander');
+                    $('#block_2_2').html(homeAdd[3]).expander({ slicePoint: 450, expandText: ' Read more', userCollapseText: ' Read Less' });
+                    $('#block_3_1').html(homeAdd[4]);
+                    $('#block_3_2').html(homeAdd[5]);
+                    break;
+                case '2':
+                    $('#block_1').html(homeAdd[1]);
+                    $('#block_2_1').attr('class','span4 expander');
+                    $('#block_2_1').html(homeAdd[3]).expander({ slicePoint: 450, expandText: ' Read more', userCollapseText: ' Read Less' });
+                    $('#block_2_2').html(homeAdd[2]);
+                    $('#block_3_1').html(homeAdd[5]);
+                    $('#block_3_2').html(homeAdd[4]);
+                    break;
+                case '3':
+                    document.getElementById('additionalSpace').style.display = '';
+                    $('#block_1_1').html(homeAdd[2]);
+                    $('#block_1_2').attr('class','span4 expander');
+                    $('#block_1_2').html(homeAdd[3]).expander({ slicePoint: 450, expandText: ' Read more', userCollapseText: ' Read Less' });
+                    $('#block_2').html(homeAdd[1]);
+                    $('#block_3_1').html(homeAdd[4]);
+                    $('#block_3_2').html(homeAdd[5]);
+                    break;
+                case '4':
+                    document.getElementById('additionalSpace').style.display = '';
+                    $('#block_1_1').attr('class','span4 expander');
+                    $('#block_1_1').html(homeAdd[3]).expander({ slicePoint: 450, expandText: ' Read more', userCollapseText: ' Read Less' });
+                    $('#block_1_2').html(homeAdd[2]);
+                    $('#block_2').html(homeAdd[1]);
+                    $('#block_3_1').html(homeAdd[5]);
+                    $('#block_3_2').html(homeAdd[4]);
+                    break;
+                default:
+                    $("#block_2_1").html('<div class="span7 expand"><h4 class="text-center">Home it\'s comming soon...</h4></div>');
+                    break;
+            }
+
+
+        },
+        error: function (request, status, error) {
+            mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+            $('#acceptbox div').html(mensaje);
+            $('#acceptbox').css('background-color', '#E8747D');
+        },
+        timeout: 20000,
+        type: "POST"
+    });
+
+</script>
+
+<!-- Announcement banner (whether it is functionally required is up to debate) -->
+<div id="block_1">
+    <div class="span12" id="content2">
+        <br />
+        <div id="block_1_1">
+        </div>
+        <div id="block_1_2">
+        </div>
+    </div>
+</div>
+
+<div id="additionalSpace" style="display: none;"><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+<div id="block_2">
+<!-- Begin Carousel/Spotlight section -->
+    <div class="span12" id="content2">
+        <br />
+        <div id="block_2_1">
+        </div>
+        <div id="block_2_2">
+        </div>
+    </div>
+<!-- End Carousel/Spotlight Section -->
+</div>
+
+<br>
+
+
+<!-- Separator -->
+<div class="span12" id="content2">
+    <p></p>
+</div>
+<!-- end Separator -->
+
+<div id="block_3">
+    <!-- Begin FAQ/Blog section -->
+    <div class="span12" id="content">
+        <div id="block_3_1">
+        </div>
+        <div id="block_3_2">
+        </div>
+    </div>
+    <!-- End FAQ/Blog Section -->
+</div>
+    <?php }?>
+
+<script type='text/javascript'>
+    var tag = document.createElement('script');
+
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    var player;
+    var player2;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+        player2 = new YT.Player('player2', {
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+
+    function onPlayerReady(event) {
+    }
+
+    function onPlayerStateChange(event) {
+        if (player.getPlayerState() == 1 || player2.getPlayerState() == 1 || player.getPlayerState() == 3 || player2.getPlayerState() == 3) {
+            $('#mainCarousel').carousel('pause');
+        }
+        if(player.getPlayerState() == 0 || player2.getPlayerState() == 0){
+            $('#mainCarousel').carousel('cycle');
+        }
+    }
+
+
+    function stopVideo() {
+        player.stopVideo()
+    }
+
+    $(document).ready(function(){
+        if ($.browser.mozilla){
+            $('.carousel').each(function(){
+                $(this).carousel({
+                    interval: false
+                });
+            });
+        }
+        $('#mainCarousel').bind('slid', function() {
+            currentIndex = $('div.active').index() + 1;
+            if (player.getPlayerState() == 1 && currentIndex != 2){
+                player.pauseVideo();
+                if (!$.browser.mozilla){
+                    $('#mainCarousel').carousel('cycle');
+                }
+            }
+            if (player2.getPlayerState() == 1 && currentIndex != 3){
+                player2.pauseVideo();
+                if (!$.browser.mozilla){
+                    $('#mainCarousel').carousel('cycle');
+                }
+            }
+        });
+    })
+
+    $(window).resize(function(){
+        if ($('#mainCarousel').width() == 414){
+            console.log($('#mainCarousel').width());
+            if ($('div.active').index() == 1){
+                console.log('carousel caption');
+                $('.carousel-caption').css('position', 'absolute', 'margin-top', '500px');
+            }
+        }
+    })
+
+</script>

@@ -1,0 +1,190 @@
+<?php
+$this->jQuery()->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/datatable.fnReloadAjax.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/TableTools/media/js/TableTools.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/TableTools/media/js/ZeroClipboard.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/advancedFilter.js')
+;
+$this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools.css')
+->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools_JUI.css')
+;
+?>
+
+<div class="topHeader" style="top:0px;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">				
+				<div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>						
+						<li class="current"><a href="javascript:void(0)">Users</a></li>
+					</ul>
+				</div>	
+			</div>			
+		</div>
+	</div>
+</div>
+<div id="content">
+	<div class="wrapper">
+	 	<div id="mensajes"></div>	
+				 <div id="breadcrumbs-wrapper" style="display: none;" >
+			       <div class="fbc">
+			            <ul id="fbreadcrumbs" class="fbreadcrumbs">
+			            </ul>
+			            <div class="clear"></div>    
+			        </div> 
+			    </div>	
+			     <div class="dataTables_wrapper">
+				        <!-- Dynamic table -->
+				        <div class="widget">
+				            <div class="title">
+				            	<a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'user', 'action'=>'edit') )?>"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/add.png"></a>
+				            	<div class="clear"></div>
+				            </div>                                
+			            <table class="display dTable">
+			                <thead>
+			                    <tr>
+			                        
+			                        <th>Functions</th>
+			                        <th>Name</th>
+			                        <th>User</th>
+			                        <th>Role</th>
+			                        <th>Active</th>
+			                       <!-- Id 	grId 	usrName 	usrPassword 	usrNombreCompleto role	usrActivo  --> 
+			                    </tr>
+			                </thead>
+			                <tbody>
+			                    
+			                </tbody>
+			            </table>
+			        </div>  
+			    </div>
+		  
+	</div>
+</div>
+
+
+<script type="text/javascript">
+   
+
+	 var oTable;
+	    $(document).ready(function() {
+			<?php if(!empty($this->mensaje)){ ?>
+	    		$('#mensajes').message({ type: '<?php  echo $this->tipo?>',  frase: '<?php  echo $this->mensaje?>', prefrase: '<?php  echo $this->prefrase?>'  });
+
+	    		setTimeout(function(){ $("#mensajes").fadeOut(800);$("#mensajes").html('');}, 3000);
+			<?php }?>
+
+	    		
+
+			
+	    	//$.jGrowl.defaults.closerTemplate = '<div>[close all]</div>';
+	    	var calcDataTableHeight = function() {
+	            return $(window).height()-300 ; 
+	            // la altura de la tabla se calcula en base 
+	        };
+	    	oTable = $('.dTable').dataTable( { 
+	            "bJQueryUI": true, // soporte para temas UI
+	            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+	            "bRetrieve"  : true,
+	            "bProcessing": true,
+	        	"bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+	        	"sDom": '<""flT>rt<"F"ip>',
+	    		"aoColumns": [{ "sWidth": "125px","bSortable": false }, { "sWidth": "200px" },{ "sWidth": "200px" }, { "sWidth": "200px" }, { "sWidth": "200px" }],
+	    		"aaSorting":[[1,'asc']], 
+	        	"iDisplayLength": 50,
+	            //"sScrollY": "400px", // altura
+	            "sScrollY": calcDataTableHeight() ,
+	            "sScrollX": "100%",
+	            "bScrollCollapse": true,
+	            "bSortClasses": false, // no muestra las clases de ordenamiento
+	            //"bDeferRender": true, // similar al smartrendering de DHTMLX
+	            "sAjaxSource": '<?php echo $this->url(array( 'module'=>'admin','controller'=>'user', 'action'=>'ajaxsource'))?>',
+
+	            "fnServerParams": function ( aoData ) {
+	                var filters = getAdvancedFilters();
+	                aoData.push( { "name": "filters", "value": JSON.stringify(filters.filters) } );
+	            } , 
+	            
+	            "sServerMethod": "POST",
+	            "bDestroy": true,
+	            "oTableTools": {
+	                "sSwfPath": "<?php echo $this->baseUrl()?>/js/plugins/tables/TableTools/media/swf/copy_csv_xls_pdf.swf"
+	            },
+	            "oTableTools": {
+	    			"aButtons": []
+	    		}, 
+	    		                       
+	            "fnCreatedRow": function( nRow, aData, iDataIndex ) {
+	                // botones
+	               	var editar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Edit" href="#"><img alt="" src="/backend/images/icons/color/pencil.png"></a>');
+	                var borrar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
+	               
+	                	editar.on('click',function(){
+	                   	 var form = $('<form>').attr({
+	                          name:'editform', 
+	                          method: 'post', 
+	                          action: '<?php echo $this->url(array('module'=>'admin','controller'=>'user', 'action'=>'edit'))?>'
+	                      });
+	                      $('<input>').attr({
+	                           type: 'hidden',
+	                           id: 'id',
+	                           name: 'id',
+	                           value: aData[0]
+	                       }).appendTo(form);
+	                       form.appendTo($('body'));
+	                       form.submit();
+	                       return false;
+	                     });
+	                	
+	                     borrar.on('click',function(){
+	                    		$.msgbox("Are you sure you want to remove this user? <br> You cannot undo this action", {
+	                    			  type: "confirm",
+	                    			  buttons : [
+	                    			    {type: "submit", value: "Yes"},
+	                    			    {type: "cancel", value: "No"}
+	                    			  ]
+	                    			}, function(result) {
+	                    				if(result === 'Yes'){
+	                                      	 var form = $('<form>').attr({
+	                                             name:'deleteform', 
+	                                             method: 'post', 
+	                                             action: '<?php echo $this->url(array('module'=>'admin','controller'=>'user', 'action'=>'del'))?>'
+	                                         });
+	                                         $('<input>').attr({type: 'hidden', id: 'id', name: 'id',
+	                                             value: aData[0]
+	                                         }).appendTo(form);
+	                                         form.appendTo($('body'));
+	                                         form.submit();
+	                                         return false; 
+	                                         
+	                    				}
+	                    			});
+	                     });    
+	                     var div = $('<div>').attr({ style : 'width:100px; text-align:center;'}).append(editar).append(borrar);
+	                                      
+	                     $('td:eq(0)', nRow).empty();
+	                     $('td:eq(0)', nRow).append(div);
+	                                       
+	              }
+	            ,"oLanguage": { "sUrl": "<?php echo $this->baseUrl()?>/backend/js/plugins/tables/en.txt"}
+
+	          
+	        });
+	        
+
+	       $(window).resize(function () {
+		        var oSettings = oTable.fnSettings();
+		        oSettings.oScroll.sY = calcDataTableHeight(); 
+		        oTable.fnDraw();
+	        }); 
+			// dibujar los filtros si los hubiese
+			drawfbreadcrumbs(getAdvancedFilters()); 
+
+	    } );
+
+	    function reloadFilters(){
+			oTable.fnReloadAjax( '<?php echo $this->url(array( 'module'=>'admin',  'controller'=>'user', 'action'=>'ajaxsource'))?>' );
+			drawfbreadcrumbs(getAdvancedFilters()); 
+		}
+
+</script>

@@ -1,0 +1,18 @@
+{
+	"sProcessing": "<div id='loading' style='padding-top: 8px;padding-bottom: 8px; background-position: 20px 3px; margin-left: 30px;text-align:left;'>Loading...</div>",
+    "sLoadingRecords": "<div style='padding-top: 10px;padding-bottom: 10px; visibility: hidden;'>Loading...</div>",
+	"sLengthMenu": "<span class='itemsPerPage'>Items per page::</span> _MENU_ ",
+	"sZeroRecords": "No matching records found.",
+	"sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
+	"sInfoEmpty": "Showing 0 to 0 of 0 entries",
+	"sInfoFiltered": "(filtered from _MAX_ total entries)",
+	"sInfoPostFix": "",
+	"sSearch": "<span class='itemsPerPage'>Search:</span>",
+	"sUrl": "",
+	"oPaginate": {
+		"sFirst":    "First",
+		"sPrevious": "Previous",
+		"sNext":     "Next",
+		"sLast":     "Last"
+	}
+}

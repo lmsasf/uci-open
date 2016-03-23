@@ -1,0 +1,50 @@
+/* MENU */
+
+#header
+{
+    height: 12px;
+    width: 100%;
+    margin: 3px 0px 0px 3px;
+    color: steelblue;
+    letter-spacing: -1px;
+    font-size: 10px;
+    width: 640px;
+}
+
+#header .version
+{
+    float: left;
+    font-weight: bold;
+}
+
+#header .user_data
+{
+    float: right;
+    margin: 0px 10px 0px 0px;
+}
+
+#header .user_data a
+{
+    color: steelblue;
+}
+
+#nav
+{    
+    background: url("../images/menu_line_dark.jpg") repeat-x scroll 0 0 transparent;
+    font-size: 10px;
+    margin: 3px 0px 0px 0px;
+    width: 637px;
+    border: 1px solid #B0C4DE;
+    height: 28px;
+}
+
+#nav .nav_title
+{
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 8px 0px 0px 20px;
+    float: left;
+}
+
+/* END MENU */

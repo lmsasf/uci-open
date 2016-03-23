@@ -1,0 +1,1419 @@
+<?php
+/**
+ * Agrego las JS de plupload para archivos e imágenes
+ */
+
+$this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
+				->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
+				->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js')
+				->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
+				->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js')
+;
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
+?>
+<style>
+<!--
+.step h1 { display: none;}
+.widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
+.aimgdown { background-image:url("/backend/images/backgrounds/arrows.png"); background-repeat: no-repeat; display:block; height:10px; width:12px; float:right; -ms-transform: rotate(90deg);-moz-transform: rotate(90deg); -webkit-transform: rotate(90deg); -moz-transform: rotate(90deg);rotation: 90deg; filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);}
+.aimgup { background-image:url("/backend/images/backgrounds/arrows.png"); display:block; height:10px; width:12px; float:right; background-position: 0 bottom;	}
+#listAuthors_chzn{float:left;}
+#listCategories_chzn {float: left;}
+.liLeft {float: left; width: 70%; padding: 5px;}
+.liRight{float: right;}
+.buttonLi{padding: 5px; line-height: 0;}
+.placeholder { background-color: white; border:1px dashed #c5c5c5; margin:5px; height: 25px;}
+.degreeItem {padding: 3px;border: solid 1px lime;}
+#sortable-categories li{ cursor: pointer; margin: 0 0 4px; padding: 3px;}
+#sortable-author li{ cursor: pointer; margin: 0 0 4px; padding: 0px; height: 37px;}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { background: url("/backend/images/jquery/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6; border: 1px solid #D3D3D3;}
+
+#sortable-categories .ui-state-default a { color: #555555; margin-top: 0px; text-decoration: none;}
+#sortable-author .ui-state-default a { color: #555555; margin-top: 3px; text-decoration: none;}
+#sortable-categories {margin-top:5px;}
+#sortable-categories li {height:28px;}
+.dd3-handle {height: 34px;}
+#sortable-author {margin-top:5px;}
+#sortable-author li {height:34px;}
+div.checker span { vertical-align: top !important;}
+.qq-upload-list{ display:none;}
+.editor {
+	border: dashed 2px #DDDDDD !important;
+	background-color: white;
+	height: 150px;
+	overflow: auto;
+	padding:10px;
+
+ }
+.ui-dialog{padding:1px;}
+.ui-dialog form { text-align: left; }
+.ui-dialog .ui-dialog-content { overflow:visible;}
+
+#license-editor .formRight {margin-right: 0px;width: 45%;}
+#license-editor label {	width: 50%;	margin: 3px 3px 0;}
+
+#accept {display: none;}
+-->
+</style>
+<div class="topHeader" style="top:0px;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+				<div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index'), null, true )?>">Home</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ocw', 'action'=>'index'), null, true )?>">OCW list</a></li>
+						<li class="current"><a href="javascript:void(0)"><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+<?php $idcats = null; if(!empty($this->idcats)) $idcats = $this->idcats ;?>
+<?php $idauthors = null;?>
+<?php if(!empty($this->authorocw)): ?>
+	<?php foreach($this->authorocw as $author): ?>
+			<?php $idauthors[] = $author->id;?>
+	<?php endforeach;?>
+<?php endif;?>
+
+var urlImage = "<?php echo 'http://'.$_SERVER['SERVER_NAME'].'/upload/images/'?>";
+var urlFile = "<?php echo 'http://'.$_SERVER['SERVER_NAME'].'/upload/files/'?>";
+
+var idauthors= new Array();
+idauthors = <?php if(!empty($idauthors)){ echo json_encode($idauthors ); }else{ ?> new Array(); <?php }?>;
+
+var idcats= new Array();
+idcats = <?php if(!empty($this->idcats)){ echo json_encode($this->idcats ); }else{ ?> new Array(); <?php }?>;
+
+//Variable para contar la cantidad de libros que se agregaron
+var cantbook = 0; //book add
+var count = 0; //book add
+$(function() {
+
+	var validStep = new Array();
+	var mensaje;
+
+	// authors
+	$( "#sortable-author" ).sortable({
+		placeholder: "placeholder",
+		forcePlaceholderSize: true,
+        opacity: 0.4
+	});
+	$( "#sortable-author" ).disableSelection();
+	// categories
+	$( "#sortable-categories" ).sortable({
+		placeholder: "placeholder",
+		forcePlaceholderSize: true,
+        opacity: 0.4
+	});
+	$( "#sortable-categories" ).disableSelection();
+
+	$( '.buttonLi' ).on('click', function(){
+		$(this).parents('li').remove();
+	});
+
+    // combos dependientes
+    $('#idUniversity').on('change', function(){
+       var idUniversity = $(this).val();
+ 	   $.ajax({
+	        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ocw', 'action'=> 'getschoolajax'))?>",
+	        data: { idUniversity: idUniversity  } ,
+	        dataType: "json",global: true, cache:false,
+	        ifModified: false, processData:true,
+	        success: function(datos)
+	        {
+				var option = '<option value=""></option> ';
+				$.each( datos, function( key, value ) {
+					option += '<option value="' + value.id + '" >' + value.schName + '</option>';
+				});
+				$('#idSchool').html(''); $('#idDepartment').html('');
+				$('#idSchool').append(option);
+				$("#idSchool").trigger("liszt:updated"); $("#idDepartment").trigger("liszt:updated");
+
+	        },
+	        error: function(request, status, error)
+	        {
+	            mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+	            displayMessage( 'error', mensaje, 'Error', '' );
+	        },
+	        timeout: 20000,
+	        type: "POST"
+	    });
+    });
+    $('#idSchool').on('change', function(){
+       var idSchool = $(this).val();
+ 	   $.ajax( {
+	        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ocw', 'action'=> 'getdepartmentajax'))?>",
+	        data: { idSchool: idSchool  } ,
+	        dataType: "json",global: true, cache:false,
+	        ifModified: false, processData:true,
+	        success: function(datos)
+	        {
+				var option = '<option value=""></option> ';
+				$.each( datos, function( key, value ) {
+					option += '<option value="' + value.id + '" >' + value.depName + '</option>';
+				});
+				$('#idDepartment').html('');
+				$('#idDepartment').append(option);
+				$("#idDepartment").trigger("liszt:updated");
+
+	        },
+	        error: function(request, status, error)
+	        {
+	            mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+	            displayMessage( 'error', mensaje, 'Error', '' );
+	        },
+	        timeout: 20000,
+	        type: "POST"
+	    } );
+    });
+
+    $('#file-upload').fineUploader({
+    	request: {
+    	endpoint: '/admin/ocw/uploadfile/target/files'
+    	},
+    	multiple: false,
+    	text: {
+    		uploadButton: 'Select or drop here, a file to upload'
+    	},
+    	showMessage: function(message) {
+    		displayMessage( 'error', message, 'Error', '' );
+    	}
+    }).on('complete', function(event, id, filName, responseJSON) {
+   		if (responseJSON.success) {
+   		    $('#ocwUrlFile').val(urlFile + responseJSON.nameFile);
+   			$('.qq-upload-file').val(responseJSON.nameFile);
+   			displayMessage( 'success', 'Data saved successfully', 'Success', '' );
+   		}
+    })
+    .on('error', function(event, id, filName, mensaje) {
+    	displayMessage( 'error', mensaje, 'Error', '' );
+    });
+    $('#image-upload').fineUploader({
+    	request: {
+    	endpoint: '/admin/ocw/uploadfile/target/images'
+    	},
+    	multiple: false,
+    	validation: {
+    		allowedExtensions: ['jpeg', 'jpg', 'png', 'gif']
+    	},
+    	text: {
+    		uploadButton: 'Select or drop here, a image file to upload'
+    	},
+    	showMessage: function(message) {
+    		displayMessage( 'error', message, 'Error', '' );
+    	}
+    }).on('complete', function(event, id, fileName, responseJSON) {
+		 if (responseJSON.success) {
+	        	displayMessage( 'success', 'Data saved successfully', 'Success', '' );
+	        	 $('#thumbnail').val(urlImage + responseJSON.nameFile);
+				 $('#urlimagen').attr('src', urlImage + responseJSON.nameFile);
+		 }
+    })
+     .on('error', function(event, id, filName, mensaje) {
+        mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+    	displayMessage( 'error', mensaje, 'Error', '' );
+    });
+
+    $('#thumbnail').change(function() {
+    	var cadena = $(this).val().split("/");
+    	for (var i=0; i < cadena.length; i++) {
+        	if( (i + 1) == cadena.length){
+           	 	var nombre = cadena[i];
+        	}
+       }
+    	$('#urlimagen').attr('src', $(this).val());
+    });
+
+    $('#image-upload-books').fineUploader({
+    	request: {
+    	endpoint: '/admin/ocw/uploadfile/target/images'
+    	},
+    	multiple: false,
+    	validation: {
+    		allowedExtensions: ['jpeg', 'jpg', 'png', 'gif']//,
+    	},
+    	text: {
+    		uploadButton: 'Select or drop here, a image file to upload'
+    	},
+    	showMessage: function(message) {
+    		displayMessage( 'error', message, 'Error', '' );        	
+    	}
+    }).on('complete', function(event, id, fileName, responseJSON) { 
+		 if (responseJSON.success) {
+             displayMessage( 'success', 'Data saved successfully', 'Success', '' );
+
+             $('#urlimagen-book').prop('src', urlImage + responseJSON.nameFile);
+             $('#bookImageURL').val($('#urlimagen-book').prop('src'));
+		 }
+    }).on('error', function(event, id, filName, mensaje) { 
+        mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+    	displayMessage( 'error', mensaje, 'Error', '' );
+    });
+
+    $('[id^=eliminarBook]').click(function() {
+		var book = $(this).parent().parent().parent();
+		book.find('[id^=bookNameEdit]').val('');
+		book.hide();
+    });
+
+    $(document).on('click', '[id^=imagendowncourse]', function(e) {
+		e.preventDefault();
+		viewoption( $(this).prop("name"), $(this) );
+    });	
+	
+    $('.editor').click(function() {
+    	var name;
+    	for(name in CKEDITOR.instances) {
+    		var instance = CKEDITOR.instances[name];
+    		if(this && this == instance.element.$) {
+    			return;
+    		}
+    	}
+    	$(this).attr('contenteditable', true);
+    	CKEDITOR.inline(this);
+    });
+  	// pretty
+  	$('#purlimagen').prettyPhoto({show_title: false, social_tools: false});
+	// ocultar por defecto los pasos del wizard
+  	$('#step2').hide();
+  	$('#w2confirmation').hide();
+  	$('#step4template').hide();
+
+  	// submit form
+    $('#submit').on('click',function() {
+    	if($('#idLanguage').val() =='' || $('#ocwTitle').val() =='' || is_empty(getList('sortable-categories')) ){
+	     	displayMessage( 'error', 'Please complete the required data. Language, Title or Categories', 'Error', '' );
+			return false;
+    	}
+    	if($('#idUniversity').val() =='' ){
+	     	displayMessage( 'error', 'Please complete the required data "University"', 'Error', '' );
+			return false;
+		} else {
+			// Obtener los campos
+			// busco los campos del primer form
+			var inputs = new Array();
+			$('.formRow input[type=radio]:checked, .formRow input[type=text]:not(.chzn-search), .formRow select:not([name=listAuthors]), .formRow input[type=hidden]').each(function(index, element){
+				if( $(element).attr('name') ){
+					inputs.push({ campo:$(element).attr('name'), valor: $(element).val()  });
+				}
+			});
+			$('.editor').each(function(index, element){
+				inputs.push( { campo:$(element).data('name'), valor: $(element).html()  } );
+			});
+			inputs.push ( { campo: 'ocwLicense', valor: $('#ocwLicense').html() } );
+			var prmloc = $('#promoloc').is(':checked') ? '1' : '0';
+			inputs.push ( { campo: 'promoloc', valor: prmloc } );
+			var authors 	= getList('sortable-author');
+			var categories 	= getList('sortable-categories');
+
+            var degrees = new Array();
+			$('.formRow input[type=checkbox]:checked').each(function(index, element){
+				degrees.push({ campo:$(element).attr('id'), valor: $(element).val() });
+			});
+
+			//constuyo el arreglo para guardar
+			var data = { typeID: $('#idType').val(), campos: inputs, autores: authors, categorias: categories, accion: "edit", id: "<?php if(!empty($this->Ocw->id)) echo $this->Ocw->id; else null; ?>", degrees: degrees};
+			if(is_empty(authors)){
+		     	displayMessage( 'error', 'Please select an author', 'Error', '' );
+				return false;
+			}
+			edsaveOCW( data );
+			return false;
+		}
+    	return false;
+    });
+
+	$('#accept').click(function() {
+		window.location.href = '/admin/ocw';
+	});
+});
+
+function edsaveOCW(data){
+   $.ajax( {
+        url: "/admin/ocw/save",
+        data: data ,
+        dataType: "json",global: true, cache:false,
+        ifModified: false, processData:true,
+        success: function(datos)
+        {
+        	$(".loader").show();
+        	window.setTimeout(function() {
+        		$(".loader").hide();
+        		displayMessage( 'success', 'Data saved successfully', 'Success', '' );
+				$("#accept").show();
+        	}, 2000);
+        },
+        error: function(request, status, error)
+        {
+            mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+            displayMessage( 'error', mensaje, 'Error', '' );
+        },
+        timeout: 20000,
+        type: "POST"
+    } );
+}
+
+function viewoption(seccion, button){
+	//tomó el valor del display ej: none
+	var muestra = $("#extradata"+seccion).css('display')
+	//Nombro la clase como aimgup	
+	if(muestra == 'none'){
+		//Cambio el estado del display
+		button.html('<span> &#9660;</span>');		
+		$("#extradata"+seccion).css('display','block');
+	}else{
+		button.html('<span> &#9654;</span>');		
+		$("#extradata"+seccion).css('display','none');
+	}				
+}		
+		
+function addBook(){
+	
+	if($('#childrenBook').length == 1 ){
+		generateTemplate(cantbook);
+	}else{
+		var name = cantbook-1;
+		var namebook = $('#bookNameAdd'+name).val();
+		if(namebook != ''){
+			if(namebook.length >= 4){
+				generateTemplate(cantbook);
+				$('#book_warnnig'+name).css('display','none');      
+				
+			}else {
+				$('#book_warnnig'+name).css('display','block');
+				$('#bookNameAdd'+name_foc).focus();
+			}
+		}else{
+			mensaje = 'Please, enter name of book';
+			displayMessage( 'error', mensaje, 'Error', '' );
+			$('#book_warnnig'+name).css('display','block');
+			$('#bookNameAdd'+name).focus();
+
+		}
+	}
+}
+
+function generateTemplate(){
+	
+	//Tomo el contenido del template y lo pedo en el div childrenbook
+	$('#childrenBook').append($('#templateBook').html());
+	//modifico los id para identificarlos
+	$('#childrenBook #templateBookAdd').attr('id','templateBookAdd'+cantbook);
+	$('#templateBookAdd'+cantbook+' #headTemplateBook').attr('id','headTemplateBook'+cantbook);
+	$('#headTemplateBook'+cantbook+' #eliminarBook').attr('id','eliminarBook'+cantbook);
+
+	$('#eliminarBook'+cantbook).attr('onClick','deleteBook("#templateBookAdd'+cantbook+'")');
+
+	$('#headTemplateBook'+cantbook+' #imagendowncourse').attr('id','imagendowncourse'+cantbook);
+	$('#headTemplateBook'+cantbook+' #book_name_span_').attr('id','book_name_span_'+cantbook);
+	$('#imagendowncourse'+cantbook).attr('name','CourseOther'+cantbook);
+
+	$('#templateBookAdd'+cantbook+' #extradataCourseOther').attr('id','extradataCourseOther'+cantbook);
+	$('#extradataCourseOther'+cantbook+' #bookNameAdd').attr('id','bookNameAdd'+cantbook);
+	$('#extradataCourseOther'+cantbook+' #bookUrlAdd').attr('id','bookUrlAdd'+cantbook);
+	$('#extradataCourseOther'+cantbook+' #bookAuthorAdd').attr('id','bookAuthorAdd'+cantbook);
+	$('#extradataCourseOther'+cantbook+' #bookISBNAdd').attr('id','bookISBNAdd'+cantbook);
+	$('#extradataCourseOther'+cantbook+' #book_warnnig').attr('id','book_warnnig'+cantbook); 
+
+	$('#headTemplateBook'+cantbook).css('display','block');
+	$('#extradataCourseOther'+cantbook).css('display','block');
+
+	$('#bookNameAdd'+cantbook).attr('type','text');
+	$('#bookNameAdd'+cantbook).attr('name','bookName');
+	$('#bookUrlAdd'+cantbook).attr('type','text');
+	$('#bookUrlAdd'+cantbook).attr('name','bookUrl');
+	$('#bookAuthorAdd'+cantbook).attr('type','text');
+	$('#bookAuthorAdd'+cantbook).attr('name','bookAuthor');
+	$('#bookISBNAdd'+cantbook).attr('type','text'); 
+	$('#bookISBNAdd'+cantbook).attr('name','bookISBN'); 
+	
+	cantbook = cantbook+1;
+}
+
+function change_name(){
+	var name = cantbook-1;
+	var contenido = $('#bookNameAdd'+name).val();
+	$('#book_name_span_'+name).text(contenido);
+}
+
+function deleteBook(id){
+
+	$(id).remove();
+
+}
+
+
+function isValidISBN (str, elemt) {
+	if(str){
+		var sum,
+			weight,
+			digit,
+			check,
+			i;
+		
+		if (str.length != 13 && str.length != 17) {
+			mensaje = 'Plese, insert valid ISBN (10-digit or 13-digit)';
+			displayMessage( 'error', mensaje, 'Error', '' );   
+			$("#"+elemt).focus();
+
+			$( "#"+elemt ).css("border-color", "#EC5555");					
+			return false;
+		}			
+		
+		str = str.replace(/[^0-9X]/gi, '');
+		
+		if (str.length != 10 && str.length != 13) {
+			mensaje = 'Plese, insert valid ISBN (10-digit or 13-digit)';
+			displayMessage( 'error', mensaje, 'Error', '' );   
+			$("#"+elemt).focus();
+
+			$( "#"+elemt ).css("border-color", "#EC5555");					
+			return false;
+		}
+
+		if (str.length == 13) {
+			sum = 0;
+			for (i = 0; i < 12; i++) {
+				digit = parseInt(str[i]);
+				if (i % 2 == 1) {
+					sum += 3*digit;
+				} else {
+					sum += digit;
+				}
+			}
+			check = (10 - (sum % 10)) % 10;
+			$( "#"+elemt ).css("border-color", "");
+			return (check == str[str.length-1]);
+		}
+
+		if (str.length == 10) {
+			weight = 10;
+			sum = 0;
+			for (i = 0; i < 9; i++) {
+				digit = parseInt(str[i]);
+				sum += weight*digit;
+				weight--;
+			}
+			check = 11 - (sum % 11);
+			if (check == 10) {
+				check = 'X';
+			}
+			$( "#"+elemt ).css("border-color", "");
+			return (check == str[str.length-1].toUpperCase());
+		}
+	}else{
+		$( "#"+elemt ).css("border-color", "");
+	}
+}
+
+</script>
+
+
+<div id="content">
+	<div class="wrapper">
+	 	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+	 	<div id="mensajes" ></div>
+
+        <div class="widget">
+            <div class="title"><h6>OCW Edit</h6></div>
+			<form id="wizardOCW" method="post" action="" class="form" >
+                <fieldset class="step" id="w2first">
+                    <h1>General data</h1>
+                    <div class="formRow">
+                        <label>Type:<span class="req">*</span></label>
+                        <div class="formRight">
+                        	<?php foreach ($this->types as $type): ?>
+                        		<?php if(!empty($this->Ocw->idType) && $type->id == $this->Ocw->idType):?>
+                        			<label><?php echo $this->escape($type->typName); ?></label>
+                        			<input id="idType" name="idType" type="hidden" value="<?php echo $this->Ocw->idType ?>">
+                        			<?php break; ?>
+                        		<?php endif;?>
+                        	<?php endforeach;?>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="formRow">
+                        <label>Language:<span class="req">*</span></label>
+                        <div class="formRight searchDrop">
+                        <select data-placeholder="Choose a language..." name="idLanguage" id="idLanguage" class="chzn-select" style="width:350px;" tabindex="2">
+                            <option value=""></option>
+                            <?php foreach ($this->languages as $language) {?>
+                            <option value="<?php echo $language->id?>" <?php if(!empty($this->Ocw->idLanguage) && $language->id == $this->Ocw->idLanguage){ echo "selected";}?>><?php echo $this->escape($language->lanName); ?></option>
+							<?php }?>
+                        </select>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="formRow">
+                        <label>Title:<span class="req">*</span></label>
+                        <div class="formRight"><input type="text" name="ocwTitle" id="ocwTitle" class="campo" value="<?php if(!empty($this->Ocw->ocwTitle)) echo $this->escape($this->Ocw->ocwTitle);?>"/></div>
+                        <div class="clear"></div>
+                    </div>
+					<div class="formRow">
+						<label>Categories:<span class="req">*</span></label>
+	                    <div class="formRight searchDrop">
+
+
+					                <select data-placeholder="Select one.." class="chzn-select exclude" tabindex="2" name="listCategories" id="listCategories">
+						                <option value=""></option>
+						                <?php foreach($this->categories AS $category ) { ?>
+						                <option value="<?php echo $category["id"]?>" title="<?php echo $category['path']?>"><?php echo $this->escape(str_repeat(' - ',(int)$category['level']) . $category['catName'] )?></option>
+						                <?php } ?>
+				                    </select>
+
+
+			                    	<a class="smallButton" style="line-height: 0; padding: 5px; float:left; margin-left:10px;" title="Add category" href="javascript:addCategory()">
+										<img alt="" src="/backend/images/icons/color/plus.png">
+									</a>
+
+				                <div class="clear"></div>
+
+		                    <ul id="sortable-categories">
+		                    	<?php if(!empty($this->ocwcategories)){ ?>
+		                    		<?php foreach($this->ocwcategories as $ocwcat){ ?>
+		                    				<li class="ui-state-default dd-item dd3-item" id="Category_<?php echo $ocwcat["catid"]?>">
+		                    					<div class="dd-handle dd3-handle"></div>
+												<div class="liLeft" style="margin-left:30px;" title="Drag and Drop to order items"><?php echo $this->escape($ocwcat["path"]);?></div>
+												<div class="liRight">
+													<a class="smallButton buttonLi" title="remove category" href="javascript:;"><img alt="" src="/backend/images/icons/color/cross.png"></a>
+												</div>
+												<div class="clear"></div>
+											</li>
+		                    		<?php }?>
+		                    	<?php }?>
+							</ul>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+					<div class="formRow">
+                        <div class="formRight">
+							<input type="radio" <?php if(!empty($this->Ocw->ocwGolive) && $this->Ocw->ocwGolive == 1){?> checked="checked" <?php }?> name="ocwGolive" id="radio1" value="1"/><label for="radio1">Publish</label>
+                            <input type="radio" <?php if((!empty($this->Ocw->ocwGolive) && $this->Ocw->ocwGolive == 0) || empty($this->Ocw->ocwGolive)){?> checked="checked" <?php }?> name="ocwGolive" id="radio2" value="0"/><label for="radio2">Draft</label>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+					<div class="formRow">
+                        <label>Description:</label>
+                        <div class="formRight">
+                        	<div class="editor" data-name="ocwDescription"><?php if(!empty($this->Ocw->ocwDescription)) echo $this->Ocw->ocwDescription;?></div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+					
+                    <div class="formRow">
+                        <label for="tags">Tags:</label>
+                        <div class="formRight"><input type="text" id="tags" name="ocwKeywords" class="tags" value="<?php if(!empty($this->Ocw->ocwKeywords)) echo $this->escape($this->Ocw->ocwKeywords); else echo "" ;?>" /></div>
+                        <div class="clear"></div>
+                    </div>
+
+					<div class="formRow">
+                        <label>Promotions placement:</label>
+                        <div class="formRight">
+							<span class=""><input id="promoloc" type="checkbox" name="promoloc" value="" <?php if(!empty($this->Ocw->promoloc) && $this->Ocw->promoloc == 1) echo "checked"; else echo ""?> style="float: left; margin-top: 5px; margin-right: 5px; opacity: 0;"><label>On top</label></span>
+                        </div>
+                        <div class="clear"></div>
+                    </div>					
+					<div class="clear"></div>
+                </fieldset>
+
+			   <div class="formRow">
+				   	<a id="tstep2" href="javascript:toggleCont('step2','tstep2')"><?php echo ucwords($this->contentType) ?> <span>&#9654</span><span style="display:none">&#9660;</span></a>
+				   	<div class="clear"></div>
+			   </div>
+               <div id="step2" style=";">
+				   <fieldset class="step">
+						<!-- COURSE -->
+						<?php
+						$cantbook = 1;
+						if($this->Ocw->idType == 1): ?>
+						<h1 class="courseForm" >Course</h1>
+						<div class="formRow courseForm">
+							<label>Course URL:</label>
+							<div class="formRight"><input type="text" name="ocwUrlCourse" placeholder="http://" value="<?php if(!empty($this->Course->ocwUrlCourse)) echo $this->escape($this->Course->ocwUrlCourse);?>" /></div>
+							<div class="clear"></div>
+						</div>
+						<div class="formRow courseForm">
+							<label>By pass URL:</label>
+							<div class="formRight"><input type="text" name="ocwBypassUrlCourse" placeholder="http://" value="<?php if(!empty($this->Course->ocwBypassUrlCourse)) echo $this->escape($this->Course->ocwBypassUrlCourse);?>" /></div>
+							<div class="clear"></div>
+						</div>
+						<div class="formRow courseForm">
+							<label>Open Study:</label>
+							<div class="formRight">
+								<input type="radio" <?php if(empty($this->Course->ocwOpenstudy) || (!empty($this->Course->ocwOpenstudy) && $this->Course->ocwOpenstudy == 1)){ ?>checked="checked" <?php }?> name="ocwOpenstudy" id="ocwOpenstudyradio1" value="1" /><label for="ocwOpenstudyradio1">Yes</label>
+								<input type="radio" <?php if(!empty($this->Course->ocwOpenstudy) && $this->Course->ocwOpenstudy == 0 ){ ?> checked="checked" <?php }?> name="ocwOpenstudy" id="ocwOpenstudyradio2" value="0" /><label for="ocwOpenstudyradio2">No</label>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="formRow courseForm">
+							<label>Open Study URL:</label>
+							<div class="formRight"><input type="text" placeholder="http://" name="ocwOpenstudyUrl" id="ocwOpenstudyUrl"  value="<?php if(!empty($this->Course->ocwOpenstudyUrl)) echo $this->escape($this->Course->ocwOpenstudyUrl);?>" /></div>
+							<div class="clear"></div>
+						</div>
+						<div class="formRow courseForm">
+							<label>Partner Name:</label>
+							<div class="formRight"><input type="text" name="ocwPartnerName" id="ocwPartnerName" value="<?php if(!empty($this->Course->ocwPartnerName)) echo $this->escape($this->Course->ocwPartnerName); ?>"/></div>
+							<div class="clear"></div>
+						</div>
+						<div class="formRow courseForm">
+							<label>Partner URL:</label>
+							<div class="formRight"><input type="text" placeholder="http://" name="ocwPartnerUrl" id="ocwPartnerUrl" value="<?php if(!empty($this->Course->ocwPartnerUrl)) echo $this->escape($this->Course->ocwPartnerUrl);?>" /></div>
+							<div class="clear"></div>
+						</div>
+						<div class="formRow courseForm">
+							<label>Credits:</label>
+							<div class="formRight"><input type="text" name="creditCredits" id="creditCredits" value="<?php if(!empty($this->Course->creditCredits)) echo $this->escape($this->Course->creditCredits);?>" /></div>
+							<div class="clear"></div>
+						</div>
+						<div class="formRow courseForm">
+							<label>Credit Type:</label>
+							<div class="formRight searchDrop">
+
+							<select data-placeholder="Choose a credit type" name="idCreditType" id="idCreditType" class="chzn-select" style="width:350px;" tabindex="2">
+								<option value=""></option>
+								<?php
+								if(!empty($this->creditTypes)){
+								foreach ($this->creditTypes as $creditTypes) {
+								?>
+								<option value="<?php echo $creditTypes->id?>" <?php if(!empty($this->Course->idCreditType) && $creditTypes->id == $this->Course->idCreditType){ echo "selected";}?>><?php echo $creditTypes->type; ?></option>
+								<?php }}?>
+							</select>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="formRow courseForm">
+							<label>Credit URL:</label>
+							<div class="formRight"><input type="text" placeholder="http://" name="creditUrl" id="creditUrl" value="<?php if(!empty($this->Course->creditUrl)) echo $this->escape($this->Course->creditUrl);?>" /></div>
+							<div class="clear"></div>
+						</div>
+						<div class="formRow courseForm" style="margin-left: 1%;">
+							<span style="float:left;">Book data</span> <a class="" style="margin-left:5px;float:left;" href="#" id="imagendowncourse0" name="course"><span> &#9654;</span></a>
+							<div class="clear"></div>
+						</div>
+						<div id="extradatacourse" style="display:none; margin-left: 1%;">
+							<div class="formRow courseForm">
+								<label>Name:</label>
+								<div class="formRight"><input type="text" name="bookName" id="bookName" value="<?php if (!empty($this->books->bookName)) echo $this->escape($this->books->bookName); ?>" /></div>
+								<div class="clear"></div>
+								<input type="hidden"><input type="hidden" name="idBooks" id="idBooks" value="<?php if (!empty($this->books->idBooks)) echo $this->escape($this->books->idBooks); ?>">
+							</div>  
+							<div class="formRow courseForm">
+								<label>URL:</label>
+								<div class="formRight"><input type="text" name="bookUrl" id="bookUrl" value="<?php if (!empty($this->books->bookUrl)) echo $this->escape($this->books->bookUrl); ?>" placeholder="http://" /></div>
+								<div class="clear"></div>
+							</div>
+							<div class="formRow courseForm">
+								<label>Author:</label>
+								<div class="formRight"><input type="text" name="bookAuthor" id="bookAuthor" value="<?php if (!empty($this->books->bookAuthor)) echo $this->escape($this->books->bookAuthor); ?>" /></div>
+								<div class="clear"></div>
+							</div>
+							<div class="formRow courseForm">
+								<label>Upload image:</label>
+								  <div class="formRight">
+									  <input type="hidden" name="bookImg" id="bookImg" id="bookImg" value="">
+									  <div id="image-upload-books"></div>
+								  </div>
+								<div class="clear"></div>
+							</div>  
+
+							<div class="formRow courseForm">
+								<label>Image URL:</label>
+								<div class="formRight">
+									<input type="text" name="bookImageURL" id="bookImageURL" class="campo" value="<?php if (!empty($this->books->bookImageURL)) echo $this->escape($this->books->bookImageURL); ?>"/>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<div class="formRow courseForm">
+								<label>Preview:</label>
+								<div class="formRight">
+									<div id="simg_target"><img id="urlimagen-book" style="width:100px;" src="<?php echo (!empty($this->books->bookImageURL)? $this->escape($this->books->bookImageURL) : '/backend/images/not-available.jpg') ?>"></div>
+								</div>
+								<div class="clear"></div>
+							</div>
+
+							<div class="formRow courseForm">
+								<label>ISBN:</label>
+								<div class="formRight"><input type="text" class="bookISBN" onblur="isValidISBN(this.value, this.id)" id="bookISBN" name="bookISBN" value="<?php if (!empty($this->books->bookISBN)) echo $this->escape($this->books->bookISBN); ?>" /></div>
+								<div class="clear"></div>
+							</div>
+							<div class="formRow courseForm">
+								<label>Add Other Book:</label>
+								<div class="formRight">
+									<a class="smallButton" id="agregarBook" style="line-height: 0; padding: 5px; float:left; margin-left:10px;" title="Add book" href="javascript:addBook()">
+										<img alt="" src="/backend/images/icons/color/plus.png">
+									</a>
+								</div>
+								<div class="clear"></div>
+							</div>
+
+							<?php if($this->other) {
+							   
+								foreach ($this->other as $other){
+							?>
+							
+							<div id="templateBook<?php echo $cantbook ?>">
+								<div id="templateBookAdd<?php echo $cantbook ?>">
+									<div id="headTemplateBook<?php echo $cantbook ?>" style="margin-left: 2%;">
+										<a class="smallButton buttonLi idrefresh" id="eliminarBook<?php echo $cantbook ?>" style="line-height: 0; padding: 0px; float:left; margin-right:7px;" title="Delete book">
+											<img alt="" src="/backend/images/icons/color/cross.png">
+										</a>
+										<span style="float:left;"><p style="padding-top: 0px;">Other book</p></span> <a class="" style="margin-left:5px;float:left;" href="#" id="imagendowncourse<?php echo $cantbook ?>" name="CourseOther<?php echo $cantbook ?>"><span> &#9660;</span></a>
+										<div class="clear"></div>
+									</div>
+									<div id="extradataCourseOther<?php echo $cantbook ?>" style=" margin-left: 2%;">
+										<div class="formRow courseForm">
+											<label>Name:</label>
+											<div class="formRight"><input onblur="javascript:change_name()" type="text" name="bookName" id="bookNameEdit<?php echo $cantbook ?>" value="<?php echo $other['bookName'] ?>" /></div>
+											<div class="formRight" id="book_warnnig" style="display: none; color: red;">Please enter name of book, min 4 characters</div>
+											<div class="clear"></div>
+											<input type="hidden" name="idBooks" id="idBooksEdit<?php echo $cantbook ?>" value="<?php if (!empty($other['idBooks'])) echo $this->escape($other['idBooks']); ?>">
+										</div>  
+										
+										<div class="formRow courseForm">
+											<label>URL:</label>
+											<div class="formRight"><input type="text" name="bookUrl" id="bookUrlEdit<?php echo $cantbook ?>" value="<?php echo $other['bookUrl'] ?>" placeholder="http://" /></div>
+											<div class="clear"></div>
+										</div>
+										<div class="formRow courseForm">
+											<label>Author:</label>
+											<div class="formRight"><input type="text" name="bookAuthor" id="bookAuthorEdit<?php echo $cantbook ?>" value="<?php echo $other['bookAuthor'] ?>" /></div>
+											<div class="clear"></div>
+										</div>
+										<div class="formRow courseForm">
+											<label>ISBN:</label>
+											<div class="formRight"><input type="text" class="bookISBN" onblur="isValidISBN(this.value, this.id)" id="bookISBNEdit<?php echo $cantbook ?>" name="bookISBN" value="<?php echo $other['bookISBN']?>" /></div>
+											<div class="clear"></div>
+										</div>                
+									</div>
+								</div>
+							</div>
+							<?php
+									$cantbook++;
+								}
+							} ?>
+							
+							<!-- Other books -->
+							<div id="childrenBook"></div>
+							
+							<!-- Template para agregar libros -->
+							<div id="templateBook">
+								<div id="templateBookAdd">
+									<div id="headTemplateBook" style="margin-left: 2%; display: none;">
+										<a class="smallButton buttonLi idrefresh" id="eliminarBook" style="line-height: 0; padding: 0px; float:left; margin-right:7px;" title="Delete book">
+											<img alt="" src="/backend/images/icons/color/cross.png">
+										</a>
+										<span style="float:left;"><p style="padding-top: 0px;">New book</p></span> <a class="" style="margin-left:5px;float:left;" href="#" id="imagendowncourse" name="CourseOther"><span> &#9660;</span></a>
+										<div class="clear"></div>
+									</div>
+									<div id="extradataCourseOther" style="display:none; margin-left: 2%;">
+										<div class="formRow courseForm">
+											<label>Name:</label>
+											<div class="formRight"><input onblur="javascript:change_name()" type="hidden" name="bookNameTemp" id="bookNameAdd" value="" /></div>
+											<div class="formRight" id="book_warnnig" style="display: none; color: red;">Please enter name of book, min 4 characters</div>
+											<div class="clear"></div>
+										</div>  
+										
+										<div class="formRow courseForm">
+											<label>URL:</label>
+											<div class="formRight"><input type="hidden" name="bookUrlTemp" id="bookUrlAdd" value="" placeholder="http://" /></div>
+											<div class="clear"></div>
+										</div>
+										<div class="formRow courseForm">
+											<label>Author:</label>
+											<div class="formRight"><input type="hidden" name="bookAuthorTemp" id="bookAuthorAdd" value="" /></div>
+											<div class="clear"></div>
+										</div>
+										<div class="formRow courseForm">
+											<label>ISBN:</label>
+											<div class="formRight"><input type="hidden" class="bookISBN" onblur="isValidISBN(this.value, this.id)" id="bookISBNAdd" name="bookISBNTemp" value="" /></div>
+											<div class="clear"></div>
+										</div>                 
+									</div>
+								</div>
+							</div>
+							<!-- FIN Template para agregar libros -->
+						  <!-- FIN Other books -->     
+						</div>
+					
+						<?php endif;?>
+						 <!-- END COURSE -->
+						 <!-- FILES -->
+						 <?php if($this->Ocw->idType == 2 ): ?>
+						 <h1 class="fileForm" >Files</h1>
+						 <div class="formRow fileForm">
+							<label>Upload File:</label>
+							<div class="formRight">
+								<div id="file-upload"></div>
+							</div>
+							<div class="clear"></div>
+						 </div>
+						 <div class="formRow fileForm">
+							<label>File Url:<span class="req">*</span></label>
+							<div class="formRight"><input type="text" name="ocwUrlFile"  id="ocwUrlFile" class="campo" value="<?php if(!empty($this->File->ocwUrlFile)) echo  $this->File->ocwUrlFile;?>"/></div>
+							<div class="clear"></div>
+						 </div>
+						 <?php endif;?>
+						 <!-- END FILES -->
+
+						 <!-- LECTURES -->
+						 <?php if($this->Ocw->idType == 3): ?>
+						 <h1 class="lectureForm" >Lectures</h1>
+						 <div class="formRow lectureForm">
+							<label>Code to embed (youtube):</label>
+							<div class="formRight"><input type="text" name="lecEmbed" id="lecEmbed" value="<?php if(!empty($this->Lecture->lecEmbed)) echo $this->escape($this->Lecture->lecEmbed);?>"/></div>
+							<div class="clear"></div>
+						 </div>
+						 <div class="formRow lectureForm">
+							<label>Video URL (mp4):</label>
+							<div class="formRight"><input type="text" name="ocwUrlLecture" id="ocwUrlLecture" placeholder="http://" value="<?php if(!empty($this->Lecture->ocwUrlLecture)) echo $this->escape($this->Lecture->ocwUrlLecture);?>" /></div>
+							<div class="clear"></div>
+						 </div>
+						 <div class="formRow lectureForm">
+							<label>By pass URL:</label>
+							<div class="formRight"><input type="text" name="ocwBypassUrlLecture" placeholder="http://" value="<?php if(!empty($this->Lecture->ocwBypassUrlLecture)) echo $this->escape($this->Lecture->ocwBypassUrlLecture);?>" /></div>
+							<div class="clear"></div>
+						 </div>
+
+						 <div class="formRow">
+							<a id="lectureextradata" href="javascript:toggleCont('extradata','lectureextradata')">Show more <span>&#9654</span><span style="display:none">&#9660</span></a>
+							<div class="clear"></div>
+						 </div>
+						 <div id="extradata" style="display:none;">
+							 <div class="formRow lectureForm">
+								<label>Duration:</label>
+								<div class="formRight"><input type="text" name="lecDuration" id="lecDuration" value="<?php if(!empty($this->Lecture->lecDuration)) echo $this->escape($this->Lecture->lecDuration);?>"/></div>
+								<div class="clear"></div>
+							 </div>
+							 <div class="formRow lectureForm">
+								<label>Height:</label>
+								<div class="formRight"><input type="text" name="lecHeight" value="<?php if(!empty($this->Lecture->lecHeight)) echo $this->escape($this->Lecture->lecHeight);?>"/></div>
+								<div class="clear"></div>
+							 </div>
+							 <div class="formRow lectureForm">
+								<label>Width:</label>
+								<div class="formRight"><input type="text" name="lecWidth" value="<?php if(!empty($this->Lecture->lecWidth)) echo $this->escape($this->Lecture->lecWidth);?>"/></div>
+								<div class="clear"></div>
+							 </div>
+							 <div class="formRow lectureForm">
+								<label>Volume:</label>
+								<div class="formRight"><input type="text" name="lecVolume" value="<?php if(!empty($this->Lecture->lecVolume)) echo $this->escape($this->Lecture->lecVolume);?>"/></div>
+								<div class="clear"></div>
+							 </div>
+							<div class="formRow lectureForm">
+								<label>Controls:</label>
+								<div class="formRight">
+									<input type="radio" <?php if(empty($this->Lecture->lecControls) || (!empty($this->Lecture->lecControls) && $this->Lecture->lecControls == 1)){ ?> checked="checked" <?php }?> name="lecControls" id="lecControls1" value="1" /><label for="lecControls2">Yes</label>
+									<input type="radio" <?php if(!empty($this->Lecture->lecControls) && $this->Lecture->lecControls == 0){ ?> checked="checked" <?php }?> name="lecControls" id="lecControls2" value="0" /><label for="lecControls2">No</label>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<div class="formRow lectureForm">
+								<label>Autoplay:</label>
+								<div class="formRight">
+									<input type="radio" <?php if(empty($this->Lecture->lecAutoplay) || (!empty($this->Lecture->lecAutoplay) && $this->Lecture->lecAutoplay == 1)){ ?> checked="checked" <?php }?>  name="lecAutoplay" id="lecAutoplay1" value="1" /><label for="lecAutoplay1">Yes</label>
+									<input type="radio" <?php if(!empty($this->Lecture->lecAutoplay) && $this->Lecture->lecAutoplay == 0){ ?> checked="checked" <?php }?> name="lecAutoplay" id="lecAutoplay2" value="0" /><label for="lecAutoplay2">No</label>
+								</div>
+								<div class="clear"></div>
+							</div>
+							 <div class="formRow lectureForm">
+								<label>Published Date:</label>
+								<div class="formRight"><input type="text" class="datepicker" name="lecPublishedDate" value="<?php if(!empty($this->Lecture->lecPublishedDate)) echo date($this->Lecture->lecPublishedDate); else echo date('Y-m-d');?>" /></div>
+								<div class="clear"></div>
+							 </div>
+						 </div>
+						 <?php endif; ?>
+						<!-- End Lecture -->
+
+						<!-- Collections -->
+						<?php if($this->Ocw->idType == 4 ): ?>
+						 <h1 class="collectionForm" >Collections</h1>
+
+						 <div class="formRow collectionForm" >
+	                        <label>Heading:<br><br>Using arbitrary elements on the template you select, you can add any text description that you like, as well as image and video elements.</label>
+							<div class="formRight">							
+								<div class="editor" style="height: 300px;"  data-name="colfrequentlyQuest" ><?php if(!empty($this->Collection->colfrequentlyQuest)) echo $this->Collection->colfrequentlyQuest;?></div>
+							</div>
+							<div class="clear"></div>
+						 </div>
+						<?php endif;?>
+						 <!-- End Collections -->
+
+						 <!-- Conferences -->
+						 <?php if($this->Ocw->idType == 6) :?>
+						 <h1 class="conferenceForm" >Conferences</h1>
+						 <div class="formRow conferenceForm">
+							<label>Frequently asked questions:</label>
+							<div class="formRight">
+								<div class="editor" style="height: 300px;" data-name="confrequentlyQuest" ><?php if(!empty($this->Conference->confrequentlyQuest)) echo $this->Conference->confrequentlyQuest;?></div>
+							</div>
+							<div class="clear"></div>
+						 </div>
+						 <?php endif; ?>
+						 <!-- End Conference -->
+
+					</fieldset>
+                </div>
+			    <div class="formRow">
+				   	<a id="tstep3" href="javascript:toggleCont('w2confirmation','tstep3')">Author and University <span>&#9654</span><span style="display:none">&#9660</span></a>
+				   	<div class="clear"></div>
+			    </div>
+                <div id="w2confirmation" style="">
+                <fieldset id="" class="step">
+                    <h1 >Author and University</h1>
+					<div class="formRow ">
+						<label>Author:<span class="req">*</span></label>
+						<div class="formRight searchDrop">
+							<select data-placeholder="Select one.." class="chzn-select exclude" tabindex="2" name="listAuthors" id="listAuthors" >
+								<option value=""></option>
+								<?php if(!empty($this->authors)){?>
+									<?php foreach($this->authors AS $author ) { ?>
+									   <?php $nombres = null; $ids = null;?>
+									   <?php $listado_grados = explode(",",$author->degree);?>
+									   <?php foreach($listado_grados as $value){ ?>
+											<?php $pos = strpos($value, '_'); ?>
+											<?php $nombres .= substr($value, 0, $pos).',';?>
+											<?php $ids .= substr($value, $pos+1).',';?>
+									   <?php }?>
+									<option id="<?php  echo ( is_null($author->degree) ? '' : $author->degree ); ?>" value="<?php echo $author->id?>"><?php echo $this->escape($author->authorName .  ( is_null($nombres) ? '' : ' (' .substr($nombres,0,-1). ')' )); ?></option>
+									<?php } ?>
+								<?php } ?>
+							</select>
+							<a class="smallButton" style="line-height: 0; padding: 5px; float:left; margin-left:10px;" title="Add author" href="javascript:addAuthor()">
+							 <img alt="" src="/backend/images/icons/color/plus.png">
+							</a>
+							<div class="clear"></div>
+							<ul id="sortable-author">
+		                     	<?php if(!empty($this->authorocw)){?>
+		                     		<?php foreach($this->authorocw as $authorocw){?>
+		                     			<?php if(!empty($this->Ocw->id) && !empty($authorocw->idOCW) && $authorocw->idOCW == $this->Ocw->id){?>
+								        <li id="Author_<?php echo $authorocw->id?>" class="ui-state-default dd-item dd3-item">
+								        	<div class="dd-handle dd3-handle"></div>
+											<div class="liLeft" style="margin-left:30px;" title="Drag and Drop to order items">
+												<div style="float:left;margin-right:25px;"><?php echo $authorocw->authorName ?></div>
+												<?php $degs=null;?>
+												<?php if(!empty($authorocw->degree) ) {  $degs= explode(",", $authorocw->degree); } ?>
+												<?php if(!empty($authorocw->iddegree) ) {  $iddegs= explode(",", $authorocw->iddegree); } ?>
+												<?php if(!empty($degs)){?>
+													<?php foreach($degs as $value){?>
+														<?php $pos = strpos($value, '_'); ?>
+														<?php $nombre = substr($value, 0, $pos); $id = substr($value, $pos+1);?>
+															<div style="float:left;">
+																<input id="<?php echo $authorocw->id?>_<?php echo $id;?>" <?php if(!empty($iddegs)){ if(in_array($id,$iddegs )){?> checked="checked" <?php }} ?> type="checkbox" name="idDeg" value="<?php echo $id;?>" style="float:left; margin-top: 5px; margin-right: 5px;">
+																<label style="float:left; margin-right: 10px;" for="<?php echo $id;?>"><?php echo $nombre;?></label>
+															</div>
+													<?php }?>
+												<?php }?>
+											</div>
+											<div class="liRight">
+												<a class="smallButton buttonLi" href="javascript:removeAuthor(<?php echo $authorocw->id?>, '<?php echo $authorocw->authorName ?>' )" title="remove Author">
+												<img src="/backend/images/icons/color/cross.png" alt="">
+												</a>
+											</div>
+											<div class="clear"></div>
+										</li>
+										<?php }?>
+									<?php }?>
+								<?php } ?>
+							</ul>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="formRow ">
+                        <label>University:<span class="req">*</span></label>
+                        <div class="formRight searchDrop">
+                        <select data-placeholder="Choose a University..." name="idUniversity" id="idUniversity" class="chzn-select" style="width:350px;" tabindex="2">
+                        	<option value=""></option>
+                            <?php foreach ($this->universitys as $university){ ?>
+                            <option value="<?php echo $university->id?>"  <?php if(!empty($this->Ocw->idUniversity) && $this->Ocw->idUniversity == $university->id) echo "selected = selected"?> ><?php echo $this->escape($university->uniName) ?></option>
+                            <?php }?>
+                        </select>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="formRow ">
+                        <label>School:</label>
+                        <div class="formRight searchDrop">
+                        <select data-placeholder="Choose a School..." name="idSchool" id="idSchool" class="chzn-select" style="width:350px;" tabindex="2">
+                            <option value=""></option>
+                            <?php foreach ($this->schools as $school){ ?>
+                            <option value="<?php echo $school->id?>"  <?php if(!empty($this->Ocw->idSchool) && $this->Ocw->idSchool == $school->id) echo "selected = selected"?> ><?php echo $this->escape($school->schName) ?></option>
+                            <?php }?>
+                        </select>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="formRow ">
+                        <label>Department:</label>
+                        <div class="formRight searchDrop">
+                        <select data-placeholder="Choose a Deparment..." name="idDepartment" id="idDepartment" class="chzn-select " style="width:350px;" tabindex="2">
+                            <option value=""></option>
+                            <?php foreach ($this->departments as $department){ ?>
+                            <option value="<?php echo $department->id?>"  <?php if(!empty($this->Ocw->idDepartment) && $this->Ocw->idDepartment == $department->id) echo "selected = selected"?> ><?php echo $this->escape($department->depName) ?></option>
+                            <?php }?>
+                        </select>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <!-- asignación de imagen a cualquier tipo de ocw -->
+                     <div class="formRow ">
+				    	<label>Upload image:</label>
+				        <div class="formRight">
+				        	<input type="hidden" name="imaFileName" id="imaFileName" id="imaFileName" value="">
+				        	<div id="image-upload"></div>
+				        </div>
+
+				        <div class="clear"></div>
+					 </div>
+                     <div class="formRow ">
+				    	<label>Image URL:</label>
+				        <div class="formRight"><input type="text" name="thumbnail"  id="thumbnail" class="campo" value="<?php if(!empty($this->Ocw->thumbnail)) echo  $this->Ocw->thumbnail;?>"/></div>
+				        <div class="clear"></div>
+					 </div>
+                     <div class="formRow ">
+				    	<label>Preview:</label>
+				        <div class="formRight">
+				        	<div id="simg_target"><img id="urlimagen" style="width:100px;" src="<?php echo !empty($this->Ocw->thumbnail) ?  $this->Ocw->thumbnail : '/backend/images/not-available.jpg'; ?>"></div>
+				        </div>
+				        <div class="clear"></div>
+					 </div>
+                     <div class="formRow">
+                        <label>License:</label>
+                        <div class="formRight">
+                        	<div><input class="basic" id="license-editor-button" value="Open license editor" type="button" /></div>
+                        	<div data-name="ocwLicense" style="background-color: white; border: 2px dashed #dddddd; padding: 5px; margin-top: 10px;" id="ocwLicense">
+                        		<?php echo !empty($this->Ocw->ocwLicense) ? $this->Ocw->ocwLicense: '' ?>
+                        	</div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+					 <div class="formRow">
+                        <label>Notes:</label>
+                        <div class="formRight">
+                        	<div class="editor" data-name="ocwNotes"><?php if(!empty($this->Ocw->ocwNotes)) echo $this->Ocw->ocwNotes;?></div>
+                        </div>
+                        <div class="clear"></div>
+                     </div>
+
+                </fieldset>
+                </div>
+				<div class="formRow">
+					<a id="tstep4" href="javascript:toggleCont('step4template','tstep4')">Templates <span>&#9654</span><span style="display:none">&#9660</span></a>
+					<div class="clear"></div>
+				</div>
+				<div id="step4template" style="">
+					<fieldset id="" class="step">
+						 <h1>Template</h1>
+						 <div class="formRow courseForm">
+							<label>Select template:</label>
+							<div class="formRight" style="width: 64%;">
+								<input type="hidden" name="ocwTemplate" id="ocwTemplate" class="campo" value="<?php if(!empty($this->Ocw->ocwTemplate)) echo $this->escape($this->Ocw->ocwTemplate);?>"/>
+								<?php
+								$tipo=$this->escape($this->Ocw->idType);
+									switch ($tipo) {
+										case '4':
+											$path_template="/collections/template/";
+											$path_view="/collections/view/";
+											break;
+										case '1':
+											$path_template="/courses/template/";
+											$path_view="/courses/view/";
+											break;
+										case '3':
+											$path_template="/lectures/template/";
+											$path_view="/lectures/view/";
+											break;
+
+										default:
+											# code...
+											break;
+									}
+								?>
+								<!--template-view -->
+								<div id="simg_target" style="text-align: center;display: flex;">
+									<div style="padding: 2%;">
+										<a href="#" id="tmpl-a1" class="selectorTemplate"><img class="box-tmpl" id="box-tmpl-a1" style="border:4px solid #fff;width:100px;" src="/backend/images<?php echo $path_template?>template_01.jpg"></a>
+										<div>
+											<a href="#" class="tmpl-v" id="tmpl-v1" src="/backend/images<?php echo $path_view?>view_01.jpg">Preview</a> <!-- |
+											<a href="#" class="tmpl-a" id="tmpl-a1">Apply</a> -->
+										</div>
+                                        <a href="#" id="tmpl-a2" class="selectorTemplate"><img class="box-tmpl" id="box-tmpl-a2" style="border:4px solid #fff;width:100px;" src="/backend/images<?php echo $path_template?>template_02.jpg"></a>
+										<div>
+											<a href="#" class="tmpl-v" id="tmpl-v2" src="/backend/images<?php echo $path_view?>view_02.jpg">Preview</a> <!-- |
+											<a href="#" class="tmpl-a" id="tmpl-a2">Apply</a> -->
+										</div>
+									</div>
+
+									<div style="padding: 2%;">
+                                        <a href="#" id="tmpl-a3" class="selectorTemplate"><img class="box-tmpl" id="box-tmpl-a3" style="border:4px solid #fff;width:100px;" src="/backend/images<?php echo $path_template?>template_03.jpg"></a>
+										<div>
+											<a href="#" class="tmpl-v" id="tmpl-v3" src="/backend/images<?php echo $path_view?>view_03.jpg">Preview</a> <!-- |
+											<a href="#" class="tmpl-a" id="tmpl-a3">Apply</a> -->
+										</div>
+                                        <a href="#" id="tmpl-a4" class="selectorTemplate"><img class="box-tmpl" id="box-tmpl-a4" style="border:4px solid #fff;width:100px;" src="/backend/images<?php echo $path_template?>template_04.jpg"></a>
+										<div>
+											<a href="#" class="tmpl-v" id="tmpl-v4" src="/backend/images<?php echo $path_view?>view_04.jpg">Preview</a> <!-- |
+											<a href="#" class="tmpl-a" id="tmpl-a4">Apply</a>-->
+										</div>
+									</div>
+
+									<div style="padding: 2%;">
+                                        <a href="#" id="tmpl-a5" class="selectorTemplate"><img class="box-tmpl" id="box-tmpl-a5" style="border:4px solid #fff;width:100px;" src="/backend/images<?php echo $path_template?>template_05.jpg"></a>
+										<div>
+											<a href="#" class="tmpl-v" id="tmpl-v5" src="/backend/images<?php echo $path_view?>view_05.jpg">Preview</a> <!-- |
+											<a href="#" class="tmpl-a" id="tmpl-a5">Apply</a>-->
+										</div>
+                                        <a href="#" id="tmpl-a6" class="selectorTemplate"><img class="box-tmpl" id="box-tmpl-a6" style="border:4px solid #fff;width:100px;" src="/backend/images<?php echo $path_template?>template_06.jpg"></a>
+										<div>
+											<a href="#" class="tmpl-v" id="tmpl-v6" src="/backend/images<?php echo $path_view?>view_06.jpg">Preview</a> <!-- |
+											<a href="#" class="tmpl-a" id="tmpl-a6">Apply</a>-->
+										</div>
+									</div>
+
+								</div>
+								<!-- template-view-->
+							</div>
+							<div class="clear"></div>
+						 </div>
+					</fieldset>
+				</div>
+				<div id="aclink" class="formRow">
+					<a id="editac" href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ocw', 'action'=>'editac', 'id'=>$this->Ocw->id ) )?>">Edit arbitrary content &#9777;</a>
+					<div class="clear"></div>
+				</div>
+				<div class="wizButtons">
+                    <div class="status" id="status2"></div>
+					<span class="wNavButtons">
+                        <input class="basic" value="Cancel" type="button" onclick="cancel()"/>
+                        <input class="blueB ml10" id="submit" value="Save" type="button" />
+						<input class="greenB" id="accept" value="Accept" type="button" />
+                    </span>
+				</div>
+                <div class="clear"></div>
+			</form>
+			<div class="data" id="w2"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready( function() {
+    cantbook = parseInt('<?php echo $cantbook ?>');
+
+	if($( "#ocwTemplate" ).val())
+		var seletmpl = JSON.parse($( "#ocwTemplate" ).val());
+	else{
+		var seletmpl = [];
+		seletmpl["T"] = '1';
+	}
+
+	$("#box-tmpl-a"+seletmpl["T"]).css({"border-color": "#a5d24a"});
+
+	$('.tmpl-v').click(function(e) {
+		e.preventDefault();
+		var stringId 	= this.id
+		var arrayId 	= stringId.split('v');
+		if (arrayId[1]==1) {$('#tmpl-img').attr('src', $('#tmpl-v1').attr('src'));}
+		if (arrayId[1]==2) {$('#tmpl-img').attr('src', $('#tmpl-v2').attr('src'));}
+		if (arrayId[1]==3) {$('#tmpl-img').attr('src', $('#tmpl-v3').attr('src'));}
+		if (arrayId[1]==4) {$('#tmpl-img').attr('src', $('#tmpl-v4').attr('src'));}
+		if (arrayId[1]==5) {$('#tmpl-img').attr('src', $('#tmpl-v5').attr('src'));}
+		if (arrayId[1]==6) {$('#tmpl-img').attr('src', $('#tmpl-v6').attr('src'));}
+		$( "#template-viewer" ).data("tmplId", arrayId[1]).dialog('open');
+	});
+
+	$( "#template-viewer" ).dialog({
+		draggable: false,
+		autoOpen: false,
+		width: 450,
+		minHeight: 520,
+		resizable: false,
+		modal: true,
+		open: function(event,ui){},
+		buttons: {
+			'Apply': function() { applyTemplate($(this).data("tmplId")); $( this ).dialog( "close" );	}
+		},
+		close: function() {	}
+	});
+
+
+	$('#license-editor-button').on('click', function() {
+		$( "#license-editor" ).dialog('open');
+	});
+	$( "#license-editor" ).dialog({
+		draggable: false,
+		autoOpen: false,
+		width: $(window).width() < 600 ? ($(window).width() - 10) : 500,
+		resizable: false,
+		modal: true,
+		open: function(event,ui){},
+		buttons: {
+			'Cancel': function() { $( this ).dialog( "close" );	},
+			"Accept": function() {
+				var title = $('#ocwTitle').val();
+				var attribution_name = getList('sortable-author');
+				var version = $('input[name="version"]:checked').val();
+				var licclass = $('#licclass').val();
+				var licjurisdiction = $('#licjurisdiction').val();
+				var licjurisdictionText = $('#licjurisdiction option:selected').text();
+				var field_derivatives = $('#field_derivatives').val();
+				var field_commercial = $('#field_commercial').val();
+				var work_url = $('#work-url').val();
+				var more_permissions_url = $('#more_permissions_url').val();
+				var data = {	  "version": version
+								, "title":title
+								, "attribution_name":attribution_name
+								, "licclass":licclass
+								, "licjurisdiction": licjurisdiction
+								, 'licjurisdictionText': licjurisdictionText
+								, "field_derivatives":field_derivatives
+								, "field_commercial": field_commercial
+								, "work_url":work_url
+								, "more_permissions_url": more_permissions_url};
+				$( this ).dialog( "close" );
+		 	    $.ajax( {
+			        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ocw', 'action'=> 'getlicense'))?>",
+			        data: data ,
+			        dataType: "html",global: true, cache:false,
+			        ifModified: false, processData:true,
+			        success: function(datos)
+			        {
+			        	$(".loader").hide();
+						$('#ocwLicense').html('');
+						if(version == 3 ){
+							datos = replaceAll( datos, '4.0', '3.0' );
+						}
+						$('#ocwLicense').html(datos);
+
+			        },
+			        error: function(request, status, error)
+			        {
+			            mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+			            displayMessage( 'error', mensaje, 'Error', '' );
+			        },
+			        timeout: 20000,
+			        type: "POST"
+			     } );
+			}
+		},
+		close: function() {	}
+	});
+	
+	$("input[name='version']").on('click', function(){
+		if( $(this).prop('id') == 'version_3' ){
+			$('#licjurisdiction').prop('disabled', false);
+			$(".chzn-select").trigger("liszt:updated");
+		} else {
+			$('#licjurisdiction').prop('disabled', true);
+			$(".chzn-select").trigger("liszt:updated");
+		}
+	});
+
+    $(".selectorTemplate").click(function(event){
+		event.preventDefault();
+        id = $(this).attr("id").split("a")[1];
+        applyTemplate(id);
+	});
+});
+function applyTemplate(tmplId){
+	prevContent = $("#ocwTemplate").attr("value");
+	if(prevContent != ""){
+		arrtmpl = JSON.parse(prevContent);
+		arrtmpl.T = tmplId;
+	}else{
+		var arrtmpl = {};
+		arrtmpl["T"] = tmplId;
+	}
+	var datatmpl = JSON.stringify(arrtmpl);
+	$( "#ocwTemplate" ).val(datatmpl);
+	$(".box-tmpl").css("border-color", "#fff");
+	$("#box-tmpl-a"+tmplId).css("border-color", "#a5d24a");
+}
+
+function replaceAll( text, busca, reemplaza ){
+	while (text.toString().indexOf(busca) != -1)
+		text = text.toString().replace(busca,reemplaza);
+	return text;
+}
+</script>
+
+<div id="license-editor" title="License Editor">
+	<div class="">
+		<form class="form" method="post" action="" class="dialog" onsubmit="return false;">
+			<fieldset>
+				<div class="formRow">
+	                <div class="searchDrop" style="float: left;">
+	                	<div style="clear: both;">
+							<input type="radio" value="4" name="version" checked="checked" id="version_4" /><label for="version_4" style="width: 80%;">Use latest license version</label>
+						</div>
+						<div style="clear: both;">
+                        	<input type="radio" value="3" name="version" id="version_3" /><label for="version_3" style="width: 80%;">Looking for earlier license version, including ports?</label>
+                        </div>
+						<div style="clear: both; padding-top: 5px;">
+                        	<select disabled="disabled" data-placeholder="License Jurisdiction" name="licjurisdiction" id="licjurisdiction" class="chzn-select " style="width:450px; float: right;" tabindex="2" >
+                        		<option value="">International</option>
+                        		<?php echo file_get_contents('http://api.creativecommons.org/rest/1.5/support/jurisdictions');?>
+                        	</select>
+                        </div>
+                    </div>
+            		<div class="clear"></div>
+                </div>
+           		<div class="formRow " style="">
+					<label>Class:</label>
+                    <div class="formRight searchDrop">
+                    	<select data-placeholder="Choose ..." name="licclass" id="licclass" class="chzn-select " style="width:200px;" tabindex="2">
+                        	<option value="standard">Standart</option>
+                        	<option value="zero">CCO</option>
+                        	<option value="mark">Public Domain Mark</option>
+                        </select>
+					</div>
+                    <div class="clear"></div>
+				</div>
+           		<div class="formRow " style="">
+					<label>Allow adaptions of your work to be shared?:</label>
+                    <div class="formRight searchDrop">
+                    	<select data-placeholder="Choose ..." name="field_derivatives" id="field_derivatives" class="chzn-select " style="width:200px;" tabindex="2">
+                        	<option value="y">Yes</option>
+                        	<option value="sa">Yes, as long as other share alike</option>
+                        	<option value="n">No</option>
+                        </select>
+					</div>
+                    <div class="clear"></div>
+				</div>
+           		<div class="formRow " style="">
+					<label>Allow commercial uses of your work?:</label>
+                    <div class="formRight searchDrop">
+                    	<select data-placeholder="Choose ..." name="field_commercial" id="field_commercial" class="chzn-select " style="width:200px;" tabindex="2">
+                        	<option value="y">Yes</option>
+                        	<option value="n">No</option>
+                        </select>
+					</div>
+                    <div class="clear"></div>
+				</div>
+           		<div class="formRow ">
+					<label>Source work URL:</label>
+					<div class="formRight"><input type="text" class="" id="work-url" name="work-url" value="" /></div>
+					<div class="clear"></div>
+				</div>
+           		<div class="formRow ">
+					<label>More permissions URL:</label>
+					<div class="formRight"><input type="text" class="" id="more_permissions_url" name="more_permissions_url" value="" /></div>
+					<div class="clear"></div>
+				</div>
+			</fieldset>
+        </form>
+	</div>
+</div>
+
+<div id="template-viewer" title="Template Viewer">
+	<div style="text-align: center;">
+		<img id="tmpl-img" src="" width="100%">
+	</div>
+</div>

@@ -1,0 +1,91 @@
+<!-- Start primary content -->
+
+
+<div class="span12" id="navi2">
+    <div class="navbar">
+        <div class="navbar-inner" id="nav2">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target="#navbar2">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <div id="navbar2" class="nav-collapse">
+                    <ul class="nav">
+                        <li><a id="navaboutocw" href="#">About UCI OpenCourseWare</a></li>
+                        <li><a id="navfaq" href="#">FAQ</a></li>
+                        <li><a id="navtermsofuse" href="#">Terms of Use</a></li>
+                        <li><a id="navawards" href="#">Awards</a></li>
+                        <li><a id="navtestimonials" href="#">Testimonials</a></li>
+                        <li><a id="navinfo" href="#">Information for Faculty</a></li>
+                        <li><a id="navourteam" href="#">Our Team</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="span12" id="content">
+    <!-- Start accordion -->
+    <div class="accordion" id="about">
+
+        <!-- Start accordion grouping -->
+        <div class="accordion-group">
+            <div class="accordion-heading">
+            </div>
+
+            <!-- Start accordion-body content -->
+            <div id="ocw" class="accordion-body collapse in">
+                <div class="accordion-inner">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".accordion-heading").html('<a class="accordion-toggle" data-parent="#about" href="#ocw"><h3>About UCI OpenCourseWare</h3></a>');
+        $(".nav li #navaboutocw").click(function (){
+            //$("#content").load("about/aboutus.html");
+            $(".accordion-heading").html('<a class="accordion-toggle" data-parent="#about" href="#ocw"><h3>About UCI OpenCourseWare</h3></a>');
+            $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(1)").addClass("active");
+        })
+        $(".nav li #navfaq").click(function () {
+            //$("#content").load("about/faq.html");
+            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#faq"><h3>Frequently Asked Questions</h3></a>');
+	        $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(2)").addClass("active");
+	    })
+        $(".nav li #navtermsofuse").click(function () {
+            //$("#content").load("about/termsofuse.html");
+            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#termsofuse"><h3>Terms of Use</h3></a>');
+	        $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(3)").addClass("active");
+	    })
+        
+        $(".nav li #navawards").click(function () {
+            $("#content").load("about/awards.html");
+            $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(4)").addClass("active");
+        })
+        $(".nav li #navtestimonials").click(function(){
+            $("#content").load("about/testimonials.html");
+            $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(5)").addClass("active");
+        })
+        $(".nav li #navinfo").click(function(){
+            $("#content").load("about/infoforfaculty.html");
+            $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(6)").addClass("active");
+        })
+        $(".nav li #navourteam").click(function(){
+            $("#content").load("about/ourteam.html");
+            $("#nav2 li").removeClass("active");
+            $("#nav2 li:nth-child(7)").addClass("active");
+        })
+    });
+</script>
+

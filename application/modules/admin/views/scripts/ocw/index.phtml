@@ -1,0 +1,439 @@
+<?php
+$this->jQuery()->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/datatable.fnReloadAjax.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/TableTools/media/js/TableTools.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/TableTools/media/js/ZeroClipboard.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/advancedFilter.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
+;
+
+$this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools.css')
+->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools_JUI.css')
+;
+?>
+<!-- Mueve el search de la tabla principal -->
+<style>
+    #DataTables_Table_0_filter {margin-left: 80px !important;}
+</style>
+<div class="topHeader" style="top:0px;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">				
+				<div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>						
+						<li class="current"><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ocw', 'action'=>'index') )?>">OCW list</a></li>
+					</ul>
+				</div>	
+			</div>			
+		</div>
+	</div>
+</div>
+    <div id="content">
+        <div class="wrapper">
+            <div id="mensajes">
+                <?php
+                if ($this->success) {
+                    $this->messages()->success($this->success, 'OK!');
+                }
+                if ($this->info) {
+                    $this->messages()->info($this->info, 'Info');
+                }
+                if ($this->error) {
+                    $this->messages()->error($this->error, 'Error');
+                }
+                ?>
+            </div>	
+            <div class="filterDetailed" id="f1" style="display:none;">
+                <div class="filterContent">
+                    <div class="advancedFilterButons">
+                        <a class="button basic" title="" href="javascript:reloadFilters();" id="reload-table">
+                            <img class="icon" alt="" src="<?php echo $this->baseUrl() ?>/backend/images/icons/dark/refresh2.png">
+                            <span title="Reload Filters">Reload</span>
+                        </a>
+                        <a class="button basic"  title="" href="javascript:clarFilters();" id="clean-filters">
+                            <img class="icon" alt="" src="<?php echo $this->baseUrl() ?>/backend/images/icons/dark/smallBrush.png">
+                            <span title="Clean filters">Clean</span>
+                        </a>		                            
+                    </div>
+                    <span class="line"></span>
+                    <div class="advancedFilterToggle">
+                        <div class="toggle acc">
+                            <div class="title"><img src="<?php echo $this->baseUrl() ?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>Title</h6></div>
+                            <div class="menu_body">
+                                <form class="form" action="" id="" onsubmit="return false;">
+                                    <input type="hidden" name="type" value="TEXT" >
+                                    <input type="hidden" name="op" value="LIKE" >
+                                    <input type="hidden" name="label" value="Title" >
+                                    <div class="formRow">
+                                        <label for="ocwTitle">Title:</label>
+                                        <div class="formRight">
+                                            <input id="ocwTitle" name="ocwTitle" type="text" value="" >
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                </form>	
+                            </div>
+
+                            <div class="title"><img src="<?php echo $this->baseUrl() ?>/backend/images/icons/dark/check.png" alt="" class="titleIcon" /><h6>Published</h6></div>
+                            <div class="menu_body">						
+                                <form class="form" action="" id="" onsubmit="return false;">
+                                    <input type="hidden" name="type" value="MULTIPLE" >
+                                    <input type="hidden" name="op" value="IN" >
+                                    <input type="hidden" name="label" value="Published" >
+                                    <div class="formRow">
+                                        <input type="checkbox" name="ocwGolive" id="ocwGolivesi" value="1" alt="Yes" /><label for="ocwGolivesi">Yes</label>
+                                        <div class="clear"></div>
+                                    </div>	
+                                    <div class="formRow">
+                                        <input type="checkbox" name="ocwGolive" id="ocwGoliveno" value="0" alt="No" /><label for="ocwGoliveno">No</label>
+                                        <div class="clear"></div>
+                                    </div>													
+                                </form>																									
+                            </div>
+
+                            <div class="title"><img src="<?php echo $this->baseUrl() ?>/backend/images/icons/dark/check.png" alt="" class="titleIcon" /><h6>Type</h6></div>
+                            <div class="menu_body">
+                                <form class="form" action="" id="" onsubmit="return false;">
+                                    <input type="hidden" name="type" value="MULTIPLE" >
+                                    <input type="hidden" name="op" value="IN" >
+                                    <input type="hidden" name="label" value="Type" >
+                                    <div class="formRow">
+                                        <label for="ocwTitle">Type:</label>
+                                        <div class="formRight">
+                                            <input type="checkbox" name="r4.typName" id="Course" value="Course" alt="Course" /><label for="Course">Course</label>
+                                        </div>
+                                        <div class="formRight">
+                                            <input type="checkbox" name="r4.typName" id="File" value="File" alt="File" /><label for="File">File</label>
+                                        </div>
+                                        <div class="formRight">
+                                            <input type="checkbox" name="r4.typName" id="Lecture" value="Lecture" alt="Lecture" /><label for="Lecture">Lecture</label>
+                                        </div>
+                                        <div class="formRight">
+                                            <input type="checkbox" name="r4.typName" id="Conference" value="Conference" alt="Conference" /><label for="Conference">Conference</label>
+                                        </div>	
+                                        <div class="formRight">
+                                            <input type="checkbox" name="r4.typName" id="Collection" value="Collection" alt="Collection" /><label for="Collection">Collection</label>
+                                        </div>													
+                                        <div class="clear"></div>
+                                    </div>														
+                                </form>	
+                            </div>
+
+                            <div class="title"><img src="<?php echo $this->baseUrl() ?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>University</h6></div>
+                            <div class="menu_body">
+                                <form class="form" action="" id="" onsubmit="return false;">
+                                    <input type="hidden" name="type" value="TEXT" >
+                                    <input type="hidden" name="op" value="LIKE" >
+                                    <input type="hidden" name="label" value="University" >
+                                    <div class="formRow">
+                                        <label for="r1.uniName">University:</label>
+                                        <div class="formRight">
+                                            <input id="r1.uniName" name="r1.uniName" type="text" value="" >
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                </form>	
+                            </div>
+                            <div class="title"><img src="<?php echo $this->baseUrl() ?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>School</h6></div>
+                            <div class="menu_body">
+                                <form class="form" action="" id="" onsubmit="return false;">
+                                    <input type="hidden" name="type" value="TEXT" >
+                                    <input type="hidden" name="op" value="LIKE" >
+                                    <input type="hidden" name="label" value="School" >
+                                    <div class="formRow">
+                                        <label for="r2.schName">School:</label>
+                                        <div class="formRight">
+                                            <input id="r2.schName" name="r2.schName" type="text" value="" >
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                </form>	
+                            </div>
+                            <div class="title"><img src="<?php echo $this->baseUrl() ?>/backend/images/icons/dark/list.png" alt="" class="titleIcon" /><h6>Department</h6></div>
+                            <div class="menu_body">
+                                <form class="form" action="" id="" onsubmit="return false;">
+                                    <input type="hidden" name="type" value="TEXT" >
+                                    <input type="hidden" name="op" value="LIKE" >
+                                    <input type="hidden" name="label" value="Department" >
+                                    <div class="formRow">
+                                        <label for="perCountry">Department:</label>
+                                        <div class="formRight">
+                                            <input id="r3.depName" name="r3.depName" type="text" value="" >
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                </form>	
+                            </div>
+                            <div class="title"><img src="<?php echo $this->baseUrl() ?>/backend/images/icons/dark/check.png" alt="" class="titleIcon" /><h6>Has note</h6></div>
+                            <div class="menu_body">						
+                                <form class="form" action="" id="" onsubmit="return false;">
+                                    <input type="hidden" name="type" value="MULTIPLE" >
+                                    <input type="hidden" name="op" value="IN" >
+                                    <input type="hidden" name="label" value="Has note" >
+                                    <div class="formRow">
+                                        <input type="radio" name="IF(r0.ocwNotes is not null AND LENGTH(r0.ocwNotes)>0, 1, 0)" id="ocwNotessi" value="1" alt="Yes" /><label for="ocwNotessi">Yes</label>
+                                        <div class="clear"></div>
+                                    </div>	
+                                    <div class="formRow">
+                                        <input type="radio" name="IF(r0.ocwNotes is not null AND LENGTH(r0.ocwNotes)>0, 1, 0)" id="ocwNotesno" value="0" alt="No" /><label for="ocwNotesno">No</label>
+                                        <div class="clear"></div>
+                                    </div>													
+                                </form>																									
+                            </div>	 
+
+                        </div>
+                    </div>
+                </div>
+            </div>				                
+
+            <div class="dataTables_wrapper">
+                <!-- Dynamic table -->
+                <div class="widget">
+                    <div class="title">
+                        <a href="<?php echo $this->url(array('module' => 'admin', 'controller' => 'ocw', 'action' => 'editocw')) ?>"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl() ?>/backend/images/icons/dark/add.png"></a>
+                        
+                        <a href="<?php echo $this->url(array('module' => 'admin', 'controller' => 'cache', 'action' => 'refresh')) ?>"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl() ?>/backend/images/icons/dark/refresh3.png"></a>
+                        
+                        <a href="javascript:displayFilter()">
+                            <img style="margin-left: 243px;border:none;" class="titleIcon" alt="" src="<?php echo $this->baseUrl() ?>/backend/images/icons/dark/filter.png">
+                        </a>
+                        <div id="breadcrumbs-wrapper" style="" >
+                            <div class="fbc">
+                                <ul id="fbreadcrumbs" class="fbreadcrumbs">
+                                </ul>
+                                <div class="clear"></div>    
+                            </div> 
+                        </div>
+                        <div class="clear"></div>
+                    </div>                          
+                    <table class="display dTable">
+                        <thead>
+                            <tr>
+                                <th>Functions</th>
+                                <th>OCW Title</th>
+                                <th>Published</th>
+                                <th>OCW Type</th>
+                                <th>University</th>
+                                <th>School</th>
+                                <th>Department</th>							
+                                <th>Thumbnail</th>
+                                <th>Has note</th>
+                            </tr>
+                        </thead>
+                        <tbody>	                    
+                        </tbody>
+                    </table>
+                </div>  
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    var oTable;
+    $(document).ready(function() {
+
+    	$.jGrowl.defaults.closerTemplate = '<div>[close all]</div>';
+    	var calcDataTableHeight = function() {
+            return $(window).height()-300 ; 
+            // la altura de la tabla se calcula en base 
+        };
+    	oTable = $('.dTable').dataTable( { 
+            "bJQueryUI": true, // soporte para temas UI
+            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+            "bRetrieve"  : true,
+            "bProcessing": true,
+        	"bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+        	"sDom": '<""flT>rt<"F"ip>',
+    		"aoColumns": [{ "sWidth": "145px","bSortable": false }, { "sWidth": "30%" }, { "sWidth": "100px" }, { "sWidth": "175px" }, { "sWidth": "15%" }, { "sWidth": "15%" }, { "sWidth": "15%" }, { "sWidth": "50px" }, { "sWidth": "50px" }],
+    		"aaSorting":[[1,'asc']], 
+        	"iDisplayLength": 50,
+            //"sScrollY": "400px", // altura
+            "sScrollY": calcDataTableHeight() ,
+            "sScrollX": "100%",
+            "bScrollCollapse": true,
+            "bSortClasses": false, // no muestra las clases de ordenamiento
+            //"bDeferRender": true, // similar al smartrendering de DHTMLX
+            "sAjaxSource": '<?php echo $this->url(array( 'module'=>'admin','controller'=>'ocw', 'action'=>'ocwgrid'))?>',
+            "fnServerParams": function ( aoData ) {
+                var filters = getAdvancedFilters();
+                aoData.push( { "name": "filters", "value": JSON.stringify(filters.filters) } );
+            } , 
+            
+            "sServerMethod": "POST",
+            "bDestroy": true,
+            
+            "oTableTools": {
+                "sSwfPath": "<?php echo $this->baseUrl()?>/backend/js/plugins/tables/TableTools/media/swf/copy_csv_xls_pdf.swf"
+            },
+
+            "oTableTools": {
+    			"aButtons": []
+    		}, 
+    		                       
+            "fnCreatedRow": function( nRow, aData, iDataIndex ) {
+                // botones
+               	var editar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Edit" href="#"><img alt="" src="/backend/images/icons/color/pencil.png"></a>');
+                var borrar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
+                var asociar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Join" href="#"><img alt="" src="/backend/images/icons/color/block.png"></a>');
+                var refresh = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Refresh cached data" href="#"><img alt="" src="/backend/images/icons/color/arrow-circle-double.png"></a>');
+                	editar.on('click',function(){
+                   	 var form = $('<form>').attr({
+                          name:'editform', 
+                          method: 'post', 
+                          action: '<?php echo $this->url(array('module'=>'admin','controller'=>'ocw', 'action'=>'edit'))?>'
+                      });
+                      $('<input>').attr({
+                           type: 'hidden',
+                           id: 'id',
+                           name: 'id',
+                           value: aData[0]
+                       }).appendTo(form);
+                       form.appendTo($('body'));
+                       form.submit();
+                       return false;
+                     });
+                	asociar.on('click',function(){
+                  	 var form = $('<form>').attr({
+                         name:'editform', 
+                         method: 'post', 
+                         action: '<?php echo $this->url(array('module'=>'admin','controller'=>'ocw', 'action'=>'joins'))?>'
+                     });
+                     $('<input>').attr({
+                          type: 'hidden',
+                          id: 'id',
+                          name: 'id',
+                          value: aData[0]
+                      }).appendTo(form);
+                      form.appendTo($('body'));
+                      form.submit();
+                      return false;
+                    });
+                     borrar.on('click',function(){
+                    		$.msgbox("Are you sure you want to remove this ocw? <br> You cannot undo this action", {
+                    			  type: "confirm",
+                    			  buttons : [
+                    			    {type: "submit", value: "Yes"},
+                    			    {type: "cancel", value: "No"}
+                    			  ]
+                    			}, function(result) {
+                    				if(result === 'Yes'){
+                                      	 var form = $('<form>').attr({
+                                             name:'deleteform', 
+                                             method: 'post', 
+                                             action: '<?php echo $this->url(array('module'=>'admin','controller'=>'ocw', 'action'=>'delete'))?>'
+                                         });
+                                         $('<input>').attr({
+                                             type: 'hidden',
+                                             id: 'Id',
+                                             name: 'Id',
+                                             value: aData[0]
+                                         }).appendTo(form);
+                                         form.appendTo($('body'));
+                                         form.submit();
+                                         return false;
+                    				}
+                    			});
+                     });  
+                     refresh.on('click',function(){
+                 		$.msgbox("Are you sure you want to refresh this ocw? <br> You cannot undo this action", {
+                 			  type: "confirm",
+                 			  buttons : [
+                 			    {type: "submit", value: "Yes"},
+                 			    {type: "cancel", value: "No"}
+                 			  ]
+                 			}, function(result) {
+                 				if(result === 'Yes'){
+                                   	 var form = $('<form>').attr({
+                                          name:'refreshform', 
+                                          method: 'post', 
+                                          action: '<?php echo $this->url(array('module'=>'admin','controller'=>'cache', 'action'=>'refresh'))?>'
+                                      });
+                                      $('<input>').attr({
+                                          type: 'hidden',
+                                          id: 'Id',
+                                          name: 'Id',
+                                          value: aData[0]
+                                      }).appendTo(form);
+                                      form.appendTo($('body'));
+                                      form.submit();
+                                      return false;
+                 				}
+                 			});
+                  	});  
+                   	<?php if($this->usuario->idRole == 3 || $this->usuario->idRole == 4){?>                     
+                    	var div = $('<div>').attr({ style : 'width:120px; text-align:center;'}).append(editar).append(asociar);
+                    <?php }else{?> 
+                    	var div = $('<div>').attr({ style : 'width:120px; text-align:center;'}).append(editar).append(asociar).append(borrar).append(refresh);
+                    <?php }?>                 
+                     $('td:eq(0)', nRow).empty();
+                     $('td:eq(0)', nRow).append(div);
+
+					if(aData[7] != null && aData[7] != ""){
+				        var preview = $('<img>').css({'width': '30px'});
+				        
+				        var aPreview = $('<a>').attr('title','Vista previa').css({'margin-left':'5px', 'line-height': '0px'});
+				        $(aPreview).prettyPhoto({show_title: false, social_tools: false});
+			        	$(aPreview).attr('href', aData[7]);
+			        	$(preview).attr('src', aData[7]);
+                     	var divthum = $('<div>').attr({ style : 'width:40px; text-align:center;'}).append(aPreview.append(preview)); 
+					}else{ divthum = ''; }                                    
+                     $('td:eq(7)', nRow).empty();
+                     $('td:eq(7)', nRow).append(divthum); 
+                     //check publish
+                     var selected = aData[2] == 'Yes' ? 'checked="checked"' : ''; 
+                     var checkbox = $('<input type="checkbox" name="tesVisible_' + aData[0] + '" value="Yes" ' + selected + ' >');
+                     
+                     checkbox.on('change', function(){
+                         var me =  $(this);
+                   	 	
+							$.ajax( { 
+	      	                	url: "<?php echo $this->url(array( 'module'=>'admin','controller'=>'ocw', 'action'=>'savepublish'))?>",
+	      	                    data:  { Id: $(nRow).attr('id'), value: $(this).is(':checked') ? 1 : 0 },
+	      	                    //async: false,
+	      	                    type: "POST",
+	      	                    beforeSend: function(objeto){
+		      	                    me.prop("disabled", true);
+		      	                },
+	      	                    complete: function(objeto, exito) { },
+	      	                    dataType: "json",
+	      	                    global: true,
+	      	                    cache:false,
+	      	                    ifModified: false,
+	      	                    processData:true,
+	      	                    success: function(datos)
+	      	                    {
+	      	                    	me.prop("disabled", false);
+	      	                    	displayMessage( 'success', 'Status updated successfully', 'Ok!', '' );
+	      	                    },
+		      	      	        error: function(request, status, error)
+			      	  	        {
+			      	  	            mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+			      	  	            displayMessage( 'error', mensaje, 'Error', '' );
+			      	  	        },
+	      	                 });
+                     });
+					  
+                     $('td:eq(2)', nRow).empty();
+                     $('td:eq(2)', nRow).append(checkbox);                        
+              }
+            ,"oLanguage": { "sUrl": "<?php echo $this->baseUrl()?>/backend/js/plugins/tables/en.txt"}
+
+          
+        });
+        
+
+       $(window).resize(function () {
+	        var oSettings = oTable.fnSettings();
+	        oSettings.oScroll.sY = calcDataTableHeight(); 
+	        oTable.fnDraw();
+        }); 
+		// dibujar los filtros si los hubiese
+		drawfbreadcrumbs(getAdvancedFilters()); 
+
+    } );
+
+    function reloadFilters(){
+		oTable.fnReloadAjax( '<?php echo $this->url(array( 'module'=>'admin',  'controller'=>'ocw', 'action'=>'ocwgrid'))?>' );
+		drawfbreadcrumbs(getAdvancedFilters()); 
+	}
+</script>

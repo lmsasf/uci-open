@@ -1,0 +1,123 @@
+<style>
+.savecat { background: url("/backend/images/icons/dark/save.png") repeat-x scroll 0 0 transparent; height: 37px; padding-right: 15px; margin-left: 10px;}
+#content { margin-right: 10px; padding-top: 110px;}
+</style>
+<div class="topHeader" style="top: 0;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+	        	<!-- <h5>Category</h5>
+	            <span><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></span>-->	    	            
+	            <div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'category', 'action'=>'index') )?>">Category list</a></li>
+						<li class="current"><a href="javascript:void(0)"><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></a></li>
+					</ul>
+				</div>
+			 </div>
+		</div>
+	</div>
+</div>
+<!-- CONTENIDO -->
+<div id="content">
+	<div class="wrapper">
+		<div id="ejecmens" class="body textC" style="display:none; float:left;">
+			<img style="margin: 5px;" alt="" src="/backend/images/loaders/loader1.gif">
+		</div>
+		<div id="mensajes" ></div>	
+		<div class="widgets">
+			<div class="oneTwo">
+	        <!-- Validation form -->
+		        <form id="validate" class="form" method="post" action="" onsubmit="return false;">
+		        	<input type="hidden" name="id" id="catId" value="<?php echo is_null($this->id) && $this->accion ==='add' ? '' : $this->Category->id ?>" />
+		        	<input type="hidden" name="accion" id="accion" value="<?php echo $this->accion ?>" />
+		        	<fieldset>
+		                <div class="widget">
+		                    <div class="title">
+		                    	<!-- <h6>Details</h6>-->
+		                    	<!-- <a id="savecat" class="savecat" href="javascript:save()" ></a> -->
+		                    	<div class="loader" style="display:none;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+		                    </div>
+		                    <div class="formRow">
+		                        <label for="perFirstName">Name:<span class="req">*</span></label>
+		                        <div class="formRight">
+		                        	<input type="text" class="validate[required]" name="catName" id="catName" value="<?php echo is_null($this->Category) ? '' : $this->escape($this->Category->catName) ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>
+		                    <div class="formSubmit">		                    	
+		                    	<input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancel()" />
+		                    	<input type="button" value="Save" class="blueB" onclick="save()" />
+		                    </div>
+		                    <div class="clear"></div>
+		                </div>
+		                
+		            </fieldset>
+		        </form>  
+	        </div>	        
+        </div>	
+	</div>
+</div>	        
+<script type="text/javascript">
+	function save(){
+		// recorro los campos del formulario
+		// console.debug( jQuery('#validate').validationEngine('validate') );
+		if (jQuery('#validate').validationEngine('validate') ) {
+			var data = new Array();
+			$('#validate input[type="text"], #validate input[type="hidden"], #validate textarea').each(function(index, value){
+				//console.debug(this);
+				if($(this).attr('name') !=='' && $(this).val() !==''){
+					data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+				}
+			});
+			var Id = $('#catId').val();
+			var accion = $('#accion').val();
+		   $.ajax( {
+		        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'category', 'action'=> 'savecategory'))?>",
+		        data: { data: data, accion: accion, id:Id  } , 
+		        async: false,
+		        beforeSend: function(objeto){ $(".loader").show(); },
+		        complete: function(objeto, exito) { },
+		        dataType: "json",
+		        global: true,
+		        cache:false,
+		        ifModified: false,
+		        processData:true,
+		        success: function(datos)
+		        {
+		        	
+		        	
+		        	//$.jGrowl('Data saved successfully', { header: 'Success', sticky: false, theme: 'success' });
+		        	$('#catId').val(datos.id);
+		        	$('#accion').val('edit');
+		        	//return datos.ordenId;
+		        	// tipo, mensaje, prefrase, url_redirect
+		        	displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin', 'controller'=>'category', 'action'=> 'index'))?>' );
+		        	$(".loader").hide();
+		        },
+		        error: function(request, status, error)
+		        {
+		            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+		            //$.msgbox(mensaje, {type: "error"});
+		            $.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+		        },
+		        timeout: 20000,
+		        type: "POST"
+		    } ); 
+		} else {
+			return false;
+		}
+	}	
+	function cancel(){
+		document.location.href='<?php echo $this->url(array('module'=>'admin','controller'=>'category', 'action'=>'index'))?>';
+	}
+
+	$(function() {
+		   $('#validate').submit(function() {
+				save();
+		    	return false;
+		    }); 
+	});	
+</script>
+

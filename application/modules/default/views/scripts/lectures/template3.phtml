@@ -1,0 +1,332 @@
+<?php
+echo $this->headScript()->appendFile($this->baseUrl() . '/frontend/js/video/ovp.js')
+                        ->appendFile($this->baseUrl() . '/frontend/js/testimonials.js')
+;
+$ads_actives = $this->ads;
+$ads = json_encode($ads_actives);
+?>
+
+<script type="text/javascript">
+function showSingleVideo(sourceUrl) {
+	var configobj = {
+        "players": {
+            "Flash":{"src":"/frontend/js/video/ovp.swf","minver":"9","controls":true, "plugins":[]},
+            "Silverlight":{"src":"/frontend/js/video/ovp.xap","minver":"4.0","controls":true, "plugins":[""]},
+            "HTML5":{"minver":"0","controls":true}
+        },
+		"controls": { 'src_img':'/frontend/img/pixel.png' },
+		"strategy":{ "order":["HTML5","Silverlight","Flash"] }
+	};
+	ovp.init(configobj);
+
+	var videoconf = {
+		"sources":[
+			{"src":sourceUrl,"type":"video/mp4"}
+		],
+		// For real testing, these are public and available
+		'posterimg':"/frontend/img/videobackground.png",
+		'autobuffer':true,
+		'controls':true,
+		'height':360,
+		'width':640,
+		'id':'vplayer'
+	};
+
+	// render the player
+	return ovp.render('vplayer', videoconf);
+}
+
+$(function() {
+
+	// Find all YouTube videos
+	var $allVideos = $("iframe[src^='//player.vimeo.com'],iframe[src^='http://player.vimeo.com'], iframe[src^='//www.youtube.com'], iframe[src^='http://www.youtube.com']"),
+	// The element that is fluid width
+	$fluidEl = $(".span5");
+	// Figure out and save aspect ratio for each video
+	$allVideos.each(function() {
+		$(this)
+			.data('aspectRatio', this.height / this.width)
+			// and remove the hard coded width/height
+			.removeAttr('height')
+			.removeAttr('width');
+	});
+	// When the window is resized
+	// (You'll probably want to debounce this)
+	$(window).resize(function() {
+		var newWidth = $fluidEl.width();
+		// Resize all videos according to their own aspect ratio
+		$allVideos.each(function() {
+			var $el = $(this);
+			$el
+				.width(newWidth)
+				.height(newWidth * $el.data('aspectRatio'));
+		});
+	// Kick off one resize to fix all videos on page load
+	}).resize();
+});
+</script>
+
+
+<div class="span12" id="content">
+    <div class="span12">
+        <!-- Start sidebar layout -->
+        <div id="sidel" class="span3 pull-left">
+            <br>
+
+        </div>
+
+        <!-- Start two-columns -->
+        <div id="sidec" class="span5" style="margin-left: 3.5%;">
+            <!-- Title of Lecture -->
+            <h2><?php echo $this->escape($this->Lecture[0]['ocwTitle'] . ' (' . $this->Lecture[0]['lanName'] . ')')?></h2><br>
+
+            <!-- Youtube video embed -->
+            <?php if(!empty($this->Lecture[0]['lecEmbed']) ) : ?>
+                <?php echo $this->Lecture[0]['lecEmbed'] ?>
+            <?php endif; ?>
+            <!-- video embed -->
+            <?php if(!empty($this->Lecture[0]['ocwUrlLecture']) ) : ?>
+                <script type="text/javascript">
+                    $(document).ready(function(){
+                        showSingleVideo('<?php echo $this->Lecture[0]['ocwUrlLecture']?>');
+                    });
+                </script>
+                <div id="vplayer"></div>
+            <?php endif; ?>
+            <!-- Files Provided by the lecture -->
+            <?php if($this->Files->count() > 0 ): ?>
+            <div class="accordion" id="files" style="margin-top:10px;">
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#files" href="#pro-files">
+                            <h4>Provided Files</h4>
+                        </a>
+                    </div>
+
+                    <div id="pro-files" class="accordion-body collapse">
+                        <div class="accordion-inner">
+                        <ul>
+                        <?php foreach ($this->Files as $join):  ?>
+                            <?php if($join->idType == 2):?>
+                            <?php $titleEncode = is_null($join->ocwTitleEncode) ? codificar_titulo($join->ocwTitle) : $join->ocwTitleEncode;?>
+                            <?php $target=$join->ocwUrlFile; ?>
+                            <li><a href="<?php echo $target ?>" target="_blank"><?php echo $this->escape( $join->ocwTitle ) ?></a></li>
+                            <?php endif;?>
+                        <?php endforeach; ?>
+                        </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+            <!-- Description of Lecture -->
+            <div class="well well-small" style="margin-top:10px;">
+                <?php if(!empty($this->Lecture[0]['ocwDescription'])) {?>
+                    <div>
+                        <div style="text-align: right; clear:both;" class="pull-right">
+                            <a href="javascript:void(0)" title="Share on Facebook" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),'Share on Facebook','width=626,height=436');return false;"><img alt="Share on Facebook" src="/frontend/img/social/facebook-btn.png"></a>
+                            <a href="javascript:void(0)" title="Share on Twitter" onclick="window.open('http://twitter.com/?status=<?php echo $this->escape($this->Lecture[0]['ocwTitle'] . ' (' . $this->Lecture[0]['lanName'] . ')') ?> --> '+encodeURIComponent('<?php echo $this->shortUrl?>'),'Share on Twitter','width=626,height=500')"><img alt="Share on Twitter" src="/frontend/img/social/twitter-btn.png"></a>
+                        </div>
+                        <div style="clear:both;">
+                            <?php echo removeHtmlAttribute($this->Lecture[0]['ocwDescription']) ?>
+                            </div>
+                    </div>
+                <?php } ?>
+            </div>
+			<div class="clearfix testimbox" style="margin-top: 30px;">
+				<?php if($this->pastTestimonials->count() > 0): ?>
+				<?php $this->pasttestimonials()->render($this->pastTestimonials)?>
+				<?php endif; ?>
+			</div>	
+        </div>
+
+        <div id="sider" class="span3 pull-right" style="margin-right: 5%;">
+            <br>
+            <!-- Start accordions for related content -->
+            <?php if($this->Joins->count() > 0 ): ?>
+            <div class="accordion" id="related">
+            <?php foreach($this->ocwTypes AS $type ) { ?>
+                <div class="accordion-group">
+                    <!-- Related Collections Heading -->
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#related" href="#type_<?php echo $this->escape( $type['id'] ) ?>">
+                            <h4>Related <?php echo $this->escape($type['typName']) ?>s</h4>
+                        </a>
+                    </div>
+                    <!-- Related Collections content -->
+                    <div id="type_<?php echo $this->escape( $type['id'] ) ?>" class="accordion-body collapse">
+                        <div class="accordion-inner">
+                            <ul>
+                                <?php foreach ($this->Joins as $join) {  ?>
+                                    <?php if($type['id'] == $join->idType) { ?>
+                                        <?php
+                                        $titleEncode = is_null($join->ocwTitleEncode) ? codificar_titulo($join->ocwTitle) : $join->ocwTitleEncode;
+                                        $target = '';
+                                        $external='';
+                                        switch ($join->idType) {
+                                            case 1: // Courses
+                                                if(is_null($join->ocwBypassUrlCourse) || empty($join->ocwBypassUrlCourse)){
+                                                        $target='/courses/'.$titleEncode.'.html';
+                                                        //d(is_null($join->ocwBypassUrlCourse));
+                                                } else {
+                                                        $external = 'target="_blank"';
+                                                        $target = $join->ocwBypassUrlCourse;
+                                                }
+                                            break;
+                                            case 2: // files
+                                                //$target='/getfile/'.$titleEncode.'.html';
+                                                $external = 'target="_blank"';
+                                                $target=$join->ocwUrlFile;
+                                                break;
+                                            case 3: // lectures
+                                                if(is_null($join->ocwBypassUrlLecture) || empty($join->ocwBypassUrlLecture)){
+                                                        $target='/lectures/'.$titleEncode.'.html';
+                                                } else {
+                                                        $external = 'target="_blank"';
+                                                        $target = $join->ocwBypassUrlLecture;
+                                                }
+                                                break;
+                                            case 4: // Collections
+                                                $target='/collections/'.$titleEncode.'.html';
+                                            case 6: // Conferences
+                                                $target='/conferences/'.$titleEncode.'.html';
+                                            default:
+                                                    ;
+                                            break;
+                                        }
+                                    ?>
+                                    <?php if ($join->idType != 5 ||$join->idType != 7 ) { ?>
+                                    <li><a href="<?php echo $target ?>" <?php echo $external ?> ><?php echo $this->escape( $join->ocwTitle ) ?></a></li>
+                                    <?php }?>
+                                <?php } }?>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <?php }?>
+            </div>
+            <?php endif;?>
+
+            <!-- Start Description of author, title, and department of speaker -->
+            <?php if(!empty($this->Lecture[0]['thumbnail'])) {?>
+            <div class="well well-small" style="text-align: center;">
+                    <img src="<?php echo $this->Lecture[0]['thumbnail']?>" class="img-polaroid">
+            </div>
+            <?php } ?>
+            <?php
+            $count = count($this->Authors);
+            if( $count > 0 ) {?>
+                <?php foreach ($this->Authors as $author ) { ?>
+                    <div class="well well-small">
+                        <dl>
+                            <dt>Author:</dt>
+                                <?php if(!is_null($author['perUrlPersonal']) || !empty($author['perUrlPersonal'])): ?>
+                                    <dd><a href="<?php echo $author['perUrlPersonal'] ?>" target="_blank"> <?php echo $this->escape( $author['Author'] )?></a></dd>
+                                <?php else: ?>
+                                    <dd><?php echo $this->escape( $author['Author'] )?></dd>
+                                <?php endif;?>
+                                <?php if(!is_null($author['pedTitle']) || !empty($author['pedTitle'])):?>
+                            <dt>Title:</dt>
+                                <dd><?php echo $this->escape($author['pedTitle']) ?></dd>
+                                <?php endif;?>
+                                <?php if(!is_null($author['authorDepartment']) || !empty($author['authorDepartment'])):?>
+                            <dt>Department:</dt>
+                                <dd><?php echo $author['authorDepartment'] ?></dd>
+                                <?php endif;?>
+                        </dl>
+                    </div>
+                <?php } ?>
+            <?php } ?>
+            <!-- End Description -->
+
+            <!-- Start Creative Commons Licensing Materials -->
+            <?php if(!empty( $this->Lecture[0]['ocwLicense'] )):?>
+                <div class="well well-small">
+                    <?php echo $this->Lecture[0]['ocwLicense'] ?>
+                </div>
+            <?php endif; ?>
+            <!-- End Creative Commons Licensing Materials -->
+
+            <!-- Provide Testimonial Button -->
+            <a class="btn btn-primary btn-block" href="javascript:postTestimonial('<?php echo $this->ocwTitleEncode ?>')">Provide a Testimonial</a>
+            <div style="height: 20px"></div>
+
+			<?php if($this->count_ads > 0){?>
+			<div class="promobox" id="content_right" style="margin-top: 10px;margin-left: 0;margin-right: 0;">
+				<div class="well well-small" style="text-align: center;">
+					<div id="imgAMostrar1" class="img-polaroid"></div>
+				</div>
+			</div>	
+			<?php }?>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        upPromotions();
+    });
+
+    function array_rand(input, num_req) {
+        var indexes = [];
+        var ticks = num_req || 1;
+        var checkDuplicate = function(input, value) {
+            var exist = false,
+                index = 0,
+                il = input.length;
+            while (index < il) {
+                if (input[index] === value) {
+                    exist = true;
+                    break;
+                }
+                index++;
+            }
+            return exist;
+        };
+
+        if (Object.prototype.toString.call(input) === '[object Array]' && ticks <= input.length) {
+            while (true) {
+                var rand = Math.floor((Math.random() * input.length));
+                if (indexes.length === ticks) {
+                    break;
+                }
+                if (!checkDuplicate(indexes, rand)) {
+                    indexes.push(rand);
+                }
+            }
+        } else {
+            indexes = null;
+        }
+
+        var id_random = ((ticks == 1) ? indexes.join() : indexes);
+
+        var publish = new Array();
+
+        for(var i in input) {
+            if(i == id_random[0]){
+                publish.push(input[i])
+            }
+            else if(i == id_random[1]){
+                publish.push(input[i])
+            }
+        }
+
+        $('#imgAMostrar1').html('<a href="'+ publish[0]['adsRedirectURL'] +'"><img src="'+ publish[0]['adsImageURL'] +' " style="border: 0px;"></a>');
+        $('#imgAMostrar2').html('<a href="'+ publish[1]['adsRedirectURL'] +'"><img src="'+ publish[1]['adsImageURL'] +' " style="border: 0px;"></a>');
+
+    }
+
+    function upPromotions(){
+        var json = <?php echo $ads; ?>;
+        var count = JSON.parse(json);
+        if(count){
+            if(count.length > 1){
+                array_rand(count,2);
+            }else{
+                $('#imgAMostrar1').html('<a href="'+ count[0]['adsRedirectURL'] +'"><img src="'+ count[0]['adsImageURL'] +' " style="border: 0px;"></a>');
+            }
+        }
+    }
+
+</script>

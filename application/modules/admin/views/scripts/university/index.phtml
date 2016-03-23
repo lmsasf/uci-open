@@ -1,0 +1,344 @@
+<?php
+$this->jQuery()->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/datatable.fnReloadAjax.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/TableTools/media/js/TableTools.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/TableTools/media/js/ZeroClipboard.js')
+->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tables/advancedFilter.js')
+;
+$this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools.css')
+->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools_JUI.css')
+;
+?>
+<style>
+.edituniv { background: url("/backend/images/icons/dark/add.png") repeat-x scroll 0 0 transparent; height: 37px; padding-right: 15px; margin-left: 10px;}
+</style>
+<div class="topHeader" style="top:0px;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+				<!-- <h5>Universities</h5>
+				<span>List</span> -->
+				<div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>						
+						<li class="current"><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'university', 'action'=>'index') )?>">University list</a></li>
+					</ul>
+				</div>	
+			</div>			
+		</div>
+	</div>
+	
+</div>
+<div id="content">
+	<div class="wrapper">
+		<!-- <div id="mensajes">
+			<?php //$this->success ? $this->messages()->success($this->success . ' [Click to hide]', 'Success'): null; ?>
+			<?php //$this->error ? $this->messages()->error($this->error . ' [Click to hide]', 'Error:'): null; ?>
+	 	</div>-->
+	 	<div id="mensajes"></div>	
+	 	<div id="breadcrumbs-wrapper" style="display: none;" >
+	       <div class="fbc">
+	            <ul id="fbreadcrumbs" class="fbreadcrumbs">
+	            </ul>
+	            <div class="clear"></div>    
+	        </div> 
+	    </div>	
+
+	    <div class="dataTables_wrapper">
+	        <!-- Dynamic table -->
+	        <div class="widget">
+	            <div class="title">
+	            	<!-- <a id="edituniv" class="edituniv" href="javascript:addUni()" ></a> -->
+	            	<a href="javascript:addUni()"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/add.png"></a>
+	            </div>                          
+	            <table class="display sTable" id="table">
+	            	<thead>				                        						                   			                    	
+	                    <tr>
+	                    	<th>Functions</th>
+							<th>University</th>
+	                    	<th>School / Departments</th>
+	                    </tr>
+	                </thead>
+	                <tbody id ="tbody">
+	                <style>	             				
+						.aimgdown { background-image:url("/backend/images/backgrounds/arrows.png"); background-repeat: no-repeat; display:block; height:10px; width:12px; float:right; -ms-transform: rotate(90deg);-moz-transform: rotate(90deg); -webkit-transform: rotate(90deg); -moz-transform: rotate(90deg);rotation: 90deg; filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);}
+						.aimgup { background-image:url("/backend/images/backgrounds/arrows.png"); display:block; height:10px; width:12px; float:right; background-position: 0 bottom;}
+	                </style>
+	                    <?php foreach($this->University as $key=>$id){ ?>
+		                    <?php foreach($id as $k=>$universidad){ ?>
+		                    	<tr id="univ_<?php echo $key?>">
+			                    	<td style="vertical-align: top;"><a class="smallButton" style="line-height: 0px; margin-left:5px" title="Edit"  href="javascript:edit('<?php echo $key?>')"><img alt="" src="/backend/images/icons/color/pencil.png"></a>
+			                    		<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Delete" onclick="javascript:deluni('<?php echo $key?>')" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a>
+			                    	</td>
+			                    	<td style="vertical-align: top;color: #595959; font-size: 12px; font-weight: 700;"><?php echo $k;?></td>
+			                    	<td>
+			                    	<table width="100%" >
+			                    	
+			                    	<?php $i = 0;?>
+			                    		<?php $cant = count($universidad);?>
+		                    			<?php foreach($universidad as $ks=>$school){ ?>
+		                    				<?php if($i == $cant-1){?>
+		                    						<?php $border ="style='border-bottom:0px'"?>
+		                    				<?php }else{?>
+		                    						<?php $border ="";?>
+                    						<?php }?>
+                    						<tr rowspan="2" <?php echo $border?> >
+                    						<?php if(!empty($ks)){ ?>
+                    						
+	                    							<td width="200px"><span style="color: #595959; font-size: 12px; font-weight: 700;"><?php echo $this->escape($ks);?></span>
+	                    								<?php if(!empty($school[0])){ ?>
+	                    									<a class="aimgdown" id="img<?php echo str_replace('"','',$ks);?>"  href="#"  title="view departments"  onClick="javascript:mostrarDep('department<?php echo str_replace('"','',($ks));?>','img<?php echo str_replace('"','',$ks);?>')"></a>
+	                    								<?php } ?>
+	                    								<?php if(!empty($school[0])){ ?>
+			                    							<div id="department<?php echo str_replace('"','',$ks);?>" style="display:block; margin-left:10%; margin-top:10px; margin-bottom:10px;">
+				                    							<?php foreach($school as $department){ ?>
+					                    							<div style="vertical-align: middle; position: relative;  margin-top: 2px;"><img src="/backend/images/icons/bullet_blue.png" ><label style="position: absolute;"><?php echo $department;?></label></div>
+					                    					<?php } ?> 
+					                    					</div>
+				                    					<?php } ?>
+	                    							</td>
+	                    							<!-- <td width="200px">
+	                    								<?php if(!empty($school[0])){ ?>
+			                    							<div id="department<?php echo str_replace('"','',$ks);?>" style="display:block">
+				                    							<?php foreach($school as $department){ ?>
+					                    							<div><?php echo $department;?></div>
+					                    					<?php } ?> 
+					                    					</div>
+				                    					<?php } ?>
+			                    					</td> -->
+		                    					<?php } ?>
+                    						</tr>
+                    						
+                    						<?php $i++;?>
+		                    			<?php }?>
+		                    			
+			                    	</table>
+			                    	</td>
+		                    	</tr>
+		                    <?php } ?>
+	                    <?php } ?>
+	                </tbody>
+	            </table>
+	        </div>  
+	    </div>
+    </div>
+</div>
+
+<script>
+function mostrarDep(div, imagen){
+	var muestra = document.getElementById(div).style.display;
+	if(muestra == 'none'){
+		document.getElementById(div).style.display='block';
+		//document.getElementById(imagen).src = "/backend/images/collapsedown.png";
+		document.getElementById(imagen).className  = "aimgdown";
+	}else{
+		document.getElementById(div).style.display='none';
+		//document.getElementById(imagen).src = "/backend/images/collapse.png";
+		document.getElementById(imagen).className  = "aimgup"; 
+	}	
+	
+}
+
+function edit(id){
+	var accion = 'edit';
+    var form = $('<form>').attr({
+		name:'editform', 
+		method: 'post', 
+		action: '<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=>'edituniversity'))?>'
+	});
+	$('<input>').attr({
+		 type: 'hidden',
+		 id: 'id',
+		 name: 'id',
+		 value: id
+	}).appendTo(form);
+	$('<input>').attr({
+		 type: 'hidden',
+		 id: 'accion',
+		 name: 'accion',
+		 value: accion
+	}).appendTo(form);
+	form.appendTo($('body'));
+	form.submit();                
+}
+
+function deluni(id){
+	
+	$.msgbox("Are you sure you want to remove this university? <br> You cannot undo this action", {
+		  type: "confirm",
+		  buttons : [
+		    {type: "submit", value: "Yes"},
+		    {type: "cancel", value: "No"}
+		  ]
+		}, function(result) {
+			if(result == 'Yes'){
+				/*var accion = 'edit';
+			    var form = $('<form>').attr({
+					name:'editform', 
+					method: 'post', 
+					action: '<?php //echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=>'deleteuni'))?>'
+				});
+				$('<input>').attr({
+					 type: 'hidden',
+					 id: 'Id',
+					 name: 'Id',
+					 value: id
+				}).appendTo(form);
+				
+				form.appendTo($('body'));
+				form.submit(); */ 
+
+				$.ajax( {
+			        url: "<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=> 'deleteuni'))?>",
+			        data: { Id : id } , 
+			        //async: false,
+			        beforeSend: function(objeto){},
+			        complete: function(objeto, exito) { },
+			        dataType: "json",
+			        global: true,
+			        cache:false,
+			        ifModified: false,
+			        processData:true,
+			        success: function(datos)
+			        {
+			        	var row = document.getElementById("univ_"+datos.Id);
+						var table = document.getElementById("tbody");
+			        	table.removeChild(row);
+			        },
+			        error: function(request, status, error)
+			        {
+			        	 var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+				         displayMessage( 'error', mensaje, 'Error', '' );
+			        },
+			        timeout: 20000,
+			        type: "POST"
+			    } ); 
+			    
+			}
+		});              
+}
+
+function addUni(){
+	$("#uniName").val('');
+	$( "#dialog-messageuni" ).dialog( "open" );
+}
+
+$(function() {
+	$( "#sortable" ).sortable({
+		placeholder: "placeholder",
+		forcePlaceholderSize: true,
+        opacity: 0.4
+	});
+	$( "#sortable" ).disableSelection();
+	$( '.buttonLi' ).on('click', function(){
+		$(this).parents('li').remove();
+	});
+
+
+	$( "#dialog-messageuni" ).dialog({
+		autoOpen: false,
+		height : 200,
+		width: $(window).width() < 600 ? ($(window).width() - 10) : 500,
+		resizable: false,
+		modal: true,
+		open: function(event,ui){
+			$('.dialog').validationEngine({
+	    		prettySelect : true,
+	    		useSuffix: "_chzn"
+	    });
+		},
+		buttons: {
+			
+			'Cancel': function() {
+				$( this ).dialog( "close" );
+			},
+			"Accept": function() {
+				if (jQuery('.dialog').validationEngine('validate')) {
+					
+						if (jQuery('#validate').validationEngine('validate')) {
+							guardarUni(true);
+							$( this ).dialog( "close" );					
+						}
+						
+					
+				}
+				
+			}
+		},
+		close: function() {
+			$('.dialog').validationEngine('hideAll');
+		}
+	});
+
+});	
+
+function guardarUni(callback){
+	if (jQuery('#validate').validationEngine('validate') || callback === true) {
+		var data = new Array();
+		$('#validate input[type="text"]').each(function(index, value){ 
+			if($(this).attr('name') !=='' && $(this).val() !=='' && $(this).attr('name') == 'uniName'){
+				data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+			}
+		});
+		
+	   $.ajax( {
+	        url: "<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=> 'saveuniversity'))?>",
+	        data: { data:data, accion: 'add' } , 
+	        async: false,
+	        beforeSend: function(objeto){},
+	        complete: function(objeto, exito) { },
+	        dataType: "json",
+	        global: true,
+	        cache:false,
+	        ifModified: false,
+	        processData:true,
+	        success: function(datos)
+	        {
+	        	var form = $('<form>').attr({
+                    name:'editform', 
+                    method: 'post', 
+                    action: '<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=>'edituniversity'))?>'
+                });
+	        	$('<input>').attr({
+	       		 type: 'hidden',
+	       		 id: 'id',
+	       		 name: 'id',
+	       		 value: datos.id
+	       		}).appendTo(form);
+
+	        	$('<input>').attr({
+		       		 type: 'hidden',
+		       		 id: 'accion',
+		       		 name: 'accion',
+		       		 value: 'edit'
+		       		}).appendTo(form);
+	       		
+                
+                form.appendTo($('body'));
+                form.submit();
+                return false;
+
+	        },
+	       /* error: function(request, status, error)
+	        {
+	            var mensaje = request.responseText != '' ? request.responseText : 'Tiempo de espera agotado o sesión interrumpida, puede que se estén presentando problemas en la red' ;
+	            $.jGrowl(mensaje, { header: 'ERROR', sticky: true, theme: 'error' });
+	        },
+	        timeout: 20000,*/
+	        type: "POST"
+	    } ); 
+	} 
+}
+</script>
+	<div id="dialog-messageuni" title="New university" style="display:none;">
+        <div class="">
+	        <form id="validate" class="form" method="post" action="" class="dialog" id="formUni" onsubmit="return false;">
+	        		<input type="hidden" name="universityId" id="universityId" value="" />
+	        		&nbsp;               
+                    <div class="clear"></div>	        
+                    <label style="margin-top:14px;margin-right:10px;">Name university:  </label>
+                    <div class="row" style="width:250px;">
+                    	<input type="text" class="validate[required]" name="uniName" id="uniName" value=""/>
+                    </div>                  
+            </form>
+        </div>
+	</div>

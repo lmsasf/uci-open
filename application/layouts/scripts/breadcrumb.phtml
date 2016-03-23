@@ -1,0 +1,25 @@
+
+<div class="span12">
+	<ul class="breadcrumb">
+	  <li>
+	  	<a href="<?php echo $this->baseUrl()?>/">
+	  		Home
+	  	</a>
+	  	<span class="divider">/</span>
+	  </li>
+	  <?php if( is_null( $this->title ) || !isset( $this->title ) ): ?>
+	  	<li class="active">
+	  		<?php echo ucfirst($this->section) ?>
+	  	</li>
+	  <?php else: ?>
+	  	<li>
+	  		<a href="<?php echo $this->baseUrl() . '/' . $this->section ?>">
+	  			<?php echo ucfirst($this->section) ?> 
+	  		</a>
+	  		<span class="divider">/</span></li>
+	  	<li class="active">
+	  		<?php echo $this->title ?>
+	  	</li>
+	  <?php endif;?>
+	</ul>
+</div>

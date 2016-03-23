@@ -1,0 +1,193 @@
+<div class="topHeader" style="top: 0;">
+	
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+	        	<!-- <h5>Degree</h5>
+	            <span><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></span>-->
+	            <div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'user', 'action'=>'index') )?>">Users</a></li>
+						<li class="current"><a href="javascript:void(0)"><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></a></li>
+					</ul>
+				</div>
+	        </div>			
+		</div>
+	</div>
+</div>
+<!-- CONTENIDO -->
+<div id="content" class="noLeftMenu" >
+<!-- La clase noLeftMenu fuerza a usar un margin left=0 anulando el espacio para el menú izquierdo -->
+	<div class="wrapper" style="margin-top: 40px; margin-bottom: 20px;">
+	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+	<div id="mensajes"></div>
+		<!-- <div class="widgets"> -->
+		<form id="validate" class="form" method="post" action="">
+		<fieldset > <!-- style="background-color:#EEEEF0; padding:10px 30px 30px 30px"> -->
+			<div class="oneTwo">
+	        <!-- Validation form -->
+		        	<input type="hidden" name="id" id ="id" value="<?php echo is_null($this->id) && $this->accion ==='add' ? '' : $this->User->id ?>" />
+		        	<input type="hidden" name="accion" value="<?php echo $this->accion ?>" />
+		        	
+		                <div class="widget" style="margin-top:0px;">
+		                    <div class="title"><h6>User</h6></div>
+		                    <div class="formRow">
+		                        <label>User name:<span class="req">*</span></label>
+		                        <div class="formRight">
+		                        	<input type="text" class="validate[required,custom[onlyLetterNumber]]" name="usrName" id="usrName" value="<?php echo empty($this->User->usrName) ? '' : $this->User->usrName ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>	
+		                    <div class="formRow">
+		                        <label>Password:<span class="req">*</span></label>
+		                        <div class="formRight">
+		                        <?php if( $this->accion =='add' ){ ?>
+		                        	<div><input TYPE="password" class="validate[required]" name="usrPassword" id="usrPassword" value=""/></div>
+		                        <?php }else{ ?>
+		                        	<!-- <div><input TYPE="password" class="validate[required]" name="usrPassword" id="usrPassword" value="<?php echo empty($this->User->usrPassword) ? '' : $this->User->usrPassword ?>"/></div>-->
+		                        	<div style="float:left;width:70%"><input style="background-color:#F8F8F8" disabled="disabled" TYPE="password" class="validate[required]" name="usrPassword" id="usrPassword" value=""/></div>
+		                        	<div style="float:left; margin-left:20px;width:26%"><input  id="checkmodif" type="checkbox" onclick="javascript:modificarPass('<?php echo $this->User->usrPassword ?>')"><label style="padding-top:4px;">Change password</label></div> 
+		                        	<?php }?>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>
+		                    	
+		                    	
+		                    <div class="formRow">
+		                        <label>Person:<span class="req">*</span></label>
+		                        <div class="formRight">
+	                        		<div class="searchDrop" >
+				                        <select data-placeholder="Person" class="validate[required] chzn-select exclude" style="width:100%;" tabindex="2" name="idPer" id="idPer">
+				                            <option value=""></option> 
+				                            <?php foreach($this->persons AS $person ) { ?>
+				                            <?php $selected = is_null($this->User) ? '' : ($this->User->idPer === $person->id ? 'selected="selected"': ''); ?>
+				                            	<option value="<?php echo !is_null($person->id)? $person->id: '00' ?>" <?php echo $selected?> ><?php echo $person->perFirstName.', '.$person->perLastName?></option>
+				                            <?php } ?> 
+				                         </select>
+				                     </div>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>
+		                    
+		                    <div class="formRow">
+		                        <label>Role:<span class="req">*</span></label>
+		                        <div class="formRight">
+	                        		<div class="searchDrop" >
+				                        <select data-placeholder="Role" class="validate[required] chzn-select exclude" style="width:100%;" tabindex="2" name="idRole" id="idRole">
+				                            <option value=""></option> 
+				                            <?php foreach($this->roles AS $role ) { ?>
+				                            <?php $selected = is_null($this->User) ? '' : ($this->User->idRole === $role->id ? 'selected="selected"': ''); ?>
+				                            	<option value="<?php echo !is_null($role->id)? $role->id: '00' ?>" <?php echo $selected?> ><?php echo $role->roleName?></option>
+				                            <?php } ?> 
+				                         </select>
+				                     </div>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>
+		                    
+		                    	                    
+		                    <div class="formRow">
+		                        <label>Active:</label>
+		                        <div class="formRight">
+		                        	<input type="checkbox" name="usrActive" id="usrActive" <?php echo !empty($this->User->usrActive) && $this->User->usrActive == 1 ? 'checked' : '' ?> value="1"/>		                        	
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>
+		                    
+		                    <div class="formSubmit" style="float:none;">			                     
+				                     <input type="button" value="Save" class="blueB" onclick="save()" />
+				                     <input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancelar()" />
+			                 </div>			                    	                   		                   
+		                </div>	
+		                
+		                	                
+		         </div>       
+		                		                 		          		       
+                 <div class="clear"></div>             
+                 
+                 
+ 
+            </fieldset>         
+		 </form>          	
+	  <!-- </div>
+	  <div class="clear"></div>		 -->        	        	        
+  </div>	
+</div>
+<script>
+function save(){
+	// recorro los campos del formulario
+	// console.debug( jQuery('#validate').validationEngine('validate') );
+	if (jQuery('#validate').validationEngine('validate') ) {
+		var data = new Array();
+		$('#validate input[type="text"], #validate input[type="hidden"], #validate input[type="password"], input[type="checkbox"], #validate select').each(function(index, value){
+			//console.debug(this);
+			if($(this).attr('name') !=='' && $(this).val() !=='' && $(this).attr('name') !== undefined){
+				if($(this).attr('type')=='checkbox'){
+						var habilitado = $(this).is(':checked')?1:0;
+						data.push( {campo: $(this).attr('name'), valor: habilitado } );
+					}else{ 
+						data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+					}
+			}
+		});
+		//console.debug(data);
+		var id = $('#id').val();
+		var accion = $('#accion').val();
+	   $.ajax( {
+	        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'user', 'action'=> 'saveusuario'))?>",
+	        data: { data: data, accion: accion, id:id  } , 
+	        async: false,
+	        beforeSend: function(objeto){},
+	        complete: function(objeto, exito) { },
+	        dataType: "json",
+	        global: true,
+	        cache:false,
+	        ifModified: false,
+	        processData:true,
+	        success: function(datos)
+	        {		        	
+	        	$('#id').val(datos.id);
+	        	$('#accion').val('edit');
+	        	
+	        	$(".loader").show();
+	        	window.setTimeout(function() {
+	        		$(".loader").hide();
+	        		displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'user', 'action'=>'index'))?>' );
+	        	}, 2000);	        		
+
+	        },
+	        error: function(request, status, error)
+	        {
+	        	var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+	           	$(".loader").show();
+	        	window.setTimeout(function() {
+	        		$(".loader").hide();
+	        		displayMessage( 'error', mensaje, 'Error', '<?php echo $this->url(array('module'=>'admin','controller'=>'user', 'action'=>'index'))?>' );
+	        	}, 2000);	  
+	        },
+	        timeout: 20000,
+	        type: "POST"
+	    } ); 
+	} else {
+		return false;
+	}
+}
+function guardar(){
+	$('#validate').submit();
+}
+function cancelar(){
+	document.location.href='<?php echo $this->url(array('controller'=>'user', 'action'=>'index'))?>';
+}
+function modificarPass(valor){
+	var check = document.getElementById("checkmodif").checked;
+	if(check == true){
+		document.getElementById("usrPassword").disabled = false;
+		document.getElementById("usrPassword").setAttribute("style", "background-color:#FFFFFF");
+	}else{
+		document.getElementById("usrPassword").disabled = true;
+		document.getElementById("usrPassword").value = '';
+		document.getElementById("usrPassword").setAttribute("style", "background-color:#F8F8F8");
+	}	 
+}
+</script>

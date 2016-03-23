@@ -1,0 +1,159 @@
+<div class="topHeader" style="top: 0;">
+	
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+	        	<!-- <h5>Degree</h5>
+	            <span><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></span>-->
+	            <div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'role', 'action'=>'index') )?>">Role</a></li>
+						<li class="current"><a href="javascript:void(0)"><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></a></li>
+					</ul>
+				</div>
+	        </div>			
+		</div>
+	</div>
+</div>
+<!-- CONTENIDO -->
+<div id="content" class="noLeftMenu" >
+<!-- La clase noLeftMenu fuerza a usar un margin left=0 anulando el espacio para el menú izquierdo -->
+	<div class="wrapper" style="margin-top: 40px; margin-bottom: 20px;">
+	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+	<div id="mensajes"></div>
+		<!-- <div class="widgets"> -->
+		<form id="validate" class="form" method="post" action="">
+		<fieldset > <!-- style="background-color:#EEEEF0; padding:10px 30px 30px 30px"> -->
+			<div class="oneTwo">
+	        <!-- Validation form -->
+		        	<input type="hidden" name="id" id ="id" value="<?php echo is_null($this->id) && $this->accion ==='add' ? '' : $this->Role->id ?>" />
+		        	<input type="hidden" name="accion" value="<?php echo $this->accion ?>" />
+		        	
+		                <div class="widget" style="margin-top:0px;">
+		                    <div class="title"><h6>Role</h6></div>
+		                    <div class="formRow">
+		                        <label>Role name:<span class="req">*</span></label>
+		                        <div class="formRight">
+		                        	<input type="text" class="validate[required]" name="roleName" id="roleName" value="<?php echo empty($this->Role->roleName) ? '' : $this->Role->roleName ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>	
+		                   
+		                    <div class="title"><h6>Resources</h6></div>
+		                     <div style="padding-top:9px;">
+	                        	<a style="padding-left:10px; text-align:center;" id="checkAll" href="javascript:checkAll('permitir');" > All /</a><a id="checkAll" href="javascript:checkAll('denegar');" > None</a></div>
+	                        
+	                        <div class="rolescheck" style="overflow:auto; height:450px; ">  
+	                        	<?php $array_res = array();?>                    	                    
+	                        	<?php if(!empty($this->roleresources) && !empty( $this->Role->id)){?> 
+	                        			<?php foreach($this->roleresources as $rol){?>
+	                        				<?php if($rol["idRole"] ==  $this->Role->id){?>
+	                        					<?php $array_res[] = $rol["idResource"]?>
+	                        					<?php }?>
+	                        			<?php }?>
+	                        	<?php }?>
+			     	            <?php if(!empty($this->resources)){ ?>  
+			     	            <?php $i = 0; ?>              
+		                             <?php foreach($this->resources as $value){ ?>
+				                    			<div class="formRow">
+							                        <label><?php echo $value['nickName'] ?>:<span class="req"></span></label>
+							                        <div class="formRight">		
+							                        		<?php if(!empty($array_res) && in_array($value["id"],$array_res)) $check = "checked"; else $check = ""; ?>			                        	
+							                        		<input type="checkbox" name="resource" id="resource_<?php echo $value["id"] ?>" value="<?php echo $value["id"] ?>" <?php echo $check;?>/>					                        	
+						                        	</div>
+						                        	<div class="clear"></div>
+						                        </div>
+						                     <?php $i++;?>
+				                    <?php } ?>
+			                    <?php } ?>
+	                    </div>  
+	                    <div class="formSubmit" style="float:none;">			                     
+				                     <input type="button" value="Save" class="blueB" onclick="save()" />
+				                     <input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancelar()" />
+			            </div>		                    
+	                     </div>
+		                    
+		                    		                    	                   		                   
+		                </div>			                		                	                
+		         </div>       
+		                		                 		          		       
+                 <div class="clear"></div>                                               
+ 
+            </fieldset>         
+		 </form>          	
+    	        	        
+  </div>	
+</div>
+<script>
+function checkAll(accion){ 
+	if (accion == 'permitir') var o = $(".rolescheck input[type='checkbox']").prop("checked", true); else var o = $(".rolescheck input[type='checkbox']").prop("checked", false);
+	$.uniform.update(o);
+}
+function save(){
+	// recorro los campos del formulario
+	// console.debug( jQuery('#validate').validationEngine('validate') );
+	if (jQuery('#validate').validationEngine('validate') ) {
+		var data = new Array();
+		var resource = new Array();
+		$('#validate input[type="text"], #validate input[type="hidden"], #validate input[type="password"],  input:checked, #validate select').each(function(index, value){
+			//input[type="checkbox"]
+			//console.debug(this);
+			if($(this).attr('name') !=='' && $(this).val() !=='' && $(this).attr('name') !== undefined){
+				if($(this).attr('type')=='checkbox'){
+						//var habilitado = $(this).is(':checked')?1:0;
+						resource.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+					}else{ 
+						data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+					}
+			}
+		});
+		//console.debug(data);
+		var id = $('#id').val();
+		var accion = $('#accion').val();
+	   $.ajax( {
+	        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'role', 'action'=> 'saverole'))?>",
+	        data: { data: data, accion: accion, id:id, resource: resource  } , 
+	        async: false,
+	        beforeSend: function(objeto){},
+	        complete: function(objeto, exito) { },
+	        dataType: "json",
+	        global: true,
+	        cache:false,
+	        ifModified: false,
+	        processData:true,
+	        success: function(datos)
+	        {		        	
+	        	$('#id').val(datos.id);
+	        	$('#accion').val('edit');
+	        	
+	        	$(".loader").show();
+	        	window.setTimeout(function() {
+	        		$(".loader").hide();
+	        		displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'role', 'action'=>'index'))?>' );
+	        	}, 2000);	        		
+
+	        },
+	        error: function(request, status, error)
+	        {
+	        	var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+	           	$(".loader").show();
+	        	window.setTimeout(function() {
+	        		$(".loader").hide();
+	        		displayMessage( 'error', mensaje, 'Error', '<?php echo $this->url(array('module'=>'admin','controller'=>'role', 'action'=>'index'))?>' );
+	        	}, 2000);	  
+	        },
+	        timeout: 20000,
+	        type: "POST"
+	    } ); 
+	} else {
+		return false;
+	}
+}
+function guardar(){
+	$('#validate').submit();
+}
+function cancelar(){
+	document.location.href='<?php echo $this->url(array('module'=>'admin','controller'=>'role', 'action'=>'index'))?>';
+}
+</script>

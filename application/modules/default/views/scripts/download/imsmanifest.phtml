@@ -1,0 +1,133 @@
+<?php echo "<?xml version=\"1.0\" ?>";?>
+<manifest xmlns="http://www.imsglobal.org/xsd/imsccv1p3/imscp_v1p1"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns:lom="http://ltsc.ieee.org/xsd/imsccv1p3/LOM/resource"
+          xmlns:lomimscc="http://ltsc.ieee.org/xsd/imsccv1p3/LOM/manifest"
+		  xsi:schemaLocation="http://www.imsglobal.org/xsd/imsccv1p3/imscp_v1p1
+http://www.imsglobal.org/profile/cc/ccv1p3/ccv1p3_imscp_v1p2_v1p0.xsd
+http://ltsc.ieee.org/xsd/imsccv1p3/LOM/resource
+http://www.imsglobal.org/profile/cc/ccv1p3/LOM/ccv1p3_lomresource_v1p0.xsd
+http://ltsc.ieee.org/xsd/imsccv1p3/LOM/manifest
+http://www.imsglobal.org/profile/cc/ccv1p3/LOM/ccv1p3_lommanifest_v1p0.xsd"
+          identifier="course_<?php echo $this->ocw->titleEncode ?>"
+          xml:base="<?php echo $this->ocw->titleEncode ?>/" >
+<metadata>
+<schema>IMS Common Cartridge</schema>
+<schemaversion>1.3.0</schemaversion>
+<lomimscc:lom>
+	<lomimscc:general>
+		<lomimscc:title>
+			<lomimscc:string language="en-US"><?php echo htmlspecialchars($this->ocw->title) ?></lomimscc:string>
+		</lomimscc:title>
+		<lomimscc:description>
+			<lomimscc:string language="en-US"><?php echo htmlspecialchars($this->ocw->description) ?></lomimscc:string>
+		</lomimscc:description>
+		<lomimscc:keyword>
+			<lomimscc:string language="en-US"><?php echo htmlspecialchars($this->ocw->keywords) ?></lomimscc:string>
+		</lomimscc:keyword>
+		<lomimscc:identifier>
+			<lomimscc:catalog><?php echo $this->ocw->id ?></lomimscc:catalog>
+		</lomimscc:identifier>
+	</lomimscc:general>
+	<lomimscc:educational>
+		<lomimscc:intendedEndUserRole>
+			<lomimscc:source>IMSGLC_CC_Rolesv1p2</lomimscc:source>
+			<lomimscc:value>Learner</lomimscc:value>
+		</lomimscc:intendedEndUserRole>
+	</lomimscc:educational>
+    <?php if(!empty($this->ocw->autors)):?>
+        <lomimscc:lifeCycle>
+        	<?php foreach ($this->ocw->autors as $author):?>
+            <lomimscc:contribute>
+	            <lomimscc:role>
+	                <lomimscc:source>OCW_LOMv1.0</lomimscc:source>
+	                <lomimscc:value>author</lomimscc:value>
+	            </lomimscc:role>
+	            <lomimscc:entity><?php echo htmlspecialchars($author['authorName'] . ' ' . $author['degreeDisplay']) ?></lomimscc:entity>
+        	</lomimscc:contribute>
+        	<?php endforeach;?>
+        </lomimscc:lifeCycle>	
+    <?php endif;?>
+        <?php if(!empty($this->ocw->category)):?>
+		 <lomimscc:classification>
+			<lomimscc:keyword>
+				<?php foreach ($this->ocw->category as $category):?>
+				<lomimscc:string language="en-US"><?php echo htmlspecialchars($category['catName'])?></lomimscc:string>
+				<?php endforeach; ?>
+			</lomimscc:keyword>
+		</lomimscc:classification>   
+        <?php endif; ?>
+</lomimscc:lom>
+</metadata>     
+ <organizations>
+    <organization identifier="O_<?php echo $this->ocw->titleEncode ?>" structure="rooted-hierarchy">
+    <title><?php echo htmlspecialchars($this->ocw->title) ?></title>
+    <item identifier="I_R_<?php echo $this->ocw->titleEncode?>">
+	<?php foreach ($this->ocw->joins as $key=>$join): ?>
+      	<?php if ($join->type == 5):?> 
+        <item identifier="I_<?php echo $this->ocw->titleEncode?>_S_<?php echo $join->id?>">
+          <title><?php echo htmlspecialchars($join->title) ?></title>
+          <?php foreach ($this->ocw->joins as $k=>$v):?>
+		  <?php 
+			if($key < $k ):
+				$external = '';
+				if($v->type == 5) { break; }
+				if($v->type != 5 || $v->type != 7  ) : // otro header
+				$titleEncode = is_null($v->titleEncode) ? codificar_titulo($v->title) : $v->titleEncode;
+		  ?>
+			<item identifier="I_<?php echo $titleEncode ?>" identifierref="I_<?php echo $titleEncode ?>_R">
+			<title><?php echo $v->title ?></title>
+			</item>
+		  <?php endif; endif;endforeach; ?>          
+        </item>
+        <?php endif; endforeach;?>
+	</item>      
+    </organization>
+  </organizations>    
+
+    <resources>
+    	<resource identifier="r_index" type="webcontent">
+    		<file href="<?php echo $this->ocw->titleEncode ?>/index.html" />
+    	</resource>
+		<?php 
+		foreach ($this->ocw->joins as $k=>$v):
+			if($v->type != 5 && $v->type !=7 ) : 
+				$titleEncode = is_null($v->titleEncode) ? codificar_titulo($v->title) : $v->titleEncode;
+				$target = '';
+				switch ($v->type) {
+					case 1: // courses
+						$target = $this->ocw->titleEncode . '/courses/'.$titleEncode.'.html'; break;
+					case 2: // files
+						//$target='getfile/'.$titleEncode.'.html';
+						//$target = $v->ownData['ocwUrlFile'];
+						$stripped_url = preg_replace('/\\?.*/', '', $v->ownData['ocwUrlFile']);
+						$realfilename = basename($stripped_url);
+						$target= $this->ocw->titleEncode .'/files/'. $realfilename;
+						break;
+					case 3: // lectures
+						$target= $this->ocw->titleEncode .'/lectures/'. $titleEncode.'.html'; break;
+					case 4: // Collections
+						$target=$this->ocw->titleEncode . '/collections/'.$titleEncode.'.html';	break;
+					case 6: // Conferences
+						$target=$this->ocw->titleEncode .'/conferences/'.$titleEncode.'.html'; break;
+					default:
+						;
+						break;
+				}
+				$filename = $this->tmpFolder . $this->ocw->titleEncode.'/' . $target;
+				//echo $filename .' ---  ';
+				if(file_exists($filename)){
+					echo '<resource identifier="r_'. $titleEncode . '" type="webcontent" href="'.$target.'" >';
+					echo '<file href="'.$target.'"/>';
+					echo '</resource>';
+				}
+			endif;	
+		endforeach;	
+		foreach ($this->harcodeddir as $key => $dir ):
+			echo '<resource identifier="r_hardcoded'. $key . '" type="webcontent" href="'. $this->ocw->titleEncode . $dir .'" >';
+			echo '<file href="'. $this->ocw->titleEncode . $dir .'"/>';
+			echo '</resource>';
+		endforeach;
+		?>
+  </resources>
+</manifest>

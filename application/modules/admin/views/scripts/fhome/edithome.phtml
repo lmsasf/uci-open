@@ -1,0 +1,413 @@
+<?php
+$this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js');
+
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
+?>
+<style>
+	.step h1 { display: none;}
+	.widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
+	div.checker span { vertical-align: top !important;}
+	.editor {
+		border: dashed 2px #DDDDDD !important;
+		background-color: white;
+		height: 150px;
+		overflow: auto;
+		padding:10px;
+
+	}
+	.ui-dialog form { text-align: left; }
+	.ui-dialog .ui-dialog-content { overflow:visible;}
+
+	#license-editor .formRight {margin-right: 0px;width: 45%;}
+	#license-editor label {	width: 50%;	margin: 3px 3px 0;}
+</style>
+<div class="topHeader" style="top: 0;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+	            <div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'frontend', 'action'=>'index') )?>">Frontend Dashboard</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'fhome', 'action'=>'index') )?>">Home Design List</a></li>
+						<li class="current"><a href="javascript:void(0)"><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></a></li>
+					</ul>
+				</div>
+	        </div>
+		</div>
+	</div>
+</div>
+<!-- CONTENIDO -->
+<div id="content">
+	<div class="wrapper">
+	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+	<div id="mensajes"></div>
+
+		<div class="widgets">
+			<div class="oneTwo">
+	        <!-- Validation form -->
+		        <form id="validate" class="form" method="post" action="" onsubmit="return false;">
+		        	<input type="hidden" name="id" id="id" value="<?php echo is_null($this->home) && $this->accion ==='add' ? '' : $this->home->id ?>" />
+		        	<input type="hidden" name="accion" id="accion" value="<?php echo $this->accion ?>" />
+		        	<fieldset>
+		                <div class="widget">
+		                    <div class="title"><h6>Details</h6></div>
+		                    <div class="formRow">
+		                        <label for="HomeSquare">Block availables:<span class="req">*</span></label>
+								<div class="formRight searchDrop">
+									<select data-placeholder="Choose a block..." name="homeSquare" id="homeSquare" class="chzn-select" style="width:350px;" tabindex="2">
+										<option value=""></option>
+										<?php
+											$blocks = array();
+											foreach($this->blocksDisabled as $bd){
+												$blocks[] = $bd['homeSquare'];
+											}
+
+											for($i=1;$i<=5;$i++){
+													if(!in_array($i,$blocks,false)||$this->home->homeSquare == $i){
+											?>
+													<option value="<?=$i?>" <?php if(!empty($this->home) && $this->home->homeSquare == $i){ echo "selected";}?>><?=$i?></option>
+										<?php 		}
+											  }?>
+									</select>
+								</div>
+								<?php if($this->design!=5){ ?>
+								<div class="formRight searchDrop">
+								<img class="box-tmpl" id="box-tmpl-a1" style="border:4px solid #fff;width:70px;" src="/backend/images/frontTemplates/templates/homeBlock_0<?php echo $this->design;?>_0<?php echo (empty($this->home))?'0':$this->home->homeSquare;?>.jpg">
+								</div>
+								<?php } ?>
+		                        <div class="clear"></div>
+		                    </div>
+							<div class="formRow">
+								<label for="HomeType">Type:<span class="req">*</span></label>
+								<div class="formRight searchDrop">
+									<select data-placeholder="Choose an type..." name="homeType" id="homeType" class="chzn-select" style="width:350px;" tabindex="2">
+										<option value=""></option>
+										<option value="text" <?php if(!empty($this->home) && $this->home->homeType == 'text'){ echo "selected";}?>>Text</option>
+										<option value="slide_v" <?php if(!empty($this->home) && $this->home->homeType == 'slide_v'){ echo "selected";}?>>Carousel - Video</option>
+										<option value="slide_i" <?php if(!empty($this->home) && $this->home->homeType == 'slide_i'){ echo "selected";}?>>Carousel - Image</option>
+										<option value="banner" <?php if(!empty($this->home) && $this->home->homeType == 'banner'){ echo "selected";}?>>Banner</option>
+									</select>
+								</div>
+								<div class="clear"></div>
+							</div>
+
+							<div id="titleShow" class="show" style="display: <?=(!empty($this->home) && $this->home->homeType == 'text')?'':'none'?>;">
+								<div class="formRow">
+									<label for="title">Title:</label>
+									<div class="formRight">
+										<input type="text" class="clearField" name="homeTitle" id="homeTitle" value="<?php echo is_null($this->home) ? '' : $this->home->homeTitle; ?>"/>
+									</div>
+									<div class="clear"></div>
+								</div>
+							</div>
+
+							<div id="textShow" class="show" style="display: <?=(!empty($this->home) && $this->home->homeType == 'text')?'':'none'?>;">
+								<div class="formRow">
+									<label for="frontHomeText">Text:</label>
+									<div class="formRight">
+										<div class="editor" data-name="homeText"><?php if(!empty($this->home->homeText)) echo $this->home->homeText;?></div>
+									</div>
+									<div class="clear"></div>
+								</div>
+							</div>
+
+							<!-- Imagen -->
+							<div id="imageShow" class="show" style="display: <?=(!empty($this->home) && ($this->home->homeType == 'slide_i'||$this->home->homeType == 'banner'))?'':'none'?>;">
+								<div class="formRow courseForm">
+									<label for="homeImageURL">Upload image:</label>
+									<div class="formRight">
+										<input type="hidden" class="clearField" placeholder="http://" id="hImageURL" name="hImageURL" value="">
+										<div id="image-upload-home"></div>
+									</div>
+									<div class="clear"></div>
+								</div>
+
+								<div class="formRow courseForm">
+									<label>Image URL:</label>
+									<div class="formRight"><input type="text" class="clearField" name="homeImageUrl"  placeholder="http://" id="homeImageUrl"  value="<?php  if($this->home){ echo $this->home->homeImageUrl; }?>"/></div>
+									<div class="clear"></div>
+								</div>
+
+								<div class="formRow courseForm">
+									<label>Preview:</label>
+									<div class="formRight">
+										<div id="simg_target"><img id="urlimagen-home" style="width:100px;" src="<?php  if($this->home){ echo $this->home->homeUrl; }else{?>/backend/images/not-available.jpg<?php }?>"></div>
+									</div>
+									<div class="clear"></div>
+								</div>
+							</div>
+							<!-- FIN Imagen -->
+
+							<div id="urlShow" class="show" style="display: <?=(!empty($this->home) && $this->home->homeType == 'slide_v')?'':'none'?>;">
+								<div class="formRow">
+									<label for="title">Url:<span class="req"></span></label>
+									<div class="formRight">
+										<input type="text" class="clearField" name="homeUrl" id="homeUrl" placeholder="http://" value="<?php echo is_null($this->home) ? '' : $this->home->homeUrl; ?>"/>
+									</div>
+									<div class="clear"></div>
+								</div>
+							</div>
+
+							<div id="orderShow" class="show" style="display: <?=(!empty($this->home) && $this->home->homeType != 'text')?'':'none'?>;">
+								<div class="formRow">
+									<label for="order">Order<span id="orderComment"></span>:</label>
+									<div class="formRight">
+										<input type="text" class="clearField" name="homeOrder" id="homeOrder" value="<?php echo is_null($this->home) ? '1' : $this->home->homeOrder; ?>"/>
+									</div>
+									<div class="clear"></div>
+								</div>
+							</div>
+
+							<div class="formRow">
+								<label>Active:</label>
+								<div class="formRight">
+									<span class=""><input id="homeActive" class="clearField" type="checkbox" name="homeActive" value="" <?php if(!empty($this->home->homeActive) && $this->home->homeActive == 1) echo "checked"; else if(empty($this->home->id)) echo "checked"; else echo "";?> style="float: left; margin-top: 5px; margin-right: 5px; opacity: 0;"></span>
+								</div>
+								<div class="clear"></div>
+							</div>
+
+							<div class="formSubmit">
+		                    	<input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancel()" />
+		                    	<input type="button" value="Save" class="blueB" onclick="save()" />
+		                    </div>
+		                    <div class="clear"></div>
+		                </div>
+
+		            </fieldset>
+		        </form>
+	        </div>
+        </div>
+	</div>
+</div>
+<script type="text/javascript">
+	var urlImage = "<?php echo 'http://'.$_SERVER['SERVER_NAME'].'/upload/images/'?>";
+	$(function() {
+		$('#validate').submit(function() {
+			save();
+			return false;
+		});
+
+		/*Texto enriquecido*/
+		$('.editor').click(function() {
+			var name;
+			for(name in CKEDITOR.instances) {
+				var instance = CKEDITOR.instances[name];
+				if(this && this == instance.element.$) {
+					return;
+				}
+			}
+			$(this).attr('contenteditable', true);
+			CKEDITOR.inline(this);
+		});
+
+		/*Cargar Imagen*/
+		$('#image-upload-home').fineUploader({
+			request: {
+				endpoint: '/admin/ocw/uploadfile/target/images'
+			},
+			multiple: false,
+			validation: {
+				allowedExtensions: ['jpeg', 'jpg', 'png', 'gif']//,
+			},
+			text: {
+				uploadButton: 'Select or drop here, a image file to upload'
+			},
+			showMessage: function(message) {
+				displayMessage( 'error', message, 'Error', '' );
+			}
+		}).on('complete', function(event, id, fileName, responseJSON) {
+			if (responseJSON.success) {
+				$('#homeImageUrl').val(urlImage + responseJSON.nameFile);
+				$(".homeImageformError").remove();
+				$('#urlimagen-home').attr('src', urlImage + responseJSON.nameFile);
+			}
+		}).on('error', function(event, id, filName, mensaje) {
+			mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+			displayMessage( 'error', mensaje, 'Error', '' );
+		});
+
+
+		$('#homeImageUrl').change(function() {
+			var cadena = $(this).val().split("/");
+			for (var i=0; i < cadena.length; i++) {
+				if( (i + 1) == cadena.length){
+					var nombre = cadena[i];
+				}
+			}
+			$('#urlimagen-home').attr('src', $(this).val());
+		});
+		/*FIN Cargar Imagen*/
+
+		$('#homeType').on('change', function(){
+			var type = $(this).val();
+			switch (type){
+				case 'text':
+					$('.show').hide();
+					$('#textShow').show();
+					$('#titleShow').show();
+					$('.clearField').val('');
+					$('#urlimagen-home').attr('src', '/backend/images/not-available.jpg');
+					break;
+				case 'slide_v':
+					$('.show').hide();
+					$('#urlShow').show();
+					$('#orderShow').show();
+					$('#titleShow').show();
+					$('.clearField').val('');
+					$('.editor').each(function(index, element){
+						$(element).html('');
+					});
+					$('#urlimagen-home').attr('src', '/backend/images/not-available.jpg');
+					break;
+				case 'banner':
+					$('.show').hide();
+					$('#imageShow').show();
+					$('#orderShow').show();
+					$('#titleShow').show();
+					$('.clearField').val('');
+					$('.editor').each(function(index, element){
+						$(element).html('');
+					});
+					break;
+				case 'slide_i':
+					$('.show').hide();
+					$('#imageShow').show();
+					$('#orderShow').show();
+					$('#titleShow').show();
+					$('.clearField').val('');
+					$('.editor').each(function(index, element){
+						$(element).html('');
+					});
+					break;
+				default:
+					break;
+			}
+		});
+		$('#homeSquare').on('change', function(){
+			var squareSelected = $(this).val();
+			$('#box-tmpl-a1').attr('src','/backend/images/frontTemplates/templates/homeBlock_0<?php echo $this->design;?>_0'+squareSelected+'.jpg');
+			if(squareSelected==2){
+				$('#homeType_chzn_o_1').hide();
+				$('#homeType_chzn_o_4').hide();
+				$('#homeType_chzn_o_2').show();
+				$('#homeType_chzn_o_3').show();
+			}else{
+				$('#homeType_chzn_o_1').show();
+				$('#homeType_chzn_o_4').show();
+				$('#homeType_chzn_o_2').hide();
+				$('#homeType_chzn_o_3').hide();
+			}
+		});
+
+		$( document ).ready(function() {
+			var squareSelected = $('#homeSquare').val();
+			if(squareSelected==2){
+				$('#homeType_chzn_o_1').hide();
+				$('#homeType_chzn_o_4').hide();
+				$('#homeType_chzn_o_2').show();
+				$('#homeType_chzn_o_3').show();
+			}else{
+				$('#homeType_chzn_o_1').show();
+				$('#homeType_chzn_o_4').show();
+				$('#homeType_chzn_o_2').hide();
+				$('#homeType_chzn_o_3').hide();
+			}
+		});
+
+	});
+
+	function save(){
+		// recorro los campos del formulario
+		if (jQuery('#validate').validationEngine('validate') ) {
+			if($('#homeSquare').val()==''){
+				displayMessage( 'error', 'Block selections is required.', 'Error', '' );
+				return false;
+			}
+
+			if($('#homeType').val()==''){
+				displayMessage( 'error', 'Type selections is required.', 'Error', '' );
+				return false;
+			}
+
+			if($('#homeUrl').val()!='' && $('#homeUrl').val().indexOf("https://")<0 && $('#homeUrl').val().indexOf("http://")<0){
+				$('#homeUrl').val('http://'+$('#homeUrl').val());
+			}
+
+			var data = new Array();
+
+			if($('#homeSquare').val()){
+
+			}
+
+			$('#validate input[type="text"], #validate input[type="hidden"]').each(function(index, value){
+				if($(this).attr('name') !=='' && typeof $(this).attr('name') !=='undefined'){
+					data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+				}
+			});
+
+			$('.editor').each(function(index, element){
+				data.push( { campo:$(element).data('name'), valor: $(element).html()  } );
+			});
+
+			$('#homeSquare').each(function(index, value){
+				data.push( { campo:$(this).attr('name'), valor: $(this).val()  } );
+			});
+
+			$('#homeType').each(function(index, value){
+				data.push( { campo:$(this).attr('name'), valor: $(this).val()  } );
+			});
+
+			var homeActive = $('#homeActive').is(':checked') ? '1' : '0';
+			data.push ( { campo: 'homeActive', valor: homeActive } );
+
+			var id = $('#id').val();
+			var accion = $('#accion').val();
+
+		   $.ajax( {
+		        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'fhome', 'action'=> 'savehome'))?>",
+		        data: { data: data, accion: accion, id: id } ,
+		        async: false,
+		        beforeSend: function(objeto){},
+		        complete: function(objeto, exito) { },
+		        dataType: "json",
+		        global: true,
+		        cache:false,
+		        ifModified: false,
+		        processData:true,
+		        success: function(datos)
+		        {
+		        	$('#id').val(datos.id);
+		        	$('#accion').val('edit');
+
+		        	$(".loader").show();
+		        	window.setTimeout(function() {
+		        		$(".loader").hide();
+		        		displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'fhome', 'action'=>'index'))?>' );
+		        	}, 2000);
+		        },
+		        error: function(request, status, error)
+		        {
+		        	var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+		            displayMessage( 'error', mensaje, 'Error', '' );
+		        },
+		        timeout: 20000,
+		        type: "POST"
+		    } );
+		} else {
+			return false;
+		}
+	}
+
+	function cancel(){
+		document.location.href='<?php echo $this->url(array('module'=>'admin','controller'=>'fhome', 'action'=>'index'))?>';
+	}
+
+
+
+</script>
+

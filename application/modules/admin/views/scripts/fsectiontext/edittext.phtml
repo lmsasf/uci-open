@@ -1,0 +1,201 @@
+<?php
+$this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js');
+
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
+?>
+<style>
+	.step h1 { display: none;}
+	.widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
+	div.checker span { vertical-align: top !important;}
+	.editor {
+		border: dashed 2px #DDDDDD !important;
+		background-color: white;
+		height: 150px;
+		overflow: auto;
+		padding:10px;
+
+	}
+	.ui-dialog form { text-align: left; }
+	.ui-dialog .ui-dialog-content { overflow:visible;}
+
+	#license-editor .formRight {margin-right: 0px;width: 45%;}
+	#license-editor label {	width: 50%;	margin: 3px 3px 0;}
+</style>
+<div class="topHeader" style="top: 0;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+	            <div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'frontend', 'action'=>'index') )?>">Frontend Dashboard</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'fsectiontext', 'action'=>'index') )?>">Sections Text list</a></li>
+						<li class="current"><a href="javascript:void(0)"><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></a></li>
+					</ul>
+				</div>
+	        </div>			
+		</div>
+	</div>
+</div>
+<!-- CONTENIDO -->
+<div id="content">
+	<div class="wrapper">
+	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+	<div id="mensajes"></div>
+		
+		<div class="widgets">
+			<div class="oneTwo">
+	        <!-- Validation form -->
+		        <form id="validate" class="form" method="post" action="" onsubmit="return false;">
+		        	<input type="hidden" name="id" id="id" value="<?php echo is_null($this->section) && $this->accion ==='add' ? '' : $this->section->id ?>" />
+		        	<input type="hidden" name="accion" id="accion" value="<?php echo $this->accion ?>" />
+		        	<fieldset>
+		                <div class="widget">
+		                    <div class="title"><h6>Details</h6></div>
+		                    <div class="formRow">
+		                        <label for="frontSection">Section:<span class="req">*</span></label>
+								<div class="formRight searchDrop">
+									<select data-placeholder="Choose a section..." name="section" id="section" class="chzn-select" style="width:350px;" tabindex="2">
+										<option value=""></option>
+										<option value="1" <?php if(!empty($this->section->section) && $this->section->section == 1){ echo "selected";}?>>About Us</option>
+										<option value="2" <?php if(!empty($this->section->section) && $this->section->section == 2){ echo "selected";}?>>FAQs</option>
+										<option value="3" <?php if(!empty($this->section->section) && $this->section->section == 3){ echo "selected";}?>>Term of use</option>
+										<option value="4" <?php if(!empty($this->section->section) && $this->section->section == 4){ echo "selected";}?>>Collections text</option>
+										<option value="5" <?php if(!empty($this->section->section) && $this->section->section == 5){ echo "selected";}?>>Awards</option>
+										<option value="6" <?php if(!empty($this->section->section) && $this->section->section == 6){ echo "selected";}?>>Information for Faculty</option>
+										<option value="7" <?php if(!empty($this->section->section) && $this->section->section == 7){ echo "selected";}?>>Our Team</option>
+									</select>
+								</div>
+		                        <div class="clear"></div>
+		                    </div>
+							<div class="formRow">
+								<label for="title">Title:<span class="req">*</span></label>
+								<div class="formRight">
+									<input type="text" name="secTitle" id="secTitle" value="<?php echo is_null($this->section) ? '' : $this->section->secTitle; ?>"/>
+								</div>
+								<div class="clear"></div>
+							</div>
+		                    <div class="formRow">
+		                        <label for="frontSectionText">Section Text:<span class="req">*</span></label>
+								<div class="formRight">
+									<div class="editor" data-name="secText"><?php if(!empty($this->section->secText)) echo $this->section->secText;?></div>
+								</div>
+		                        <div class="clear"></div>
+		                    </div>
+							<div class="formRow">
+								<label>Active:</label>
+								<div class="formRight">
+									<span class=""><input id="secActive" type="checkbox" name="secActive" value="" <?php if(!empty($this->section->secActive) && $this->section->secActive == 1) echo "checked"; else echo ""?> style="float: left; margin-top: 5px; margin-right: 5px; opacity: 0;"></span>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<div class="formSubmit">
+		                    	<input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancel()" />
+		                    	<input type="button" value="Save" class="blueB" onclick="save()" />
+		                    </div>
+		                    <div class="clear"></div>
+		                </div>
+		                
+		            </fieldset>
+		        </form>  
+	        </div>	        
+        </div>	
+	</div>
+</div>	        
+<script type="text/javascript">
+	$(function() {
+		$('#validate').submit(function() {
+			save();
+			return false;
+		});
+
+		$('.editor').click(function() {
+			var name;
+			for(name in CKEDITOR.instances) {
+				var instance = CKEDITOR.instances[name];
+				if(this && this == instance.element.$) {
+					return;
+				}
+			}
+			$(this).attr('contenteditable', true);
+			CKEDITOR.inline(this);
+		});
+	});	
+
+	function save(){
+		// recorro los campos del formulario
+		if (jQuery('#validate').validationEngine('validate') ) {
+			if($('.editor').html().length>65535){
+				displayMessage( 'error', 'Text extensive. Enter only 65535 characters.', 'Error', '' );
+				return false;
+			}
+
+			if($('#section').val()==''){
+				displayMessage( 'error', 'Complete the required parameter (*): Section', 'Error', '' );
+				return false;
+			}
+
+			var data = new Array();
+			$('#validate input[type="text"], #validate input[type="hidden"]').each(function(index, value){
+				if($(this).attr('name') !=='' && $(this).val() !==''){
+					data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+				}
+			});
+
+			var active = $('#secActive').is(':checked') ? '1' : '0';
+			data.push ( { campo: 'secActive', valor: active } );
+
+			$('.editor').each(function(index, element){
+				data.push( { campo:$(element).data('name'), valor: $(element).html()  } );
+			});
+
+			$('#section').each(function(index, value){
+				data.push( { campo:$(this).attr('name'), valor: $(this).val()  } );
+			});
+			var id = $('#id').val();
+			var accion = $('#accion').val();
+
+		   $.ajax( {
+		        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'fsectiontext', 'action'=> 'savetext'))?>",
+		        data: { data: data, accion: accion, id:id  } ,
+		        async: false,
+		        beforeSend: function(objeto){},
+		        complete: function(objeto, exito) { },
+		        dataType: "json",
+		        global: true,
+		        cache:false,
+		        ifModified: false,
+		        processData:true,
+		        success: function(datos)
+		        {
+		        	$('#id').val(datos.id);
+		        	$('#accion').val('edit');
+		        	  
+		        	$(".loader").show();
+		        	window.setTimeout(function() {
+		        		$(".loader").hide();
+		        		displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'fsectiontext', 'action'=>'index'))?>' );
+		        	}, 2000);
+		        },
+		        error: function(request, status, error)
+		        {
+		        	var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+		            displayMessage( 'error', mensaje, 'Error', '' );
+		        },
+		        timeout: 20000,
+		        type: "POST"
+		    } );
+		} else {
+			return false;
+		}
+	}	
+	function cancel(){
+		document.location.href='<?php echo $this->url(array('module'=>'admin','controller'=>'fsectiontext', 'action'=>'index'))?>';
+	}
+
+</script>
+

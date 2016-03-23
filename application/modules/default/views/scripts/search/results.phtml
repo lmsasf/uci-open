@@ -1,0 +1,116 @@
+<?php $this->inlineScript()->appendFile($this->baseUrl()."/frontend/js/jquery.dotdotdot.min.js",'text/javascript');?>
+<style>
+<!--
+.ocwdescription { padding: 5px; /*max-height: 65px;*/ margin-bottom: 10px; }
+.ocwTitle 		{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 95%; }
+.row-search 	{ border-bottom: 1px solid #CCCCCC;	margin-bottom: 15px; }
+-->
+</style>
+<script type="text/javascript" language="javascript">
+	$(function() {
+		// $('.ocwdescription').dotdotdot({ watch: 'window' });
+		$('.filter').on('change', function(){
+			
+			var gotoURL = '/search/results/keyword/<?php echo $this->keyword ?>/' ;
+			$('.filter').each(function( index ){
+				if( $(this).val() != 'all' ) {
+					gotoURL += $(this).prop('id') + '/' + $(this).val() + '/' ;
+				} 
+			});
+			//console.debug(gotoURL);
+			window.location = gotoURL;
+		});
+	});
+</script>
+<div class="span12" id="content">
+	<div style="padding: 15px;">
+	    <div class="row-fluid ">
+	
+	    	<div class="span12">
+	    	    	<div class="row-fluid ">
+	    	    		<select name="ocwtype" id="ocwtype" class="filter" >
+	    	    			<option value="all" >All types</option>
+	    	    			<option value="collection" <?php echo $this->ocwtype =='collection'	? 'selected="selected"' : '' ?>  > Collections </option>
+	    	    			<option value="conference" <?php echo $this->ocwtype =='conference'	? 'selected="selected"' : '' ?>  > Conferences </option>
+	    	    			<option value="course" <?php echo $this->ocwtype =='course'    		? 'selected="selected"' : '' ?>  > Courses</option>
+	    	    			<option value="lecture" <?php echo $this->ocwtype =='lecture'   	? 'selected="selected"' : '' ?>  > Lectures</option>
+	    	    			<option value="file" <?php echo $this->ocwtype =='file'      		? 'selected="selected"' : '' ?>  > File</option>
+	    	    		</select>
+	    	    		<select name="category" id="category" class="filter">
+	    	    			<option value="all" >All categories</option>
+	    	    			<?php foreach ($this->categories as $category ): ?>
+	    	    			<option value="<?php echo $category['id']?>" <?php echo $this->idCat == $category['id']	? 'selected="selected"' : '' ?>  > <?php echo $category['path']?></option>
+	    	    			<?php endforeach;?>
+	    	    		</select>
+	    	    		<select name="language" id="language" class="filter">
+	    	    			<option value="all" >All languages</option>
+	    	    			<?php foreach ($this->languages as $lan ): ?>
+	    	    			<option value="<?php echo $lan->lanName ?>" <?php echo $this->lanName == $lan->lanName	? 'selected="selected"' : '' ?>  > <?php echo $lan->lanName ?></option>
+	    	    			<?php endforeach;?>
+	    	    		</select>
+	
+				    </div>
+	   		<?php  
+				echo $this->paginationControl($this->searchresult,  'Sliding', '/search/pagination_control.phtml', array('keyword'=>$this->keyword, 'label'=> true, 'ocwtype'=> $this->ocwtype, 'category'=> $this->idCat, 'totalItemCount'=>$this->searchresult->getTotalItemCount()  ));  
+			?>      	
+			<?php 
+			if( $this->searchresult->count() > 0 ):
+				foreach($this->searchresult as $ocw): 
+				?>    	
+		    	<div class="row-fluid row-search">
+					<div class="span12">
+					    <?php 
+					    	$dsu = array();
+					    	if($ocw->depName != '') { array_push($dsu, $ocw->depName . ' Dept.'); }
+					    	if($ocw->schName != '') { array_push($dsu, $ocw->schName . ' Sch.'); }
+					    	if($ocw->uniName != '') { array_push($dsu, $ocw->uniName); }
+						    $titleEncode = is_null($ocw->ocwTitleEncode) ? codificar_titulo($ocw->ocwTitle) : $ocw->ocwTitleEncode;
+						    $type = '';
+						    switch ($ocw->idType) {
+						    	case 1: // courses
+						    		$target= empty($ocw->ocwBypassUrlCourse)? '/courses/'.$titleEncode.'.html':$ocw->ocwBypassUrlCourse ;
+						    		$type = 'Course';
+						    		break;
+						    	case 2: // files
+						    		$target= $ocw->ocwUrlFile;
+						    		$type = 'File';
+						    		break;					    	
+						    	case 3: // lectures
+						    		$target= empty($ocw->ocwBypassUrlLecture) ? '/lectures/'.$titleEncode.'.html' : $ocw->ocwBypassUrlLecture ;
+						    		$type = 'Lecture';
+						    		break;
+						    	case 4: // Collections
+						    		$target='/collections/'.$titleEncode.'.html';
+						    		$type = 'Collection';
+						    		break;
+					    		case 6: // Conferences
+					    			$target='/conferences/'.$titleEncode.'.html';
+					    			$type = 'Conference';
+					    			break;										    			
+						    	default:
+						    		;
+						    	break;
+					    } 
+					    ?>			    			
+						<h2 ><a href="<?php echo $target ?>" title="<?php  echo $this->escape($ocw->ocwTitle); ?> "> <?php  echo $this->escape($ocw->ocwTitle); ?><?php echo !empty($ocw->lanName) ? ' ('.$ocw->lanName . ')' : ''; ?></a> &nbsp; <span class="label pull-right <?php echo strtolower($ocw->typName)?>"><?php echo $ocw->typName?></span></h2>
+						<div class="ocwdescription expand"><?php echo removeHtmlAttribute(preg_replace('#<iframe(.*?)>(.*?)</iframe>#is', '', $ocw->ocwDescription)) ?></div>
+					    <p class="muted">
+					    	<small class="clearfix"><?php echo !empty($ocw->author) ? $ocw->author : ''; ?></small>
+					    	<small><?php echo $this->escape( implode(' | ', $dsu) ); ?></small>
+					    </p>
+					</div>
+				</div>
+				<?php 
+				endforeach; 
+			else :
+				echo 'No results found for "' .  $this->keyword . '"';
+			endif;
+			?>  
+	
+	    	<?php  
+				echo $this->paginationControl($this->searchresult,  'Sliding', '/search/pagination_control.phtml', array('keyword'=>$this->keyword , 'label'=> false , 'ocwtype'=> $this->ocwtype, 'category'=> $this->idCat ));  
+			?>  
+	    	</div>
+	    </div>
+	</div>    
+</div>

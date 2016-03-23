@@ -1,0 +1,125 @@
+<div class="topHeader" style="top: 0;">
+	<div class="titleArea">
+		<div class="wrapper">
+			<div class="TopPageTitle">
+	        	<!-- <h5>Degree</h5>
+	            <span><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></span>-->
+	            <div class="bc">
+					<ul id="breadcrumbs" class="breadcrumbs">
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
+						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'degree', 'action'=>'index') )?>">Degree list</a></li>
+						<li class="current"><a href="javascript:void(0)"><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></a></li>
+					</ul>
+				</div>
+	        </div>			
+		</div>
+	</div>
+</div>
+<!-- CONTENIDO -->
+<div id="content">
+	<div class="wrapper">
+	<!-- <div id="ejecmens" class="body textC" style="display:none; float:left;"><img style="margin: 5px;" alt="" src="/backend/images/loaders/loader1.gif"></div> -->
+	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
+	<div id="mensajes"></div>
+		
+		<div class="widgets">
+			<div class="oneTwo">
+	        <!-- Validation form -->
+		        <form id="validate" class="form" method="post" action="" onsubmit="return false;">
+		        	<input type="hidden" name="id" id="id" value="<?php echo is_null($this->id) && $this->accion ==='add' ? '' : $this->Degree->id ?>" />
+		        	<input type="hidden" name="accion" id="accion" value="<?php echo $this->accion ?>" />
+		        	<fieldset>
+		                <div class="widget">
+		                    <div class="title"><h6>Details</h6></div>
+		                    <div class="formRow">
+		                        <label for="degDescription">Description:<span class="req">*</span></label>
+		                        <div class="formRight">
+		                        	<input type="text" class="validate[required]" name="degDescription" id="degDescription" value="<?php echo is_null($this->Degree) ? '' : $this->Degree->degDescription ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>
+		                    <div class="formRow">
+		                        <label for="degShortDescription">Short Description:<span class="req">*</span></label>
+		                        <div class="formRight">
+		                        	<input type="text" class="validate[required]" name="degShortDescription" id="degShortDescription" value="<?php echo is_null($this->Degree) ? '' : $this->Degree->degShortDescription ?>"/>
+		                        </div>
+		                        <div class="clear"></div>
+		                    </div>
+		                    <div class="formSubmit">		                    	
+		                    	<input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancel()" />
+		                    	<input type="button" value="Save" class="blueB" onclick="save()" />
+		                    </div>
+		                    <div class="clear"></div>
+		                </div>
+		                
+		            </fieldset>
+		        </form>  
+	        </div>	        
+        </div>	
+	</div>
+</div>	        
+<script type="text/javascript">
+	$(function() {
+		   $('#validate').submit(function() {
+				save();
+		    	return false;
+		    }); 
+	});	
+
+	function save(){
+		// recorro los campos del formulario
+		// console.debug( jQuery('#validate').validationEngine('validate') );
+		if (jQuery('#validate').validationEngine('validate') ) {
+			var data = new Array();
+			$('#validate input[type="text"], #validate input[type="hidden"]').each(function(index, value){
+				//console.debug(this);
+				if($(this).attr('name') !=='' && $(this).val() !==''){
+					data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
+				}
+			});
+			var Id = $('#id').val();
+			var accion = $('#accion').val();
+		   $.ajax( {
+		        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'degree', 'action'=> 'savedegree'))?>",
+		        data: { data: data, accion: accion, id:Id  } , 
+		        async: false,
+		        beforeSend: function(objeto){},
+		        complete: function(objeto, exito) { },
+		        dataType: "json",
+		        global: true,
+		        cache:false,
+		        ifModified: false,
+		        processData:true,
+		        success: function(datos)
+		        {		        	
+		        	$('#id').val(datos.id);
+		        	$('#accion').val('edit');
+		        	  
+		        	$(".loader").show();
+		        	window.setTimeout(function() {
+		        		$(".loader").hide();
+		        		displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'degree', 'action'=>'index'))?>' );
+		        	}, 2000); 
+		        	//return datos.ordenId;
+
+		        },
+		        error: function(request, status, error)
+		        {
+		        	var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+		            //$.msgbox(mensaje, {type: "error"});
+		            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+		            displayMessage( 'error', mensaje, 'Error', '' );  
+		        },
+		        timeout: 20000,
+		        type: "POST"
+		    } ); 
+		} else {
+			return false;
+		}
+	}	
+	function cancel(){
+		document.location.href='<?php echo $this->url(array('module'=>'admin','controller'=>'degree', 'action'=>'index'))?>';
+	}
+
+</script>
+

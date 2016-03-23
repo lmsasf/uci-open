@@ -1,0 +1,93 @@
+<div class="span12" id="content">
+    <div class="<?php if($this->count_ads > 0){ ?>span9<?php }else{?> span11 <?php }?>" id="content_left">
+        <h2>What is a Conference?</h2>
+        <p>An academic conference or symposium is a conference for researchers (not necessarily academics) to present and discuss their work. Together with academic or scientific journals, conferences provide an important channel for exchange of information between researchers.</p>
+
+        <h2>Current Conferences</h2>
+
+        <!-- Collections have two items: image and title; button redirects to corresponding collection page -->
+        <!-- The number (of accordion-group)'s is based on how many collections are in the database -->
+        <div class="accordion" id="current-collections">
+            <?php foreach ($this->conferences as $conference): ?>
+            <?php $titleEncode = is_null($conference->ocwTitleEncode) ? codificar_titulo($conference->ocwTitle) : $conference->ocwTitleEncode; ?>
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#current-collections" href="<?php echo '#'.$titleEncode.'-acc-'. $conference->id?>">
+                        <h3><?php echo $this->escape( strip_tags( $conference->ocwTitle ) ) ?></h3>
+                    </a>
+                </div>
+                <div id="<?php echo $titleEncode.'-acc-'. $conference->id?>" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                        <div class="media">
+                            <?php if($conference->thumbnail):?>
+                            <img class="pull-left img128 pop-preview" data-container="body" rel="popover" 
+                            data-toggle="popover" data-trigger="hover" data-placement="right" data-html="true" data-content="<img style='max-width:250px;' src='<?php echo $conference->thumbnail ?>'>" src="<?php echo $conference->thumbnail ?>">
+                            <?php else :?>
+                            <img class="pull-left" style="width: 128px; height: 128px;" src="<?php echo $this->baseUrl()?>/frontend/img/no-image.jpg" >
+                            <?php endif;?>
+                            <div class="media-body">
+                                <p><?php echo removeHtmlAttribute($conference->ocwDescription)?></p>
+                                <a href="<?php echo 'conferences/'.$titleEncode.'.html' ?>"><button class="btn btn-primary btn-block pull-right">View Conference</button></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php if($this->count_ads > 0){ 
+        /* Imagen de sponsortships o donate */
+        if($this->count_ads > 1){
+        ?>
+            <div class="span3" id="content_right" style="margin-top: 10px;">
+                <div class="well well-small" style="text-align: center;">
+                    <div id="img_url" class="img-polaroid"></div>
+
+                </div>            
+            </div>
+            <div class="span3" id="content_right" style="margin-top: 10px;">
+                <div class="well well-small" style="text-align: center;">
+
+                    <div id="img_url1" class="img-polaroid"></div>
+                </div>            
+            </div>
+        <?php }else{?>
+            <div class="span3" id="content_right" style="margin-top: 10px;">
+                <div class="well well-small" style="text-align: center;">
+                    <div id="img_url" class="img-polaroid"></div>
+
+                </div>            
+            </div>
+        <?php }?>
+    <?php }?>
+</div>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $('#myTabs a').click(function (e) {
+        $('#preMessage').hide();
+    });
+    
+    loadAds();
+});
+function loadAds(){
+    data = $.parseJSON('<?php echo $this->ads ?>');
+    images = new Array; 
+    links = new Array;     
+
+    $.each(data, function(ind, obj){
+       images[ind] = obj.adsImageURL; 
+       links[ind] = obj.adsRedirectURL;
+    });
+    
+    if(images.length > 1){
+        $('#img_url').html('<a href="'+ links[0] +'"><img src="'+ images[0] +' " style="border: 0px;"></a>');
+        $('#img_url1').html('<a href="'+ links[1] +'"><img src="'+ images[1] +' " style="border: 0px;"></a>');
+    }else{
+        $('#img_url').html('<a href="'+ links[0] +'"><img src="'+ images[0] +' " style="border: 0px;"></a>');
+    }    
+}
+
+</script>
