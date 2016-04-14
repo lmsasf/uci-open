@@ -18,7 +18,6 @@
 	//set your MYSQL users database username here
 	define("MYSQL_USER","media");
 	
-	//define("MYSQL_PASS","JieP3*ck2");
 	define("MYSQL_PASS","06-media-13");
 	
 	//set your database name here or leave "dlc" as default. Changed to media for testing.
