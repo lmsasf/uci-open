@@ -20,20 +20,19 @@ class Default_SearchController extends Zend_Controller_Action
     		
     		$OCW 				= new Table_OCW();
     		$resultado 			= $OCW->getOCWSearch($search, $ocwtype, $category, $language); 
-	    	// obtenemos la página actual
+	    	// get the current page
     		$page 				= $this->_getParam('page', 1);
-	    	// número de registros a mostrar por página
+	    	// number of records to display per page
 	    	$registros_pagina 	= 20;
-	    	// número máximo de páginas a mostrar en el paginador
+	    	// maximum number of pages to display in the paginated
 	    	$rango_paginas 		= 10;
 	    	$adapter 			= new Zend_Paginator_Adapter_DbTableSelect($resultado);
 	    	$paginator 			= new Zend_Paginator($adapter);
-	    	// opciones
+	    	// options
 	    	$paginator  ->setItemCountPerPage($registros_pagina)
 				    	->setCurrentPageNumber($page)
 				    	->setPageRange($rango_paginas);
 	    	
-	    	//$this->view->productos = $paginador;
 	    	$Categories = new Table_Category();
 	    	$categories = $Categories->getTreeWithPaths();
 	    	$this->view->assign('categories', $categories);

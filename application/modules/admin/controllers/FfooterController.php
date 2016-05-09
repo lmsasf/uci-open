@@ -8,7 +8,7 @@ class Admin_FFooterController extends Zend_Controller_Action
         $this->_helper->layout()->setLayout('admin');
     }
     /**
-     * Listado de datos para el footer
+     * Data list to footer
      */
     public function indexAction()
     {
@@ -17,7 +17,7 @@ class Admin_FFooterController extends Zend_Controller_Action
     }
 
     /**
-     * Levanta el formulario de edición de textos
+     * form text editing
      * @throws Exception
      */
     public function editfooterAction(){
@@ -30,11 +30,11 @@ class Admin_FFooterController extends Zend_Controller_Action
 
             if(!is_null($id) && is_null($accion)) {
                 $this->view->headTitle('Frontend Pages Design :: Edit');
-                // busco los datos
+                // search data
                 $this->view->assign('footer', $Footer->fetchRow($Footer->select()->where('id = ?', $id)));
                 $this->view->assign('accion', 'edit');
             }
-            if(is_null($id)) { // nuevo
+            if(is_null($id)) { // new
                 $this->view->headTitle('Frontend Pages Design :: Add');
                 $this->view->assign('accion', 'add');
                 $this->view->assign('id', null);
@@ -60,7 +60,7 @@ class Admin_FFooterController extends Zend_Controller_Action
         echo Zend_Json_Encoder::encode($nextSequence);
     }
     /**
-     * Ajax para eliminar textos
+     * Ajax to delete texts
      */
     public function deleteAction(){
         $this->_helper->layout()->setLayout('empty');
@@ -73,19 +73,19 @@ class Admin_FFooterController extends Zend_Controller_Action
                 throw new Exception( 'Insufficient parameters' );
             }
             $resp = $Sections->delete("id = $id");
-            $this->_forward('index', 'ffooter', 'admin');//echo Zend_Json_Encoder::encode(array('Id'=> $Id));
+            $this->_forward('index', 'ffooter', 'admin');
         } catch (Exception $e) {
             echo $e->getMessage();
         }
     }
 
     /**
-     * Ajax que guarda la información del formulario de textos
+     * Ajax keeps the form information text
      * @throws Exception
      */
     public function savefooterAction(){
         $this->_helper->layout()->setLayout('empty');
-        // no necesita vista para renderizarse
+        // don't need a view to render
         $this->_helper->viewRenderer->setNoRender();
         $Footer = new Table_Footer();
         $tr = $Footer->getAdapter()->beginTransaction();
@@ -94,7 +94,7 @@ class Admin_FFooterController extends Zend_Controller_Action
             $accion  		= $this->getRequest()->getParam('accion'	 , null);
             $data	 		= $this->getRequest()->getParam('data'		 , null);
 
-            if( !is_null($accion) && !is_null($data) ){ // editar o añadir
+            if( !is_null($accion) && !is_null($data) ){ // add or edit
                 $SectionRow = null;
 
                 if($accion === 'edit'){
@@ -102,8 +102,6 @@ class Admin_FFooterController extends Zend_Controller_Action
                 } else {
                     $FooterRow = $Footer->createRow();
                 }
-
-                //$Footer->reasignarOrden($area,$order);
 
                 foreach($data as $dato){
                     if($dato['campo']!== 'accion'){
@@ -124,11 +122,11 @@ class Admin_FFooterController extends Zend_Controller_Action
     }
 
     /**
-     * Método para rellenar los datos de la grilla de textos
+     * Method to fill the grid data
      */
     public function footergridAction(){
         $this->_helper->layout()->setLayout('empty');
-        // no necesita vista para renderizarse
+        // don't need a view to render
         $this->_helper->viewRenderer->setNoRender();
         $filters = Zend_Json_Decoder::decode($this->getRequest()->getParam('filters', '{}'));
         $where = '';
@@ -147,7 +145,7 @@ class Admin_FFooterController extends Zend_Controller_Action
         $iDisplayLength=$this->getRequest()->getParam('iDisplayLength', 50); // limit
         $iDisplayStart = $this->getRequest()->getParam('iDisplayStart', 0); // offset
         $limit = array('limit'=>$iDisplayLength, 'offset'=> $iDisplayStart);
-        //search de la grilla
+        //search
         $sSearch = $this->getRequest()->getParam('sSearch', '');
 
 
@@ -166,8 +164,7 @@ class Admin_FFooterController extends Zend_Controller_Action
                     echo ",";
                 }
                 $json = '{"DT_RowId": "'.$row[0].'", ';
-                $PK = array_shift($row); // se asume que la primer fila tiene PK
-                //$json = Zend_Json_Encoder::encode($row);
+                $PK = array_shift($row);
                 foreach($row AS $k => $v){
                     $json.= '"'.$k.'":'.Zend_Json_Encoder::encode($v).',';
                 }
@@ -186,39 +183,32 @@ class Admin_FFooterController extends Zend_Controller_Action
         echo "}";
     }
     /**
-     * Método para construcción del where para filtrar la grilla de textos
+     * Where construction method to filter the grid text
      */
     private function buildWherelp($filters){
         $sql = '';
         foreach ($filters AS $campo => $opciones ) {
             $valores = $opciones['values'];
             $operador = $opciones['op'];
-            // conversion de operadores relacionales
+            // conversion of relational operators
             // EQ 	NE 	GT 	LT 	GE 	LE
             switch ($operador) {
                 case 'EQ':
-                    // igual, la lista de valores es igual al campo (Sirve para comparar un sólo valor)
-                    // ya que un campo no puede tener mas de un valor
                     $operador = '= ALL';
                     break;
                 case 'NE':
-                    // No es igual o diferente a todos los elementos listados
                     $operador = '!= ALL';
                     break;
                 case 'GT':
-                    // El campo es mayor al del listado de valores
                     $operador = '> ANY';
                     break;
                 case 'LT':
-                    // El campo es menor al del listado de valores
                     $operador = '< ANY';
                     break;
                 case 'GE':
-                    // El campo es mayor o igual al del listado de valores
                     $operador = '>=';
                     break;
                 case 'LE':
-                    // El campo es menor al del listado de valores
                     $operador = '<=';
                     break;
                 case 'IN':
@@ -235,7 +225,6 @@ class Admin_FFooterController extends Zend_Controller_Action
                     break;
             }
 
-
             if(is_array($valores)){
                 if($operador === 'BETWEEN'){
                     $sql .= ' AND '  . $campo . ' ' . $operador . ' ';
@@ -246,11 +235,8 @@ class Admin_FFooterController extends Zend_Controller_Action
                 }
                 $removeChars = $operador === 'BETWEEN' ?  5 : 1 ;
                 foreach ($valores AS $valor ){
-                    // detectar si es fecha
                     $patron= "/[0-9]{2}-[0-9]{2}-[0-9]{4}$/";
-                    //Detecto si es fecha y agrego TO_DATE('27-06-2009','DD-MM-YYYY')
                     $valor = preg_match($patron, $valor) ? "'".convFechaSQL($valor)."'" : ( is_numeric($valor) ? $valor : ( $operador !=='LIKE' ? "'" . $valor . "'": strtolower($valor) ) );
-                    // si el operador es LIKE el separador es % y debo añadirselos si la cadena tiene espacios
                     $valor = $operador === 'LIKE' ? str_replace( ' ', '%', $valor ) : $valor;
                     $separador = $operador === 'BETWEEN'? ' AND ' : ($operador==='LIKE' ? '%': ',');
                     $sql .= $valor . $separador;
@@ -304,7 +290,7 @@ class Admin_FFooterController extends Zend_Controller_Action
             $action	 = $this->getRequest()->getParam('accion'	 , null);
 
 
-            if( !is_null($action) && !is_null($data) ){ // editar o añadir
+            if( !is_null($action) && !is_null($data) ){ // add or edit
                 $SectionRow = null;
 
                 if($action === 'edit'){

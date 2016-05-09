@@ -11,10 +11,7 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 <div class="topHeader" style="top:0px;">
 	<div class="titleArea">
 		<div class="wrapper">
-			<div class="TopPageTitle">
-				<!-- <h5>Persons</h5><span>List</span> -->
-				<!-- <a class="tipN" href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a>	> <a class="tipN" href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'person', 'action'=>'index') )?>">Person > List</a>-->
-				<div class="bc">
+			<div class="TopPageTitle"><div class="bc">
 					<ul id="breadcrumbs" class="breadcrumbs">
 						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>						
 						<li class="current"><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'person', 'action'=>'index') )?>">Person list</a></li>
@@ -26,11 +23,6 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 </div>
 <div id="content">
 	<div class="wrapper">
-		<!-- <div id="mensajes">
-			<?php //$this->success ? $this->messages()->success($this->success . ' [Click to hide]', 'Success'): null; ?>
-			<?php //$this->error ? $this->messages()->error($this->error . ' [Click to hide]', 'Error:'): null; ?>
-	 		<?php //$this->messages()->warning('La tabla esta mostrando los &uacute;ltimos 5000 registros, para trabajar con el conjunto de datos diferente pulse el &iacute;cono "filtrar" del men&uacute; de opciones', 'IMPORTANTE') ?>
-	 	</div>	--> 
 	 	<div id="mensajes"></div>	
 	 	<div class="filterDetailed" id="f1" style="display:none;">
 			                    <div class="filterContent">
@@ -167,26 +159,24 @@ $(document).ready(function() {
 
     	$.jGrowl.defaults.closerTemplate = '<div>[close all]</div>';
     	var calcDataTableHeight = function() {
-            return $(window).height()-300 ; 
-            // la altura de la tabla se calcula en base 
+            return $(window).height()-300 ;
         };
     	oTable = $('.dTable').dataTable( { 
-            "bJQueryUI": true, // soporte para temas UI
-            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+            "bJQueryUI": true, // UI themes support
+            "sPaginationType": "full_numbers", // show the page numbers
             "bRetrieve"  : true,
             "bProcessing": true,
-        	"bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+        	"bServerSide": true,
         	"sDom": '<""flT>rt<"F"ip>',
     		"aoColumns": [
     		              { "sWidth": "90px", "bSortable": false }, { "sWidth": "300px" },{ "sWidth": "200px" },{ "sWidth": "200px" },{ "sWidth": "295px" },{ "sWidth": "150px" },{ "sWidth": "150px" },{ "sWidth": "150px" },{ "sWidth": "150px" }
     		          ],
-    		"aaSorting":[[1,'asc']], //fecha pauta
+    		"aaSorting":[[1,'asc']],
         	"iDisplayLength": 50,
-            //"sScrollY": "400px", // altura
             "sScrollY": calcDataTableHeight() ,
             "sScrollX": "100%",
             "bScrollCollapse": true,
-            "bSortClasses": false, // no muestra las clases de ordenamiento
+            "bSortClasses": false,
             "sAjaxSource": '<?php echo $this->url(array( 'controller'=>'person', 'action'=>'persongrid'))?>',
 
             "fnServerParams": function ( aoData ) {
@@ -205,7 +195,7 @@ $(document).ready(function() {
     		},
     		
             "fnCreatedRow": function( nRow, aData, iDataIndex ) {
-                // botones
+                // buttons
                	var editar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Edit" href="#"><img alt="" src="/backend/images/icons/color/pencil.png"></a>');
                 var borrar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
                 editar.on('click',function(){
@@ -263,7 +253,7 @@ $(document).ready(function() {
 	        oSettings.oScroll.sY = calcDataTableHeight(); 
 	        oTable.fnDraw();
         }); 
-		// dibujar los filtros si los hubiese
+		// draw the filters if they exists
 		drawfbreadcrumbs(getAdvancedFilters()); 
 
     } );

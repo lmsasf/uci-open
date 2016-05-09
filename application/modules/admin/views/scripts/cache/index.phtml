@@ -60,12 +60,18 @@
 	                                <td colspan="2" class="tasFolder" style="text-align: left;"><a href="#" title=""><?php echo $clave?></a></td>                                
 	                            </tr>
 	                            
-		                            <?php foreach ($valor as $k=>$v):?>
-		                            <tr>
-										<td class="taskDoc subElement"><a href="javascript:void(0)" title=""><?php echo substr($v['name'],0, -5)?></a></td>
-		                                <td class="actBtns"><a href="javascript:removeFromCache('<?php echo base64_encode($v['path'])?>')" title="Remove" class="tipS"><img src="/backend/images/icons/remove.png" alt="" /></a></td>
-		                            </tr>
-		                            <?php endforeach;?>
+		                            <?php
+									foreach ($valor as $k=>$v):
+										if(isset($v['path'])){
+									?>
+											<tr>
+												<td class="taskDoc subElement"><a href="javascript:void(0)" title=""><?php echo substr($v['name'],0, -5)?></a></td>
+												<td class="actBtns"><a href="javascript:removeFromCache('<?php echo base64_encode($v['path'])?>')" title="Remove" class="tipS"><img src="/backend/images/icons/remove.png" alt="" /></a></td>
+											</tr>
+		                            <?php
+										}
+									endforeach;
+									?>
 	                            
 	                            <?php endif;?>
                     		<?php endforeach;?>                        

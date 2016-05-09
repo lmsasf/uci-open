@@ -6,7 +6,7 @@ class Admin_stylefileController extends Zend_Controller_Action {
     }
 
     /**
-     * Listado de stylefiles
+     * Stylefiles list
      */
     public function indexAction() {
         $this->view->headTitle('Style :: List');
@@ -14,7 +14,7 @@ class Admin_stylefileController extends Zend_Controller_Action {
     }
     
     /**
-     * Levanta el formulario de edición de stylefiles
+     * Editions stylefiles form
      * @throws Exception
      */
     public function editstylefileAction() {
@@ -39,7 +39,7 @@ class Admin_stylefileController extends Zend_Controller_Action {
     }
 
     /**
-     * Ajax para restaurar stylefiles
+     * Ajax to restore stylefiles
      */
     public function restoreAction() {
         $this->_helper->layout()->setLayout('empty');
@@ -88,7 +88,7 @@ class Admin_stylefileController extends Zend_Controller_Action {
     }
     
     /**
-     * Ajax que guarda la información del formulario de stylefiles
+     * Ajax keeps information form style files
      * @throws Exception
      */
     public function savedegreeAction(){
@@ -105,7 +105,7 @@ class Admin_stylefileController extends Zend_Controller_Action {
             $accion  		= $this->getRequest()->getParam('accion'	 , null);
             $data	 		= $this->getRequest()->getParam('data'		 , null);
 
-            if( !is_null($accion) && !is_null($data) ){ // editar o añadir
+            if( !is_null($accion) && !is_null($data) ){ // add or edit
                 $DegreeRow = null;
 
                 if($accion === 'edit'){
@@ -123,12 +123,12 @@ class Admin_stylefileController extends Zend_Controller_Action {
                 $out=shell_exec($command);
 
                 if(empty($out)){
-                    // copiar el original al /bk
+                    // copy original to /bk
                     $command = 'cp -R ' . "./frontend/css/".$filez . ' ' ."./frontend/css/bk/".$filez;
                     shell_exec($command);
                 }
 
-                // grabar css.
+                // save css.
                 $fh = fopen("./frontend/css/".$filez, 'w') or die("Error al abrir fichero de salida");
                 fwrite($fh, $editor);
                 fclose($fh);
@@ -148,7 +148,7 @@ class Admin_stylefileController extends Zend_Controller_Action {
                 $newLog->stylefile = $nameCSS;
                 $newLog->save();
 
-                // grabar en tabla
+                // save on table
                 $idGr = $DegreeRow->save();
                 $tr->commit();
                 echo Zend_Json_Encoder::encode(array('id'=> $idGr));
@@ -163,7 +163,7 @@ class Admin_stylefileController extends Zend_Controller_Action {
     }
 
     /**
-     * Metodo que obtiene los StyleFileLog
+     * Method that gets data from StyleFileLog
      */
     public function getchangeslogAction(){
         $this->_helper->layout()->setLayout('empty');
@@ -211,7 +211,7 @@ class Admin_stylefileController extends Zend_Controller_Action {
 
 
     /**
-     * Método para rellenar los datos de la grilla de stylefiles
+     * Method to fill the data grid style files
      */
     public function degreegridAction(){
     	$this->_helper->layout()->setLayout('empty');
@@ -233,7 +233,7 @@ class Admin_stylefileController extends Zend_Controller_Action {
 		$iDisplayLength=$this->getRequest()->getParam('iDisplayLength', 50); // limit
 		$iDisplayStart = $this->getRequest()->getParam('iDisplayStart', 0); // offset
 		$limit = array('limit'=>$iDisplayLength, 'offset'=> $iDisplayStart);
-		//search de la grilla
+		//search
 		$sSearch = $this->getRequest()->getParam('sSearch', '');
 
         $StyleFile= new Table_StyleFile();
@@ -251,7 +251,7 @@ class Admin_stylefileController extends Zend_Controller_Action {
     				echo ",";
     			}
     			$json = '{"DT_RowId": "'.$row[0].'", ';
-    			$PK = array_shift($row); // se asume que la primer fila tiene PK
+    			$PK = array_shift($row);
 
     			foreach($row AS $k => $v){
     				$json.= '"'.$k.'":'.Zend_Json_Encoder::encode($v).',';
@@ -272,39 +272,39 @@ class Admin_stylefileController extends Zend_Controller_Action {
     }
 
     /**
-     * Método para construcción del where para filtrar la grilla de stylefiles
+     * Where construction method to filter the grid stylefiles
      */
     private function buildWherelp($filters){
 		$sql = '';
 		foreach ($filters AS $campo => $opciones ) {
 			$valores = $opciones['values'];
 			$operador = $opciones['op'];
-			// conversion de operadores relacionales
+			// conversion of relational operators
 			// EQ 	NE 	GT 	LT 	GE 	LE
 			switch ($operador) {
 				case 'EQ':
-					// igual, la lista de valores es igual al campo (Sirve para comparar un sólo valor)
-					// ya que un campo no puede tener mas de un valor
+					// equal, the list of values is equal to the field (used to compare a single value)
+					// because a field can not have more than one value
 					$operador = '= ALL';
 					break;
 				case 'NE':
-					// No es igual o diferente a todos los elementos listados
+					// It is not the same or different for all listed items
 					$operador = '!= ALL';
 					break;
 				case 'GT':
-					// El campo es mayor al del listado de valores
+					// The field is greater than the list of values
 					$operador = '> ANY';
 					break;
 				case 'LT':
-					// El campo es menor al del listado de valores
+					// The field is less than the list of values
 					$operador = '< ANY';
 					break;
 				case 'GE':
-					// El campo es mayor o igual al del listado de valores
+					// The field is greater than or equal to the list of values
 					$operador = '>=';
 					break;
 				case 'LE':
-					// El campo es menor al del listado de valores
+					// The field is less than or equal to the list of values
 					$operador = '<=';
 					break;
 				case 'IN':
@@ -332,11 +332,11 @@ class Admin_stylefileController extends Zend_Controller_Action {
 				}
 				$removeChars = $operador === 'BETWEEN' ?  5 : 1 ;
 				foreach ($valores AS $valor ){
-					// detectar si es fecha
+					// detect if date
 					$patron= "/[0-9]{2}-[0-9]{2}-[0-9]{4}$/";
-					//Detecto si es fecha y agrego TO_DATE('27-06-2009','DD-MM-YYYY')
+					// detect if date and add TO_DATE('27-06-2009','DD-MM-YYYY')
 					$valor = preg_match($patron, $valor) ? "'".convFechaSQL($valor)."'" : ( is_numeric($valor) ? $valor : ( $operador !=='LIKE' ? "'" . $valor . "'": strtolower($valor) ) );
-					// si el operador es LIKE el separador es % y debo añadirselos si la cadena tiene espacios
+					// if the operator is LIKE the separator is % and must add it if the string has spaces
 					$valor = $operador === 'LIKE' ? str_replace( ' ', '%', $valor ) : $valor;
 					$separador = $operador === 'BETWEEN'? ' AND ' : ($operador==='LIKE' ? '%': ',');
 					$sql .= $valor . $separador;

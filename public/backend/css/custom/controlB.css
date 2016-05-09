@@ -1,0 +1,37 @@
+.controlB ul{ 
+	margin-top:30px !important !important;
+}
+.controlB ul li { 
+	background:#4B4B4B !important;
+	border: 1px solid #D5D5D5 !important;
+	box-shadow: 0 0 0 1px #FFFFFF inset !important;
+	display: inline-block !important;
+	margin-left:30px !important;
+	text-align: center !important;
+	margin-bottom:5% !important;
+	v-align: center !important;
+	width: 200px !important;
+	height:170px !important;
+	-moz-border-radius: 5% !important;
+	-webkit-border-radius: 5% !important;
+	border-radius: 5% !important;
+}
+.controlB ul li:hover { 
+	opacity:0.6 !important;
+}
+.controlB ul li a span { 
+	font-size:14pt !important;
+	display: block !important;
+	margin-top: 10px !important;
+}
+.controlB ul li a {	
+	margin-top:30px !important;
+	color: #E1E0E0 !important;
+	font-weight: bold !important;
+	white-space: nowrap !important;
+}
+.controlB ul li a:hover { 
+	color: #E1E0E0 !important;
+	font-weight: bold !important;
+	white-space: nowrap !important;
+}

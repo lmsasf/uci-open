@@ -74,21 +74,19 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 	            return $(window).height()-200 ; 
 	        };
 	    	oTable = $('.dTable').dataTable( { 
-	            "bJQueryUI": true, // soporte para temas UI
-	            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+	            "bJQueryUI": true, // UI themes support
+	            "sPaginationType": "full_numbers", // show the page numbers
 	            "bRetrieve"  : true,
 	            "bProcessing": true,
-	        	"bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+	        	"bServerSide": true, // not necessary, to paging in the server side
 	        	"sDom": '<""flT>rt<"F"ip>',
 	    		"aoColumns": [{ "sWidth": "125px","bSortable": false }, { "sWidth": "200px" }, { "sWidth": "auto","bSortable": false  }],
 	    		"aaSorting":[[1,'asc']], 
 	        	"iDisplayLength": 50,
-	            //"sScrollY": "400px", // altura
 	            "sScrollY": calcDataTableHeight() ,
 	            "sScrollX": "100%",
 	            "bScrollCollapse": true,
-	            "bSortClasses": false, // no muestra las clases de ordenamiento
-	            //"bDeferRender": true, // similar al smartrendering de DHTMLX
+	            "bSortClasses": false, // don't show the order classes
 	            "sAjaxSource": '<?php echo $this->url(array( 'module'=>'admin','controller'=>'role', 'action'=>'ajaxsource'))?>',
 
 	            "fnServerParams": function ( aoData ) {
@@ -106,7 +104,7 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 	    		}, 
 	    		                       
 	            "fnCreatedRow": function( nRow, aData, iDataIndex ) {
-	                // botones
+	                // buttons
 	               	var editar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Edit" href="#"><img alt="" src="/backend/images/icons/color/pencil.png"></a>');
 	                var borrar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
 	               
@@ -168,7 +166,7 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 		        oSettings.oScroll.sY = calcDataTableHeight(); 
 		        oTable.fnDraw();
 	        }); 
-			// dibujar los filtros si los hubiese
+			// draw filters if they exists
 			drawfbreadcrumbs(getAdvancedFilters()); 
 
 	    } );

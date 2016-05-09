@@ -7,7 +7,7 @@ class Admin_UserController extends Zend_Controller_Action
 		$this->_helper->layout()->setLayout('admin');
 	}
 	/**
-	 * Listado de Usuarios
+	 * User list
 	 */
 	public function indexAction()
 	{
@@ -20,43 +20,31 @@ class Admin_UserController extends Zend_Controller_Action
 	}
 	
 	/**
-	 * Editar usuarios
+	 * Edit users
 	 */
-	public function editAction(){
+	public function editAction() {
 		
 		$usuarios = new Table_User();
 		$persons = new Table_Person();
-		//$gupos = new GrupoModel();			
 
 	    $this->view->assign('persons', $persons->fetchAll($persons->select()->order('perFirstName')));
 	    
 	    $roles = new Table_Role();
 	    $this->view->assign('roles', $roles->fetchAll($roles->select()->order('roleName')));
-		// Obtener parámetros
+		// get parameters
 		try{
 			$id = $this->getRequest()->getParam('id', null);
 			$accion = $this->getRequest()->getParam('accion', null);			
-			
-			/*$Grupos = new GrupoModel();
-			$selectgrupo = $Grupos->select()->setIntegrityCheck(false);
-			$selectgrupo->from(array('r0'=>'Grupo'), array('r0.grNombre', 'r0.Id as gru_id', 'r1.Id as us_id'))
-					->joinLeft(array('r1'=>'Usuario'),'r0.Id=r1.grId')
-					->order('grNombre')
-			;
-			$this->view->assign('Grupos', $Grupos->fetchAll($selectgrupo));	*/		
-						
-			//var_dump($usuarios->fetchRow('Id='. $Id ));exit;
-			if(!is_null($id) /*&& is_null($accion)*/) { 
+
+			if(!is_null($id)) {
 				$this->view->assign('User', $usuarios->fetchRow('id='. $id ));
 				$this->view->assign('accion', 'edit');
 				$this->view->assign('id', $id);
-				//$accion = 'edit';
 			}
-			if(is_null($id)){ // nuevo usuario
+			if(is_null($id)){ // new user
 				$this->view->assign('accion', 'add');
 				$this->view->assign('id', null);
 				$this->view->assign('User', null);
-			//	$accion = 'add';
 			}
 					
 		} catch (Exception $e){
@@ -72,7 +60,7 @@ class Admin_UserController extends Zend_Controller_Action
 	
 	public function saveusuarioAction(){
 		$this->_helper->layout()->setLayout('empty');
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		$User = new Table_User();
 		$tr = $User->getAdapter()->beginTransaction();
@@ -110,11 +98,6 @@ class Admin_UserController extends Zend_Controller_Action
 				throw new Exception("Invalid parameters");
 			}
 	
-		/*} catch (Exception $e){
-			$tr->rollBack();
-			echo( $e->getMessage() );
-		}*/
-			
 		} catch (Exception $e){
 			$mens = $e->getCode();
 			if($mens == 23000)
@@ -126,7 +109,7 @@ class Admin_UserController extends Zend_Controller_Action
 			
 	}
 	/**
-	 * Borrado de plazas
+	 * Delete
 	 * @throws Exception
 	 */
 	
@@ -159,12 +142,12 @@ class Admin_UserController extends Zend_Controller_Action
 	}
 	
 	/**
-	 * Método para rellenar los datos de la grilla de usuarios
+	 * Method to populate the data grid users
 	 */
 		
 	public function ajaxsourceAction(){		
 		$this->_helper->layout()->setLayout('empty');
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		$filters = Zend_Json_Decoder::decode($this->getRequest()->getParam('filters', '{}'));
 		$where = '';
@@ -180,7 +163,7 @@ class Admin_UserController extends Zend_Controller_Action
 		$iDisplayLength=$this->getRequest()->getParam('iDisplayLength', 50); // limit
 		$iDisplayStart = $this->getRequest()->getParam('iDisplayStart', 0); // offset
 		$limit = array('limit'=>$iDisplayLength, 'offset'=> $iDisplayStart);
-		//search de la grilla
+		//search
 		$sSearch = $this->getRequest()->getParam('sSearch', '');
 				
 		$Usuario= new Table_User();

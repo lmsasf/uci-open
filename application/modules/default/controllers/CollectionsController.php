@@ -30,7 +30,7 @@ class Default_CollectionsController extends Zend_Controller_Action
         }
 
         $Section = new Table_SectionTexts();
-        $this->view->assign('section', $Section->fetchRow($Section->select()->where('Section = 4')));
+        $this->view->assign('section', $Section->fetchRow($Section->select()->where('section = 4 AND secActive = 1')));
 
         $this->view->assign("collections", $collections);
 
@@ -55,7 +55,7 @@ class Default_CollectionsController extends Zend_Controller_Action
         $Collections = new Table_OCW();
 
         $ocwTitleEncode = $this->getRequest()->getParam('id');
-        $golive = $this->getRequest()->getParam('golive', 1); // por defecto muestra el publicado 
+        $golive = $this->getRequest()->getParam('golive', 1); // show publish by default
 
         $select = $Collections->select()->setIntegrityCheck(false)
             ->from( array('r0'=>'OCW'), array('ocwTitle', 'ocwTitleEncode', 'id', 'thumbnail', 'ocwDescription', 'ocwKeywords','ocwTemplate','ocwDraft','promoloc') )
@@ -107,7 +107,7 @@ class Default_CollectionsController extends Zend_Controller_Action
         $this->view->assign('idPage', $idPage);		
 		
         $this->view->assign('Joins'    , $joins );
-        // Tags para facebook
+        // facebook Tags
         $this->view->doctype('XHTML1_RDFA'); // controller
         $this->view->headMeta()->setProperty('og:type', 'website');
         $this->view->headMeta()->setProperty('og:title', $collection->ocwTitle);
@@ -117,7 +117,7 @@ class Default_CollectionsController extends Zend_Controller_Action
             $this->view->headMeta()->setProperty('og:image', $collection->thumbnail);
         }
         $this->view->headTitle($collection->ocwTitle);
-        $this->view->title = $collection->ocwTitle; // sirve para el breadcrums
+        $this->view->title = $collection->ocwTitle; // useful for the breadcrums
 		$this->view->assign('prmLoc' , $collection->promoloc );
 		
         $tmplid = Zend_Json::decode($collection->ocwTemplate);

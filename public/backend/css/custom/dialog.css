@@ -1,0 +1,13 @@
+.ui-dialog form {
+    text-align: left;
+}
+form.dialog > div.row {
+    float: right;
+    width: 60%;
+    padding-top: 9px;
+}
+.ui-dialog form label {
+    cursor: pointer;
+    float: left;
+    margin: 9px 0 0 10px;
+}

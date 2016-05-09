@@ -2,11 +2,10 @@
 
 header("Content-type: text/css; charset: UTF-8");
 
-$servername = "192.168.48.200";
-//$servername = "192.168.48.43";
-$username = "root";
-$password = "xv242a";
-$dbname = "ocw";
+$servername = "localhost";
+$username = "admin";
+$password = "admin123";
+$dbname = "nameDB";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -27,7 +26,3 @@ if ($result->num_rows > 0) {
 $conn->close();
         
 ?>
-
-<!--body {background-color: #<?php // echo $color ?> !important;}
-
-* {font-family: 'monospace', sans-serif !important;}-->

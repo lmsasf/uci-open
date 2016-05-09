@@ -66,7 +66,7 @@ class Entity_OCW {
 		->joinLeft(array( 'r2' =>'University' ), 'r2.id = r0.idUniversity', array('uniName') )
 		->joinLeft(array( 'r3' =>'School' ), 'r3.id = r0.idSchool', array('schName') )
 		->joinLeft(array( 'r4' =>'Department' ), 'r4.id = r0.idDepartment', array('depName') )
-		->where("r0.ocwGolive = ?", 1); // publicadas
+		->where("r0.ocwGolive = ?", 1); // published
 		
 		if(!is_null($this->_ocwTitleEncode) && is_string($this->_ocwTitleEncode) ){
 			$select->where('r0.ocwTitleEncode = ?', $this->_ocwTitleEncode );
@@ -139,7 +139,7 @@ class Entity_OCW {
 		
 	}
 	/**
-	 * Verifica si una url esta online
+	 * Check whether a url is online
 	 * @param string $url
 	 * @param number $timeout
 	 * @return boolean

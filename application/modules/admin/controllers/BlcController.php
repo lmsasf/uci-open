@@ -9,14 +9,15 @@ class Admin_BlcController extends Zend_Controller_Action
 	
 	public function indexAction()
 	{
-		// grilla de enlaces rotos
+		// broken links grid
 	}
+
 	/**
-	 * Grilla de links muertos
+	 * Broken links grid
 	 */
 	public function blcgridAction(){
 		$this->_helper->layout()->setLayout('empty');
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		$filters = Zend_Json_Decoder::decode($this->getRequest()->getParam('filters', '{}'));
 		$where = '';
@@ -32,7 +33,7 @@ class Admin_BlcController extends Zend_Controller_Action
 		$iDisplayLength=$this->getRequest()->getParam('iDisplayLength', 50); // limit
 		$iDisplayStart = $this->getRequest()->getParam('iDisplayStart', 0); // offset
 		$limit = array('limit'=>$iDisplayLength, 'offset'=> $iDisplayStart);
-		//search de la grilla
+		//search
 		$sSearch = $this->getRequest()->getParam('sSearch', '');
 		$BLinks = new Table_BrokenLinks();
 		$links = $BLinks->getLinksGrid($where, $sort, $limit, $sSearch );
@@ -40,7 +41,7 @@ class Admin_BlcController extends Zend_Controller_Action
 	}
 	
 	/**
-	 * Ajax para eliminar
+	 * Ajax to delete
 	 */
 	public function deleteAction(){
 		$this->_helper->layout()->setLayout('empty');
@@ -52,7 +53,7 @@ class Admin_BlcController extends Zend_Controller_Action
 				throw new Exception( 'Insufficient parameters' );
 			}
 			$resp = $BLinks->delete("id = $Id");
-			$this->_forward('index', 'blc', 'admin');//echo Zend_Json_Encoder::encode(array('Id'=> $Id));
+			$this->_forward('index', 'blc', 'admin');
 		} catch (Exception $e) {
 			throw new Exception( $e->getMessage() );
 		}

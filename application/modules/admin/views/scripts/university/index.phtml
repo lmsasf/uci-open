@@ -8,15 +8,10 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 ->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools_JUI.css')
 ;
 ?>
-<style>
-.edituniv { background: url("/backend/images/icons/dark/add.png") repeat-x scroll 0 0 transparent; height: 37px; padding-right: 15px; margin-left: 10px;}
-</style>
 <div class="topHeader" style="top:0px;">
 	<div class="titleArea">
 		<div class="wrapper">
 			<div class="TopPageTitle">
-				<!-- <h5>Universities</h5>
-				<span>List</span> -->
 				<div class="bc">
 					<ul id="breadcrumbs" class="breadcrumbs">
 						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>						
@@ -30,10 +25,6 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 </div>
 <div id="content">
 	<div class="wrapper">
-		<!-- <div id="mensajes">
-			<?php //$this->success ? $this->messages()->success($this->success . ' [Click to hide]', 'Success'): null; ?>
-			<?php //$this->error ? $this->messages()->error($this->error . ' [Click to hide]', 'Error:'): null; ?>
-	 	</div>-->
 	 	<div id="mensajes"></div>	
 	 	<div id="breadcrumbs-wrapper" style="display: none;" >
 	       <div class="fbc">
@@ -47,7 +38,6 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 	        <!-- Dynamic table -->
 	        <div class="widget">
 	            <div class="title">
-	            	<!-- <a id="edituniv" class="edituniv" href="javascript:addUni()" ></a> -->
 	            	<a href="javascript:addUni()"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/add.png"></a>
 	            </div>                          
 	            <table class="display sTable" id="table">
@@ -96,15 +86,6 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 					                    					</div>
 				                    					<?php } ?>
 	                    							</td>
-	                    							<!-- <td width="200px">
-	                    								<?php if(!empty($school[0])){ ?>
-			                    							<div id="department<?php echo str_replace('"','',$ks);?>" style="display:block">
-				                    							<?php foreach($school as $department){ ?>
-					                    							<div><?php echo $department;?></div>
-					                    					<?php } ?> 
-					                    					</div>
-				                    					<?php } ?>
-			                    					</td> -->
 		                    					<?php } ?>
                     						</tr>
                     						
@@ -128,11 +109,9 @@ function mostrarDep(div, imagen){
 	var muestra = document.getElementById(div).style.display;
 	if(muestra == 'none'){
 		document.getElementById(div).style.display='block';
-		//document.getElementById(imagen).src = "/backend/images/collapsedown.png";
 		document.getElementById(imagen).className  = "aimgdown";
 	}else{
 		document.getElementById(div).style.display='none';
-		//document.getElementById(imagen).src = "/backend/images/collapse.png";
 		document.getElementById(imagen).className  = "aimgup"; 
 	}	
 	
@@ -171,26 +150,9 @@ function deluni(id){
 		  ]
 		}, function(result) {
 			if(result == 'Yes'){
-				/*var accion = 'edit';
-			    var form = $('<form>').attr({
-					name:'editform', 
-					method: 'post', 
-					action: '<?php //echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=>'deleteuni'))?>'
-				});
-				$('<input>').attr({
-					 type: 'hidden',
-					 id: 'Id',
-					 name: 'Id',
-					 value: id
-				}).appendTo(form);
-				
-				form.appendTo($('body'));
-				form.submit(); */ 
-
 				$.ajax( {
 			        url: "<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=> 'deleteuni'))?>",
 			        data: { Id : id } , 
-			        //async: false,
 			        beforeSend: function(objeto){},
 			        complete: function(objeto, exito) { },
 			        dataType: "json",
@@ -233,7 +195,6 @@ $(function() {
 		$(this).parents('li').remove();
 	});
 
-
 	$( "#dialog-messageuni" ).dialog({
 		autoOpen: false,
 		height : 200,
@@ -244,10 +205,9 @@ $(function() {
 			$('.dialog').validationEngine({
 	    		prettySelect : true,
 	    		useSuffix: "_chzn"
-	    });
+	    	});
 		},
 		buttons: {
-			
 			'Cancel': function() {
 				$( this ).dialog( "close" );
 			},
@@ -318,12 +278,6 @@ function guardarUni(callback){
                 return false;
 
 	        },
-	       /* error: function(request, status, error)
-	        {
-	            var mensaje = request.responseText != '' ? request.responseText : 'Tiempo de espera agotado o sesión interrumpida, puede que se estén presentando problemas en la red' ;
-	            $.jGrowl(mensaje, { header: 'ERROR', sticky: true, theme: 'error' });
-	        },
-	        timeout: 20000,*/
 	        type: "POST"
 	    } ); 
 	} 

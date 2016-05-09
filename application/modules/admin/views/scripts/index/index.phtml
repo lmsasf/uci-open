@@ -1,30 +1,9 @@
+<?php
+$this->headLink()->appendStylesheet($this->baseUrl().'/backend/css/custom/controlB.css')
+	->appendStylesheet($this->baseUrl().'/backend/css/custom/dialog.css');
+?>
 <style>
-.ui-dialog form {text-align: left;}
-form.dialog > .searchDrop {float: right; width: 70%; padding-top: 5px;}
-form.dialog > div.row { float: right;width: 70%; padding-top: 5px;}
-form.dialog > div.row input{margin: 0px;display: inline;}
-.ui-dialog form label { cursor: pointer; float: left; margin: 9px 0 0 10px;}
-
-/*.controlB ul li {
-    background: url("<?php //echo $this->baseUrl()?>/backend/images/backgrounds/subNavBg.jpg") repeat-x scroll 0 0 transparent;     
-    border: 1px solid #D5D5D5;
-    box-shadow: 0 0 0 1px #FFFFFF inset;
-    display: inline-block;
-    margin: 11px 5px 0;
-    width: 108px;
-}*/
-.controlB ul{ margin-top:30px; }
-.controlB ul li { background:#4B4B4B; border: 1px solid #D5D5D5; box-shadow: 0 0 0 1px #FFFFFF inset; display: inline-block; margin-left:30px; text-align: center; margin-bottom:5%; v-align: center; width: 200px; height:170px; -moz-border-radius: 5%; -webkit-border-radius: 5%; border-radius: 5%;}
-.controlB ul li:hover { opacity:0.6; }
-.controlB ul li a span { font-size:14pt; display: block;  margin-top: 10px;}
-.controlB ul li a {	margin-top:30px; color: #E1E0E0; font-weight: bold; white-space: nowrap;}
-.controlB ul li a:hover { color: #E1E0E0; font-weight: bold; white-space: nowrap;}
-#f1 { display: none; width:222px; position: absolute; z-index: 10000; left:65%;}
-#f1 a{ color: #E1E0E0; font-weight: bold; white-space: nowrap;width:222px;}
-#f1 ul li{ background: url("<?php echo $this->baseUrl()?>/backend/images/backgrounds/navBg.jpg")  scroll 100% 0 transparent; color: #E1E0E0; font-weight: bold; white-space: nowrap; width:222px; padding-left: 10px;}
-#f1 ul li a span{font-size:8pt;}
-.widget { background: none; border: 0px; clear: both; margin-top: 10px;}
-
+	.widget { background: none; border: 0px; clear: both; margin-top: 10px;}
 </style>
 <div class="titleArea">
         <div class="wrapper">
@@ -58,8 +37,6 @@ form.dialog > div.row input{margin: 0px;display: inline;}
 						<span>Persons</span>
 					</a>
 				</li>
-			<!--  </ul>
-			<ul>-->
 				<li>
 					<a title="Degrees" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'degree', 'action'=>'index'))?>">
 						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/degree.png">
@@ -84,15 +61,12 @@ form.dialog > div.row input{margin: 0px;display: inline;}
 						<span>Contact Requests</span>
 					</a>
 				</li>
-<!--manejo de css o otros-->
 				<li>
 					<a title="Edit Styles" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'stylefile', 'action'=>'index'))?>" >
 						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/styling.png">
 						<span>Edit Styles</span>
 					</a>
 				</li>
-
-<!--manejo de css o otros -->
 				<li>
 					<a title="Broken Links" href="<?php echo $this->url(array( 'module'=>'admin', 'controller'=>'blc', 'action'=>'index'))?>" >
 						<img style="width:70px;" alt="" src="<?php echo $this->baseUrl()?>/backend/images/Link-icon.png">

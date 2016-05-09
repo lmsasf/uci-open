@@ -8,7 +8,7 @@ class Default_CoursesController extends Zend_Controller_Action
         /* Initialize action controller here */
         $this->view->headMeta()->setName('keywords', $this->_KEYWORDS);
 
-        /* Actualiza el HTML de courses.html */
+        /* Update the HTML of courses.html */
         $OCW = new Table_OCW();
         $OCW->removeCacheIndex(1);
     }
@@ -18,7 +18,7 @@ class Default_CoursesController extends Zend_Controller_Action
         $Course = new Table_Course();
         $OCWJoin = new Table_OCWJoin();
 
-        // obtengo todos los cursos
+        // get all courses
         $allCourses = $Course->getCourses(null, null, 1)->toArray();
         $categoryCourses = array();
         $relatedCourses = array();
@@ -39,7 +39,7 @@ class Default_CoursesController extends Zend_Controller_Action
 
         $this->view->headTitle('List of courses');
         $this->view->headMeta()->setName('description', 'List of courses University of California, Irvine');
-        $this->view->assign('tree', $Category->treeAsArray(1));             //CATEGORIAS DEL PANEL IZQUIERDO
+        $this->view->assign('tree', $Category->treeAsArray(1));             //Categories from left panel
         $this->view->assign('courses', $categoryCourses);
         $this->view->assign('relatedCourses', $relatedCourses);
         $this->view->assign('authors',$authors);
@@ -56,7 +56,7 @@ class Default_CoursesController extends Zend_Controller_Action
         $admin = $this->getRequest()->getParam('adm');
         $preview = $this->getRequest()->getParam('prv');
         
-        /*Actualiza el HTML de courses.html*/
+        /*Updates the HTML of courses.html*/
         $OCW = new Table_OCW();
         $OCW->removeCacheIndex(1);
 
@@ -67,7 +67,7 @@ class Default_CoursesController extends Zend_Controller_Action
         $Course = new Table_Course();
 
         $ocwTitleEncode = $this->getRequest()->getParam('id');
-        $golive = $this->getRequest()->getParam('golive', 1); // por defecto muestra el curso publicado
+        $golive = $this->getRequest()->getParam('golive', 1); // published by default
         $course = $Course->getCourses(null, $ocwTitleEncode, $golive, $admin)->toArray();
 
         if( empty($course) ) {
@@ -133,7 +133,7 @@ class Default_CoursesController extends Zend_Controller_Action
         $descripcion = truncateString( preg_replace("/\r\n+|\r+|\n+|\t+/i", " ", strip_tags($course[0]['ocwDescription']) ) , 150 );
         $this->view->headTitle($course[0]['ocwTitle']);
 
-        // Tags para facebook
+        // Facebook tags
         $this->view->doctype('XHTML1_RDFA'); // controller
         $this->view->headMeta()->setProperty('og:type', 'website');
         $this->view->headMeta()->setProperty('og:title', $course[0]['ocwTitle']);
@@ -153,7 +153,7 @@ class Default_CoursesController extends Zend_Controller_Action
         }
 
         $this->view->assign('shortUrl', $shortUrl);
-        $this->view->title = $course[0]['ocwTitle'] ; // sirve para el breadcrums
+        $this->view->title = $course[0]['ocwTitle'] ; // useful for the breadcrums
         $this->view->headMeta()->setName('keywords', $this->_KEYWORDS . $course[0]['ocwKeywords'] );
         $this->view->headMeta()->setName('description', $descripcion ) ;
         $this->view->assign('ocwTypes' , $OCWJoin->getTypesJoins($ocwTitleEncode, 1));
@@ -197,18 +197,18 @@ class Default_CoursesController extends Zend_Controller_Action
     }
 
     /**
-     * Devuelve el tamaño de un archivo si exite
+     * Return the file size if exists
      * @param String $typName
      * @param String $ocwTitleEncode
      * @return mixed string | boolean
      */
     private function getDownloadSize($typName, $ocwTitleEncode){
-        // lo mas probable es que exitsa el paquete como ZIP, verifico eso primero
+        // chances are there is the package as ZIP, verify that first
         $root = $_SERVER['DOCUMENT_ROOT'];
         $packageName= strtolower($typName) . '_' . $ocwTitleEncode;
         $zipFile = $root.'/packages/'.$packageName.".zip";
         $imsccFile = $root.'/packages/'.$packageName.".imscc";
-        // verificar zip
+        // verify zip
         if(file_exists($zipFile)){
             return $this->human_filesize(filesize($zipFile), 2);
         } elseif (file_exists($imsccFile)){

@@ -1,6 +1,6 @@
 <?php
 /**
- * Clase que mapea a la tabla Course
+ * Class that maps to the table Course
  */
 class Table_Course extends Zend_Db_Table_Abstract {
 	protected $_name    = 'Course';
@@ -17,10 +17,10 @@ class Table_Course extends Zend_Db_Table_Abstract {
 	}
 	
 	/**
-	 * Devuelve la info de un curso o de todos ellos
+	 * Returns the info of a course or all
 	 * @param integer $idCourse
 	 * @param string $ocwTitleEncode
-	 * @param integer $golive Si esta publicado o no
+	 * @param integer $golive - If it is published or not
 	 * @return mixed Zend_Db_Table_Rowset_Abstract | Zend_Db_Table_Row_Abstract  
 	 */
 	public function getCourses( $idCourse = null, $ocwTitleEncode = null, $golive = 1, $admin = null ){

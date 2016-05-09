@@ -1,6 +1,6 @@
 <?php
 /**
- * Clase que mapea a la tabla Category
+ * Class that maps to the table Category
  * @author damills
  */
 class Table_Category extends Zend_Db_Table_Abstract {
@@ -10,7 +10,7 @@ class Table_Category extends Zend_Db_Table_Abstract {
     private $posicion = 0;
 
     /**
-     * Obtiene el arbol completo con sus niveles
+     * Gets the full tree with levels
      * @return Zend_Db_Table_Rowset_Abstract
      */
     public function getTree(){		
@@ -42,7 +42,7 @@ class Table_Category extends Zend_Db_Table_Abstract {
     }
     
     /**
-     * Obtiene el path de una categoría
+     * Get the path of a category
      * @param integer $id
      * @return Ambigous <multitype:, multitype:mixed Ambigous <string, boolean, mixed> >
      */
@@ -98,7 +98,7 @@ class Table_Category extends Zend_Db_Table_Abstract {
     }
         
     /**
-     * Devuelve el arbol pero con solo dos niveles
+     * Returns the tree but with only two levels
      * @return Array
      */
     public function treeAsArray($idType){
@@ -119,7 +119,7 @@ class Table_Category extends Zend_Db_Table_Abstract {
     }
     
     /**
-     * Obtiene los nodos padres
+     * Get parent nodes
      * @return Array
      */
     private function getParents($idType){
@@ -134,7 +134,7 @@ class Table_Category extends Zend_Db_Table_Abstract {
     }
     
     /**
-     * Obtiene los nodos hijos
+     * Get the child nodes
      * @param integer $idNode
      * @return Array
      */
@@ -163,9 +163,9 @@ class Table_Category extends Zend_Db_Table_Abstract {
     }
     
     /**
-     * Agrega una categoria nueva
-     * @param string $name Nombre de la categoria
-     * @param number $parentId opcional si se omite se agrega como categoria padre
+     * Add new category
+     * @param string $name - Category's name
+     * @param number $parentId - Optional, if omitted category is added as father
      */
     public function addCategory( $name, $parentId = 0 ){
         try {
@@ -185,8 +185,7 @@ class Table_Category extends Zend_Db_Table_Abstract {
     }
     
     /**
-     * Mueve una categoria, este método es publico pero se usa
-     * para reconstruir el arbol y no para mover individualmente
+     * Move a category, this method is public but is used to reconstruct the tree and not to move individually
      * @param number $idCat
      * @param number $parentId
      * @param number $posicion
@@ -207,7 +206,7 @@ class Table_Category extends Zend_Db_Table_Abstract {
     }
     
     /**
-     * Borra una categoria
+     * Delete a category
      * @param number $idCat
      * @throws Exception
      * @return integer
@@ -220,8 +219,6 @@ class Table_Category extends Zend_Db_Table_Abstract {
         // SELECT @myLeft := lft, @myRight := rgt, @myWidth := rgt - lft + 1 FROM Category WHERE id = idCat;
         $select->from('Category', array('lft', 'rgt', new Zend_Db_Expr('(rgt - lft + 1) as width')))
                    ->where('id = ?', $idCat);
-        //$sql = "CALL SPDelCategory($idCat);";
-        //$ret = $this->getAdapter()->fetchRow($sql);
         $category = $this->fetchRow($select);
         $db = $this->getAdapter();
         $tr = $db->beginTransaction();
@@ -241,22 +238,21 @@ class Table_Category extends Zend_Db_Table_Abstract {
     }
     
     /**
-     * Regenera el arbol 
-     * @param array $data este array es lo que me devuelve el componente nestable
+     * Regenerate the tree
+     * @param array $data This array is what brings me the nestable component
      * @return boolean
      */
     public function rebuildTree($data){
-        // borro los lft y rgy de la tabla
+        // delete the lft and rgy from the table
         $this->update(array( 'lft'=>0, 'rgt'=>0 ), '1=1');
-        //recorro los nodos padres
+        // I move through parent nodes
         $this->posicion = 0;
         foreach ($data as $parents ){
-            //inserto el padre
-            //d($parents['children']); exit;
+            //insert the parent
             $idCat = $parents['id'];
             $posicion = $this->posicion++;
             $ret = $this->moveCategory($idCat, 0, $posicion);
-            //verifico si este parent tiene hijos
+            //verify if the parent has children
 
             if(array_key_exists('children', $parents) ){
                 $this->addChild($idCat, $parents['children']);
@@ -266,8 +262,7 @@ class Table_Category extends Zend_Db_Table_Abstract {
     }
     
     /**
-     * Funcion auxiliar para reconstruir el arbol, se llama recursivamente para
-     * actualizar los hijos de cada rama
+     * Auxiliary function to rebuild the tree is called recursively to update the children of each branch
      * @param integer $idParent
      * @param integer $children
      */
@@ -285,7 +280,7 @@ class Table_Category extends Zend_Db_Table_Abstract {
         
         
     /**
-     * Funcion que retorna los id de subcategorias de una Categoria
+     * Function that returns the subcategories ID from a Category
      * @param array $idCategories
      * @return array
      */        
@@ -296,8 +291,8 @@ class Table_Category extends Zend_Db_Table_Abstract {
                 $in_cat = implode(',', $idCategories);
             }
 
-            # Trae los id de las subcategorias incluyendo el id de la categoria,
-            # pero si ingresamos un id de SubCategoria devuelve vacio
+            # Gets the subcategories ID including the category ID,
+            # but if we enter an Subcategory ID, it will return empty
             $sql = "select distinct id from (
                                     SELECT n.id
                                     , (SELECT parent.id
@@ -340,7 +335,7 @@ class Table_Category extends Zend_Db_Table_Abstract {
     }
 
     /**
-     *  Funcion que retorna los id de Categorias para un TipoOCW
+     *  Function that returns the Categories ID for one OCWTypes
      * @param String $id_type
      * @return array
      */  
@@ -383,7 +378,7 @@ class Table_Category extends Zend_Db_Table_Abstract {
     }
     
     /**
-     * Funcion que retorna los registros de Categorias para unos id de Categorias especificos
+     * Function that returns records Categories for one specific id Categories
      * @param array $id_category
      * @return array
      */  

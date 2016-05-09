@@ -13,7 +13,7 @@ class Default_LecturesController extends Zend_Controller_Action
         $Lecture = new Table_Lecture();
 
         $OCWJoin = new Table_OCWJoin();
-        // obtengo todos los cursos
+        // get all lectures
         $allLectures = $Lecture->getLecture(null,null,1)->toArray();
         $categoryLecture = array();
         $relatedLectures = array();
@@ -62,7 +62,7 @@ class Default_LecturesController extends Zend_Controller_Action
         $Lecture = new Table_Lecture();
 
         $ocwTitleEncode = $this->getRequest()->getParam('id');
-        $golive = $this->getRequest()->getParam('golive', 1); // por defecto muestra el curso publicado
+        $golive = $this->getRequest()->getParam('golive', 1); // published by default
 
         $course = $Course->getCourses(null, $ocwTitleEncode, $golive, $admin)->toArray();
 
@@ -78,11 +78,9 @@ class Default_LecturesController extends Zend_Controller_Action
         $pastTestimonials = $Testimonial->fetchAll($where);
         $this->view->pastTestimonials = $pastTestimonials;
 
-        // d($course); exit();
         $joins = $OCWJoin->getJoins($lecture[0]['id']);
         $files = $OCWJoin->getJoins($lecture[0]['id'], 2);
-        //d($joins);
-        // Tags para facebook
+        // Facebook tags
 
         $idPage = $lecture[0]['id'];
 
@@ -108,7 +106,7 @@ class Default_LecturesController extends Zend_Controller_Action
         }
 
         $this->view->headTitle($lecture[0]['ocwTitle']);
-        $this->view->title = $lecture[0]['ocwTitle'] ; // sirve para el breadcrums
+        $this->view->title = $lecture[0]['ocwTitle'] ; // useful for the breadcrums
         $this->view->headMeta()->setName('keywords', $this->_KEYWORDS . $lecture[0]['ocwKeywords'] );
         $this->view->headMeta()->setName('description', strip_tags( $descripcion ) );
         $this->view->assign('ocwTypes' 		, $OCWJoin->getTypesJoins($ocwTitleEncode, 3));

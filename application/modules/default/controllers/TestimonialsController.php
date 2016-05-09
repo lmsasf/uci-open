@@ -10,12 +10,10 @@ class Default_TestimonialsController extends Zend_Controller_Action
 	}
 	
 	public function postAction(){
-		// $this->view->headTitle('Provide a Testimonial');
 		$testimonialOptionsTable = new Table_TestimonialOptions();
 		$select1 = $testimonialOptionsTable->select()->order('sequence');
 		$select2 = $testimonialOptionsTable->select()->order('sequence');
 		
-		//echo $select->where('group=?', 1)->assemble(); exit;
 		$grupo_1 = $testimonialOptionsTable->fetchAll($select1->where('groupId=?', 1));
 		$grupo_2 = $testimonialOptionsTable->fetchAll($select2->where('groupId=?', 2));
 		$this->view->group1 = $grupo_1;
@@ -23,7 +21,7 @@ class Default_TestimonialsController extends Zend_Controller_Action
 		$config = new Zend_Config_Ini(APPLICATION_PATH . '/configs/application.ini', 'staging');
 		$this->view->assign('pubkey',$config->recaptcha->pubkey);
 		
-		// OCW relacionado
+		// OCW related
 		$ocwTitleEncode = $this->getRequest()->getParam('ocwTitleEncode');
 		$OCW = new Table_OCW();
 		$this->view->assign('OCW', $OCW->fetchRow($OCW->select()->where('ocwTitleEncode = ?', $ocwTitleEncode)));
@@ -39,7 +37,7 @@ class Default_TestimonialsController extends Zend_Controller_Action
 		
 		if($this->getRequest()->isPost() && !is_null( $this->getRequest()->getParam('idOCW', null) ) ) {
 			
-			// obtener de a uno por uno los campos
+			// get the fields one by one
 			$tesName 		= $this->getRequest()->getParam('tesName'		, 'Anonymous');
 			$tesCountry 	= $this->getRequest()->getParam('tesCountry'	, 'Anonymous');
 			$tesEmail 		= $this->getRequest()->getParam('tesEmail'		, 'Anonymous');
@@ -52,7 +50,6 @@ class Default_TestimonialsController extends Zend_Controller_Action
 			$idOCW			= $this->getRequest()->getParam('idOCW'			, null);
 						
 			try {
-				// d($this->getRequest()->getParams());
 				$recaptcha = new Zend_Service_ReCaptcha($config->recaptcha->pubkey, $config->recaptcha->privkey );
 				$result = $recaptcha->verify( 
 						$this->getRequest()->getParam('recaptcha_challenge_field', null ),
@@ -64,7 +61,7 @@ class Default_TestimonialsController extends Zend_Controller_Action
 				if( is_null($tesTestimonial) ) {
 					throw new Exception("Testimonial can't be empty");
 				}
-				// guardar en la DB
+				// save in the DB
 				try {
 					
 					$newTestimonial = $Testimonial->createRow();
@@ -97,14 +94,8 @@ class Default_TestimonialsController extends Zend_Controller_Action
 				$this->view->tesMarketing	= $tesMarketing;
 				$this->view->tesContact		= $tesContact;
 				$this->view->idOCW			= $idOCW;
-				
 			}
-			
 		}
-		
-
-		//$this->view->capcha = $recaptcha->getHTML();
-		
 	}
 	
 	

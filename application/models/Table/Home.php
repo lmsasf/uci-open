@@ -8,7 +8,7 @@ class Table_Home extends Zend_Db_Table_Abstract
     public function getHomeGrid($where = null, $sort=array('columna'=>1, 'direccion'=>'ASC'), $limit = array('limit'=>-1, 'offset'=>0), $sSearch='')
     {
         try {
-            //validaciones de parámetros
+            //parameters validations
             $where       = is_null($where) ? 'AND 1=1 ' : $where;
 
             if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verifico que los argumentos sean validos
@@ -73,7 +73,6 @@ class Table_Home extends Zend_Db_Table_Abstract
             $sqlCountWhere = "SELECT count(1) as total
 								FROM FE_Home
 								WHERE 1 = 1 ". $where;
-            //echo $sqlCountWhere;
             $res = $this->getDefaultAdapter()->fetchRow($sqlCountWhere);
             $totalCountWhere = $res['total'];
 

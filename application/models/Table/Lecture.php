@@ -1,13 +1,13 @@
 <?php
 /**
- * Clase que mapea a la tabla Lecture
+ * Class that maps to the table Lecture
  */
 class Table_Lecture extends Zend_Db_Table_Abstract {
 	protected $_name    = 'Lecture';
 	protected $_primary = 'id';
 	
 	/**
-	 * Obtiene el listado de campos de la tabla
+	 * Get the list of table fields
 	 * @return multitype:Ambigous <mixed, Ambigous <string, boolean, mixed>>
 	 */
 	public function getFields(){
@@ -26,7 +26,7 @@ class Table_Lecture extends Zend_Db_Table_Abstract {
 	 * @param number $golive
 	 * @return Zend_Db_Table_Rowset_Abstract
 	 */
-	public function getLecture( $idLecture = null, $ocwTitleEncode = null, $golive = 1, $admin = null){
+	public function getLecture( $idLecture = null, $ocwTitleEncode = null, $golive = 1, $admin = null) {
 		$select = $this->select()->setIntegrityCheck(false);
 		$select ->from(array('r0'=>'OCW'), array('r0.id', 'r0.ocwTitle','r0.ocwTitleEncode','r0.thumbnail', 'r0.ocwLicense', 'r0.ocwDescription', 'r0.ocwKeywords', 'r0.ocwTemplate', 'r0.ocwDraft', 'r0.promoloc'))
 					->joinInner(array('r5'=>'OCWCategory'), 'r5.idOCW = r0.id', array('r5.idCat'))
@@ -57,8 +57,7 @@ class Table_Lecture extends Zend_Db_Table_Abstract {
 		if( !is_null($ocwTitleEncode) ) {
 			$select->where('r0.ocwTitleEncode = ?', $ocwTitleEncode );
 		}
-		//echo($select->__toString()); exit;
-		if(is_null($idLecture) && is_null($ocwTitleEncode)){
+		if(is_null($idLecture) && is_null($ocwTitleEncode)) {
 			return $this->fetchAll($select);
 		} else {
 			return $this->fetchAll($select);

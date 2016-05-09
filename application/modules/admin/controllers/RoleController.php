@@ -7,7 +7,7 @@ class Admin_RoleController extends Zend_Controller_Action
 		$this->_helper->layout()->setLayout('admin');
 	}
 	/**
-	 * Listado de roles
+	 * Role list
 	 */
 	public function indexAction()
 	{
@@ -20,7 +20,7 @@ class Admin_RoleController extends Zend_Controller_Action
 	}
 	
 	/**
-	 * Editar roles
+	 * Edit roles
 	 */
 	public function editAction(){
 		
@@ -29,17 +29,17 @@ class Admin_RoleController extends Zend_Controller_Action
 		$roleresource = new Table_RoleResource();
 	    $this->view->assign('resources', $resources->fetchAll($resources->select()->order('nickName')));
 	    $this->view->assign('roleresources', $roleresource->fetchAll($roleresource->select()));
-		// Obtener parámetros
+		// get parameters
 		try{
 			$id = $this->getRequest()->getParam('id', null);
 			$accion = $this->getRequest()->getParam('accion', null);			
 						
-			if(!is_null($id) /*&& is_null($accion)*/) { 
+			if(!is_null($id)) {
 				$this->view->assign('Role', $roles->fetchRow('id='. $id ));
 				$this->view->assign('accion', 'edit');
 				$this->view->assign('id', $id);
 			}
-			if(is_null($id)){ // nuevo rol
+			if(is_null($id)){ // new role
 				$this->view->assign('accion', 'add');
 				$this->view->assign('id', null);
 				$this->view->assign('Role', null);
@@ -58,7 +58,7 @@ class Admin_RoleController extends Zend_Controller_Action
 	
 	public function saveroleAction(){
 		$this->_helper->layout()->setLayout('empty');
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		$Role = new Table_Role();
 		$RoleResource = new Table_RoleResource();
@@ -69,9 +69,7 @@ class Admin_RoleController extends Zend_Controller_Action
 			$data	 		= $this->getRequest()->getParam('data'		 , null);
 			$resource	 	= $this->getRequest()->getParam('resource'	 , null);
 			
-			//echo "<pre>";var_dump($resource);exit;
-			
-			if(!is_null($data) ){ 
+			if(!is_null($data) ){
 				$RoleRow = null;
 				 
 				if(!empty($id) || $accion === 'edit'){
@@ -107,25 +105,17 @@ class Admin_RoleController extends Zend_Controller_Action
 				$tr->commit();
 				$cache  = Zend_Registry::get('cache');
 				$cache->clean();
-				
-				//$cache->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, "");
-				
-				
+
 				echo Zend_Json_Encoder::encode(array('id'=> $id));				
 				
 			} else {
 				throw new Exception("Invalid parameters");
 			}
 	
-		/*} catch (Exception $e){
-			$tr->rollBack();
-			echo( $e->getMessage() );
-		}*/
-			
 		} catch (Exception $e){
 			$mens = $e->getCode();
 			if($mens == 23000)
-				throw new Exception('This role already exists');//$this->view->assign('error', 'This users already exists');
+				throw new Exception('This role already exists');
 			else
 				$this->view->assign('mensaje', $e->getMessage());
 			$this->_forward('index', 'role');
@@ -133,13 +123,13 @@ class Admin_RoleController extends Zend_Controller_Action
 			
 	}
 	/**
-	 * Borrado de roles
+	 * delete roles
 	 * @throws Exception
 	 */
 	
 	public function delAction(){ 
 		$this->_helper->layout()->setLayout('empty');
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		$role = new Table_Role();
 		try {
@@ -166,12 +156,12 @@ class Admin_RoleController extends Zend_Controller_Action
 	}
 	
 	/**
-	 * Método para rellenar los datos de la grilla de usuarios
+	 * Method to fill the data grid users
 	 */
 		
 	public function ajaxsourceAction(){		
 		$this->_helper->layout()->setLayout('empty');
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		$filters = Zend_Json_Decoder::decode($this->getRequest()->getParam('filters', '{}'));
 		$where = '';
@@ -187,7 +177,7 @@ class Admin_RoleController extends Zend_Controller_Action
 		$iDisplayLength=$this->getRequest()->getParam('iDisplayLength', 50); // limit
 		$iDisplayStart = $this->getRequest()->getParam('iDisplayStart', 0); // offset
 		$limit = array('limit'=>$iDisplayLength, 'offset'=> $iDisplayStart);
-		//search de la grilla
+		//search
 		$sSearch = $this->getRequest()->getParam('sSearch', '');
 				
 		$Role= new Table_Role();

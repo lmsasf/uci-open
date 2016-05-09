@@ -21,10 +21,10 @@
             $firstElement = current($this->tree);
             $fistSubElement = current($firstElement['childrens']);
             $idTour = $fistSubElement['id'];
-            //d($idTour);
+
             $elementTour = $this->courses[$idTour];
             $elementTour = current($elementTour);
-            // d($elementTour);
+
             $secondLink = '#' . $elementTour['ocwTitleEncode'] . '-acc-' . $idTour;
             $thirdLink = '#' . $elementTour['ocwTitleEncode'] . '-description-' . $idTour;
      
@@ -38,7 +38,7 @@
             <?php } ?>
         </ul>
         <div class="tab-content">
-            <div id="preMessage"><!-- h2>Select a category</h2 --> </div>
+            <div id="preMessage"> </div>
             <?php 
             $i='';
 
@@ -166,7 +166,6 @@
                                                                             $type = 'Course';
                                                                             break;
                                                                     case 2: // files
-                                                                            //$target='/getfile/'.$titleEncode.'.html';
                                                                             $target = $course->ocwUrlFile;
                                                                             $type = 'File';
                                                                             break;					    	
@@ -223,7 +222,7 @@
                         ?>
                     </div>
                 </div>
-                <?php } //else { ?>
+                <?php } ?>
                 <div class="tab-pane <?php if($i=='active'){ echo 'active'; $i='';}?>" id="<?php echo $this->escape('CAT_'.$cat['node']['id']) ?>">
                     <div class="accordion" id="<?php echo $this->escape('ACC_'.$cat['node']['id']) ?>">
                     <?php if(array_key_exists($cat['node']['id'], $this->courses)){ ?>
@@ -322,7 +321,6 @@
                                                                     $type = 'Course';
                                                                     break;
                                                             case 2: // files
-                                                                    //$target='/getfile/'.$titleEncode.'.html';
                                                                     $target = $course->ocwUrlFile;
                                                                     $type = 'File';
                                                                     break;					    	
@@ -372,8 +370,7 @@
                         <?php }?>
                     <?php }  ?>
                     </div>
-                </div>		
-            <?php // }?>
+                </div>
             </div>
             <?php } // end foreach?>
 	
@@ -381,7 +378,7 @@
 	</div>
     </div>
     <?php if($this->count_ads > 0){
-        /* Imagen de sponsortships o donate */ ?>
+        /* sponsortships or donate images */ ?>
     <div class="span3" id="content_right" style="margin-top: 10px;margin-right: 20px;float: right">
 		<div class="well well-small" style="text-align: center;">
 			<div id="img_url" class="img-polaroid"></div>
@@ -397,7 +394,7 @@ $(document).ready(function(){
     })
 
     var tour = new Tour({ 
-        storage: false, // guarda en cokies falso
+        storage: false, // save cookies false
         steps:  [
                     {
                         element: "#myTabs",

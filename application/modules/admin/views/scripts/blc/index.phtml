@@ -8,22 +8,6 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 ->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools_JUI.css')
 ;
 ?>
-<style>
-
-.ui-dialog form {
-    text-align: left;
-}
-form.dialog > div.row {
-    float: right;
-    width: 60%;
-    padding-top: 9px;
-}
-.ui-dialog form label {
-    cursor: pointer;
-    float: left;
-    margin: 9px 0 0 10px;
-}
-</style>
 <div class="topHeader" style="top:0px;">
 	<div class="titleArea">
 		<div class="wrapper">
@@ -148,15 +132,14 @@ form.dialog > div.row {
 
 
     	var calcDataTableHeight = function() {
-            return $(window).height()-300 ; 
-            // la altura de la tabla se calcula en base 
+            return $(window).height()-300 ;
         };
     	oTable = $('.dTable').dataTable( { 
-            "bJQueryUI": true, // soporte para temas UI
-            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+            "bJQueryUI": true, // UI themes support
+            "sPaginationType": "full_numbers", // show the page numbers
             "bRetrieve"  : true,
             "bProcessing": true,
-        	"bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+        	"bServerSide": true, // not necessary
         	"sDom": '<""flT>rt<"F"ip>',
     		"aoColumns": [{ "sWidth": "150px", "bSortable": false }, { "sWidth": "350px" }, { "sWidth": "350px" }, { "sWidth": "750px" }],
     		"aaSorting":[[1,'asc']], 
@@ -164,8 +147,7 @@ form.dialog > div.row {
             "sScrollY": calcDataTableHeight() ,
             "bScrollCollapse": true,
             "sScrollX": "100%",
-            "bSortClasses": false, // no muestra las clases de ordenamiento
-            //"bDeferRender": true, // similar al smartrendering de DHTMLX
+            "bSortClasses": false, // don't show the order classes
             "sAjaxSource": '<?php echo $this->url(array( 'controller'=>'blc', 'action'=>'blcgrid'))?>',
             "fnServerParams": function ( aoData ) {
                 var filters = getAdvancedFilters();
@@ -178,8 +160,7 @@ form.dialog > div.row {
             },
             "oTableTools": { "aButtons": [ ] },
             "fnCreatedRow": function( nRow, aData, iDataIndex ) {
-                // botones
-               //	var editar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Edit" href="#"><img alt="" src="/backend/images/icons/color/pencil.png"></a>');
+                // buttons
                 var borrar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
                      borrar.on('click',function(){
                     		$.msgbox("Are you sure you want to remove? <br> You cannot undo this action", {
@@ -229,9 +210,6 @@ form.dialog > div.row {
                      $('td:eq(0)', nRow).append(view);
                      $('td:eq(0)', nRow).append(gotolink);  
                      $('td:eq(0)', nRow).append(borrar);   
-                    // console.debug(aData);
-
-	                                      
               }
             ,"oLanguage": { "sUrl": "<?php echo $this->baseUrl()?>/backend/js/plugins/tables/en.txt"}
         });
@@ -242,7 +220,7 @@ form.dialog > div.row {
 	        oSettings.oScroll.sY = calcDataTableHeight(); 
 	        oTable.fnDraw();
         }); 
-		// dibujar los filtros si los hubiese
+		// draw the filters they exists
 		drawfbreadcrumbs(getAdvancedFilters()); 
 
     } );

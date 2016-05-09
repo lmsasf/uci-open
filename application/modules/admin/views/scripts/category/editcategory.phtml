@@ -1,5 +1,4 @@
 <style>
-.savecat { background: url("/backend/images/icons/dark/save.png") repeat-x scroll 0 0 transparent; height: 37px; padding-right: 15px; margin-left: 10px;}
 #content { margin-right: 10px; padding-top: 110px;}
 </style>
 <div class="topHeader" style="top: 0;">
@@ -19,7 +18,7 @@
 		</div>
 	</div>
 </div>
-<!-- CONTENIDO -->
+<!-- CONTENT -->
 <div id="content">
 	<div class="wrapper">
 		<div id="ejecmens" class="body textC" style="display:none; float:left;">
@@ -35,8 +34,6 @@
 		        	<fieldset>
 		                <div class="widget">
 		                    <div class="title">
-		                    	<!-- <h6>Details</h6>-->
-		                    	<!-- <a id="savecat" class="savecat" href="javascript:save()" ></a> -->
 		                    	<div class="loader" style="display:none;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
 		                    </div>
 		                    <div class="formRow">
@@ -61,12 +58,10 @@
 </div>	        
 <script type="text/javascript">
 	function save(){
-		// recorro los campos del formulario
-		// console.debug( jQuery('#validate').validationEngine('validate') );
+		// go through each field of the form
 		if (jQuery('#validate').validationEngine('validate') ) {
 			var data = new Array();
 			$('#validate input[type="text"], #validate input[type="hidden"], #validate textarea').each(function(index, value){
-				//console.debug(this);
 				if($(this).attr('name') !=='' && $(this).val() !==''){
 					data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
 				}
@@ -86,20 +81,14 @@
 		        processData:true,
 		        success: function(datos)
 		        {
-		        	
-		        	
-		        	//$.jGrowl('Data saved successfully', { header: 'Success', sticky: false, theme: 'success' });
 		        	$('#catId').val(datos.id);
 		        	$('#accion').val('edit');
-		        	//return datos.ordenId;
-		        	// tipo, mensaje, prefrase, url_redirect
 		        	displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin', 'controller'=>'category', 'action'=> 'index'))?>' );
 		        	$(".loader").hide();
 		        },
 		        error: function(request, status, error)
 		        {
 		            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
-		            //$.msgbox(mensaje, {type: "error"});
 		            $.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
 		        },
 		        timeout: 20000,

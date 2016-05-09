@@ -11,8 +11,8 @@ class Table_Ads extends Zend_Db_Table_Abstract {
     CONST OCW_TYPE_CONFERENCE = 6;    
     
     /**
-     * Obtiene los campos que hay en la tabla OCW
-     * se usa para hacer los inserts
+     * Gets the fields in the table OCW
+     * It used to make inserts
      * @return array
      */
     public function getFields() {
@@ -26,20 +26,20 @@ class Table_Ads extends Zend_Db_Table_Abstract {
     }
 
     /**
-     * Obtiene los datos para mostrar en grilla de OCW
-     * @param string $where cadena a aplicar en el where de la consulta
-     * @param array $sort array('columna'=>1, 'direccion'=>'ASC')
-     * @param array $limit array('limit'=>-1, 'offset'=>0)
-     * @param string $sSearch cadena a buscar
+     * Gets the data to show grid OCW
+     * @param string $where - string to apply into the where of the query
+     * @param array $sort - array('column'=>1, 'direction'=>'ASC')
+     * @param array $limit - array('limit'=>-1, 'offset'=>0)
+     * @param string $sSearch - search string
      * @throws Exception
-     * @return array Array que contiene un cursor, cantidad de registros y cantidad de registros filtrados
+     * @return array - Array containing a cursor, number of records and number of filtered records
      */
     public function getAdsGrid($where = null, $sort=array('columna'=>1, 'direccion'=>'ASC'), $limit = array('limit'=>-1, 'offset'=>0), $sSearch='') {
         try{
-            //validaciones de parámetros
+            //parameters validation
             $where       = is_null($where) ? 'AND 1=1 ' : $where;
 
-            if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verifico que los argumentos sean validos
+            if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verify valid arguments
                 throw new Exception('Invalid parameters');
             } else {
                 if( !array_key_exists('columna', $sort) || !array_key_exists('direccion', $sort) || !array_key_exists('limit', $limit) || !array_key_exists('offset', $limit) ){
@@ -112,7 +112,6 @@ class Table_Ads extends Zend_Db_Table_Abstract {
             } else {
                 $sql .= $where. " ORDER BY $sSort LIMIT $pag OFFSET $start";
             }
-            //$sql .=" $where   ORDER BY $sSort LIMIT $pag OFFSET $start";
 
             $rs = array('cursor'=>$this->getDefaultAdapter()->query($sql) , 'count'=>$totalCount, 'countWhere'=>$totalCountWhere );
 
@@ -142,7 +141,7 @@ class Table_Ads extends Zend_Db_Table_Abstract {
     }
 
     /**
-     * Obtiene la Info de la tabla OCW, algunos campos 
+     * Get info from OCW table, some fields
      * @param integer $id
      * @return Mixed Zend_Db_Table_Row_Abstract|Zend_Db_Table_Rowset_Abstract
      */
@@ -153,7 +152,7 @@ class Table_Ads extends Zend_Db_Table_Abstract {
                 ->joinLeft(array('r2' => 'School'), 'r2.id = r0.idSchool', array('r2.schName'))
                 ->joinLeft(array('r3' => 'Department'), 'r3.id = r0.idDepartment', array('r3.depName'))
         ;
-        if (!is_null($id)) { // añado el where
+        if (!is_null($id)) { // add where
             $select->where('r0.id = ? ', $id);
             return $this->fetchRow($select);
         } else {
@@ -162,7 +161,7 @@ class Table_Ads extends Zend_Db_Table_Abstract {
     }
 
     /**
-     * Buscador
+     * Searcher
      * @param string $search
      * @param string $filter
      * @param string $category
@@ -210,7 +209,7 @@ class Table_Ads extends Zend_Db_Table_Abstract {
     }
 
     /**
-     * Remueve un OCW del cache
+     * Remove a OCW from cache
      * @param integer $idOCW
      * @throws Exception
      * @return boolean
@@ -227,12 +226,12 @@ class Table_Ads extends Zend_Db_Table_Abstract {
         $output2 = array();
         $runCommand = 'find ' . CACHE_PUBLIC . ' -type f -name "' . $file . '*" -exec rm -fv {} \;';
         exec($runCommand, $output);
-        // eliminar el paquete si ya existe
+        // remove the package if it already exists
         $root = $_SERVER['DOCUMENT_ROOT'];
         $root = $root . '/packages/';
         $runCommand = 'find ' . $root . ' -type f -name "*' . $package . '" -exec rm -fv {} \;';
         exec($runCommand, $output2);
-        // Tomar como salida cierta la eliminación del cache no del paquete
+        // Take as some output cache removal no Package
         if (empty($output)) {
             return false;
         } else {
@@ -241,7 +240,7 @@ class Table_Ads extends Zend_Db_Table_Abstract {
     }
 
     /**
-     * Remueve los INDEX del cache
+     * Remove INDEX from cache
      * @param integer $idType
      * @return boolean
      */
@@ -282,7 +281,7 @@ class Table_Ads extends Zend_Db_Table_Abstract {
                 ->joinLeft(array('r9' => 'Course'), 'r0.id = r9.idOCW', array('r9.ocwBypassUrlCourse'))
                 ->joinLeft(array('r10' => 'Lecture'), 'r0.id = r10.idOCW', array('r10.ocwBypassUrlLecture'))
                 ->joinLeft(array('r11' => 'File'), 'r0.id = r11.idOCW', array('r11.ocwUrlFile'))
-                ->where("r0.ocwGolive = ?", 1) // publicadas
+                ->where("r0.ocwGolive = ?", 1) // published
                 ->group("r0.id")
                 ->order('r0.id DESC');
 
@@ -298,7 +297,7 @@ class Table_Ads extends Zend_Db_Table_Abstract {
     }
 
     /**
-     * Retorna OCW Pages que depende de OCWCategory y OCWTypes
+     * Return OCW Pages depending on OCWCategory y OCWTypes
      * @param String/array $idCat String $idOcwType
      * @return json array
      */
@@ -374,7 +373,7 @@ class Table_Ads extends Zend_Db_Table_Abstract {
             }
         }
 
-       // ADS que se seleccionaron para todas las Categories
+       // ADS selected for all categories
         $adsAllCategories = $this->select() ->where('adsActive = 1')
             ->where('adsAllCategories = 1')
             ->where('idOCWtypes = '. $ocwTypeId)
@@ -388,7 +387,7 @@ class Table_Ads extends Zend_Db_Table_Abstract {
             $result_ads_all = $this->getArrayAds($ads_all);
         }
 
-        //ADS que se seleccionaron para OCW especificas
+        //ADS that were selected for specific OCW
         $ads_active = $this  ->select()
             ->setIntegrityCheck(false)
             ->from(array('a0'=>'Ads'))
@@ -407,7 +406,7 @@ class Table_Ads extends Zend_Db_Table_Abstract {
             $result_ads_ocw = $this->getArrayAds($ads_actives);
         }
 
-        //ADS para Categorias sin seleccion de OCW
+        //ADS for Categories without OCW selection
         $ads_categories = $this ->select()
             ->setIntegrityCheck(false)
             ->from(array('a0'=>'Ads'))
@@ -427,7 +426,7 @@ class Table_Ads extends Zend_Db_Table_Abstract {
             $result_ads_cat = $this->getArrayAds($ads_Categorias);
         }
         
-        //Armado de un solo array
+        //Construction of a single array
         foreach ($result_ads_ocw as $rao){
             $result_ads_all[] = $rao;
         }

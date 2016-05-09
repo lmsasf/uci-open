@@ -86,7 +86,7 @@ $ads = json_encode($ads_actives);
                                         </dt>
                                     </div>
                                     <div class="row" style="margin-left:0%; margin-bottom: 1%;">
-                                        <!-- Imagen de libros -->
+                                        <!-- Books images -->
                                         <div class="span2" style="margin: 1% 2%; ">
                                             <?php if($this->books->bookImageURL) { ?>
                                                 <img src="<?php echo $this->books->bookImageURL ?>" class="img-polaroid">
@@ -230,9 +230,8 @@ $ads = json_encode($ads_actives);
 					foreach ($this->Joins as $k=>$v){
 						
 						if($key < $k ){ 
-							//echo $key . ' - ' . $k ."<br>";
 							$external = '';
-							if($v->idType == 5 ) { // otro header
+							if($v->idType == 5 ) { // other header
 								break;
 							} else {
 								$titleEncode = is_null($v->ocwTitleEncode) ? codificar_titulo($v->ocwTitle) : $v->ocwTitleEncode;
@@ -242,7 +241,6 @@ $ads = json_encode($ads_actives);
 										$target='/courses/'.$titleEncode.'.html';
 										break;
 									case 2: // files
-										//$target='getfile/'.$titleEncode.'.html';
 										$external = 'target="_blank"';
 										$target = $v->ocwUrlFile;
 										break;
@@ -259,12 +257,11 @@ $ads = json_encode($ads_actives);
 										;
 										break;
 								}
-								if($v->idType == 7 ){ // es un Label
+								if($v->idType == 7 ){ // a Label
 									echo '<dl><dd>'.$v->ocwDescription .'</dd></dl>';
 								} else {
 									echo '<dl><dd><a href="'. $target . '" '. $external.' >'. $this->escape( $v->ocwTitle ) . ' ('. $v->lanName . ') </a></dd></dl>';
 								}
-								//echo $v->ocwTitle. "<br>";
 							}
 						}
 					} 

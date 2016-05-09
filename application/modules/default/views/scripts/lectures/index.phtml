@@ -55,7 +55,7 @@
                                     </div>
                                 <?php endforeach;?>			
                             </div>
-                    <?php } //else { ?>
+                    <?php } ?>
                         <div class="" id="<?php echo $this->escape('ACC_'.$cat['node']['id']) ?>">
                         <?php if(array_key_exists($cat['node']['id'], $this->lectures)){ ?>
                             <?php foreach ($this->lectures[$cat['node']['id']] as $lectures ){ ?>
@@ -69,7 +69,6 @@
                         <?php } ?>
 
                         </div>
-                    <?php //}?>
                 </div>
             <?php }?>
             </div>	      
@@ -77,7 +76,7 @@
     </div>
     
     <?php if($this->count_ads > 0){
-        /* Imagen de sponsortships o donate */ ?>
+        /* sponsortships or donate images */ ?>
     <div class="span3" id="content_right" style="margin-top: 10px;margin-right: 20px;float: right">
 		<div class="well well-small" style="text-align: center;">
 			<div id="img_url" class="img-polaroid"></div>

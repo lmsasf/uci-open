@@ -9,48 +9,18 @@ $this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fin
 $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
 $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/alertify/alertify.core.css');
 $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/alertify/alertify.bootstrap.css');
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/custom/sortable.css');
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/custom/editor.css');
 ?>
 
 <style>
 <!--
 .step h1 { display: none;}
-.widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
-.aimgdown { background-image:url("/backend/images/backgrounds/arrows.png"); background-repeat: no-repeat; display:block; height:10px; width:12px; float:right; -ms-transform: rotate(90deg);-moz-transform: rotate(90deg); -webkit-transform: rotate(90deg); -moz-transform: rotate(90deg);rotation: 90deg; filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);}
-.aimgup { background-image:url("/backend/images/backgrounds/arrows.png"); display:block; height:10px; width:12px; float:right; background-position: 0 bottom;	}
-#listAuthors_chzn{float:left;}
-#listCategories_chzn {float: left;}
-.liLeft {float: left; width: 70%; padding: 5px;}
-.liRight{float: right;}
-.buttonLi{padding: 5px; line-height: 0;}
-.placeholder { background-color: white; border:1px dashed #c5c5c5; margin:5px; height: 25px;}
-.degreeItem {padding: 3px;border: solid 1px lime;}
-#sortable-categories li{ cursor: pointer; margin: 0 0 4px; padding: 3px;}
-#sortable-author li{ cursor: pointer; margin: 0 0 4px; padding: 0px; height: 37px;}
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { background: url("/backend/images/jquery/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6; border: 1px solid #D3D3D3;}
 
-#sortable-categories .ui-state-default a { color: #555555; margin-top: 0px; text-decoration: none;}
-#sortable-author .ui-state-default a { color: #555555; margin-top: 3px; text-decoration: none;}
-#sortable-categories {margin-top:5px;}
-#sortable-categories li {height:28px;}
-.dd3-handle {height: 34px;}
-#sortable-author {margin-top:5px;}
-#sortable-author li {height:34px;}
-div.checker span { vertical-align: top !important;}
-.qq-upload-list{ display:none;}
-.editor {
-	border: dashed 2px #DDDDDD !important;
-	background-color: white;
-	height: 150px;
-	overflow: auto;
-	padding:10px;
-
- }
 .ui-dialog{padding:1px;}
 .ui-dialog form { text-align: left; }
 .ui-dialog .ui-dialog-content { overflow:visible;}
 
-#license-editor .formRight {margin-right: 0px;width: 45%;}
-#license-editor label {	width: 50%;	margin: 3px 3px 0;}
 .TopPageTitle { width: 100%;}
 .bc { display: flex;background: 0;}
 .wizButtons { margin-top: -12px;margin-bottom: -10px;margin-left: auto;}
@@ -275,7 +245,7 @@ $(document).ready( function() {
 		resetVideoForm();
     });
 
-	time = setInterval(function(){ if(autosave) saveOCW('') }, 90000); // autoguardado
+	time = setInterval(function(){ if(autosave) saveOCW('') }, 90000); // auto save
 });
 
 function scaleSavedVideo(ifrm){
@@ -291,10 +261,9 @@ function scaleSavedVideo(ifrm){
 function insertSavedAC(ifrm, side, actype, acsrc){
 	var side_secc = ifrm.find("#side"+side);
 
-	// Sino existe la columna especificada utiliza la central
-	// ignore = false;
+	// If there is no specified column uses the center
 	if(side_secc.length == 0){
-		side_secc = ifrm.find("#sidec"); // Usa la columna central
+		side_secc = ifrm.find("#sidec"); // Use the center column
 	}
 
 	var add_id = 'ac'+side+'_'+side_secc.children().length;
@@ -311,9 +280,6 @@ function insertSavedAC(ifrm, side, actype, acsrc){
 
 		add = '<div id="'+add_id+'" class="well-small acont" style="margin-bottom: 20px;padding: 0;"><div style="text-align: center;"><i class="icon-move"></i>&nbsp;<i class="icon-trash"></i></div><div class="well editor" style="padding: 10px;">'+acsrc+'</div></div>';
 	}
-
-	//if(ignore)
-	//	add = $(add).attr("ignore", "true");
 
 	side_secc.append(add);
 

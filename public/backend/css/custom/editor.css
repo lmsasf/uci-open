@@ -1,0 +1,12 @@
+.editor {
+	border: dashed 2px #DDDDDD !important;
+	background-color: white;
+	height: 150px;
+	overflow: auto;
+	padding:10px;
+
+ }
+
+#license-editor .formRight {margin-right: 0px;width: 45%;}
+#license-editor label {	width: 50%;	margin: 3px 3px 0;}
+

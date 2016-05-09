@@ -1,6 +1,6 @@
 <?php
 /**
- * Mapeo de la tabla Usuario
+ * User mapping table
  * @package		application/models
  * @copyright	Aconcagua Software Factory
  *
@@ -16,7 +16,7 @@ class Table_User extends Zend_Db_Table_Abstract {
 	const INVALID_LOGIN = 'invalidLogin';
 	
 	/**
-	 * Mensajes de validaciones por defecto
+	 * Default validations messages
 	 * @var array
 	 */
 	protected $_messages = array(
@@ -28,7 +28,7 @@ class Table_User extends Zend_Db_Table_Abstract {
 
 	
 	/**
-	 * Asigna un mensaje a una clave de mensaje en un array asociativo de mensajes.
+	 * Assigns a message to a message key in an associative array of messages.
 	 * @param string $messageString
 	 * @param string $messageKey	OPTIONAL
 	 * @return UserModel
@@ -48,7 +48,7 @@ class Table_User extends Zend_Db_Table_Abstract {
 	}
 	
 	/**
-	 * Agrega un array de mensajes.
+	 * Add an array of messages.
 	 * @param array $messages
 	 * @return UserModel
 	 */
@@ -61,10 +61,10 @@ class Table_User extends Zend_Db_Table_Abstract {
 	}
 	
 	/**
-	 * Autentifica al usuario
-	 * @param string $nick nombre de usuario
-	 * @param string $password contraseña
-	 * @throws Excepción
+	 * Authenticates the user
+	 * @param string $nick - User's name
+	 * @param string $password - User's password
+	 * @throws Exception
 	 * @return UsuarioModel
 	 */
 	public function login($nick, $password)
@@ -75,7 +75,7 @@ class Table_User extends Zend_Db_Table_Abstract {
 			$db = Zend_Db_Table_Abstract::getDefaultAdapter();;
 			$autAdapter = new Zend_Auth_Adapter_DbTable(
 					$db,
-					'UserInfo', // es una vista, donde hago join con información extra del usuario
+					'UserInfo', // is a view with extra user information
 					'usrName',
 					'usrPassword',
 					'? AND usrActive = 1'
@@ -85,7 +85,6 @@ class Table_User extends Zend_Db_Table_Abstract {
 			$aut = Zend_Auth::getInstance();
 			
 			$result = $aut->authenticate($autAdapter);
-			//echo '<pre>'; print_r($autAdapter);
 			switch ($result->getCode())
 			{
 				case Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND:
@@ -112,7 +111,7 @@ class Table_User extends Zend_Db_Table_Abstract {
 		return $this;
 	}
 	/**
-	 * Elimina la session, desloguea al usuario
+	 * Deletes the session, logout the user
 	 * @return UsuarioModel
 	 */
 	public function logout()
@@ -129,8 +128,8 @@ class Table_User extends Zend_Db_Table_Abstract {
 		return $this;
 	}
 	/**
-	 * Obtiene la información del usuario logueado
-	 * @return mixed si esta logueado obtiene un objeto Zend_Auth con la información del usuario, de lo contrario null
+	 * Gets the user information logged
+	 * @return mixed if you are logged you get a Zend_Auth object with user information, otherwise null
 	 */
 	public static function getIdentity()
 	{
@@ -141,7 +140,7 @@ class Table_User extends Zend_Db_Table_Abstract {
 		return null;
 	}
 	/**
-	 * Verifica si esta logueado
+	 * Check if you are logged
 	 * @return boolean
 	 */
 	public static function isLoggedIn()
@@ -150,14 +149,14 @@ class Table_User extends Zend_Db_Table_Abstract {
 	}	
 	
 	/**
-	 * Obtiene los usuarios para listado
+	 * You get users to list
 	 * @param string $where
 	 * @return puntero
 	 */
 	public function getUsuarios($where = null, $sort=array('columna'=>1, 'direccion'=>'ASC'), $limit = array('limit'=>-1, 'offset'=>0), $sSearch='')
 	{
 		try {
-			//validaciones de parámetros
+			//parameters validations
 			$where       = is_null($where) ? 'AND 1=1 ' : $where;
 	
 			if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verifico que los argumentos sean validos
@@ -211,8 +210,7 @@ class Table_User extends Zend_Db_Table_Abstract {
 			} else {
 				$sql .= $where. " ORDER BY $sSort LIMIT $pag OFFSET $start";
 			}
-			//$sql .=" $where	ORDER BY $sSort LIMIT $pag OFFSET $start";
-	
+
 			$rs = array('cursor'=>$this->getDefaultAdapter()->query($sql) , 'count'=>$totalCount, 'countWhere'=>$totalCountWhere );
 			return $rs;
 		} catch (Exception $e){

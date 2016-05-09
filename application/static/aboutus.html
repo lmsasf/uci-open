@@ -1,6 +1,4 @@
 <!-- Start primary content -->
-
-
 <div class="span12" id="navi2">
     <div class="navbar">
         <div class="navbar-inner" id="nav2">
@@ -48,19 +46,16 @@
     $(document).ready(function () {
         $(".accordion-heading").html('<a class="accordion-toggle" data-parent="#about" href="#ocw"><h3>About UCI OpenCourseWare</h3></a>');
         $(".nav li #navaboutocw").click(function (){
-            //$("#content").load("about/aboutus.html");
             $(".accordion-heading").html('<a class="accordion-toggle" data-parent="#about" href="#ocw"><h3>About UCI OpenCourseWare</h3></a>');
             $("#nav2 li").removeClass("active");
             $("#nav2 li:nth-child(1)").addClass("active");
         })
         $(".nav li #navfaq").click(function () {
-            //$("#content").load("about/faq.html");
             $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#faq"><h3>Frequently Asked Questions</h3></a>');
 	        $("#nav2 li").removeClass("active");
             $("#nav2 li:nth-child(2)").addClass("active");
 	    })
         $(".nav li #navtermsofuse").click(function () {
-            //$("#content").load("about/termsofuse.html");
             $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#termsofuse"><h3>Terms of Use</h3></a>');
 	        $("#nav2 li").removeClass("active");
             $("#nav2 li:nth-child(3)").addClass("active");

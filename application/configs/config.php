@@ -12,7 +12,6 @@
 	define ("DBSALT","Stripes with Bill Murray");	
 
 	//set your CAT database password here
-	//define ("DBPASS","JieP3*ck2");
 	define ("DBPASS","06-media-13");
 	
 	//set your MYSQL users database username here

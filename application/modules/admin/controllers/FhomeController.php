@@ -9,7 +9,7 @@ class Admin_FhomeController extends Zend_Controller_Action
     }
 
     /**
-     * Listado de datos para el footer
+     * Data listo to the footer
      */
     public function indexAction()
     {
@@ -36,11 +36,10 @@ class Admin_FhomeController extends Zend_Controller_Action
 
             if(!is_null($id) && is_null($accion)) {
                 $this->view->headTitle('Frontend Home Design :: Edit');
-                // busco los datos
                 $this->view->assign('home', $Home->fetchRow($Home->select()->where('id = ?', $id)));
                 $this->view->assign('accion', 'edit');
             }
-            if(is_null($id)) { // nuevo
+            if(is_null($id)) { // new
                 $this->view->headTitle('Frontend Home Design :: Add');
                 $this->view->assign('accion', 'add');
                 $this->view->assign('id', null);
@@ -61,7 +60,7 @@ class Admin_FhomeController extends Zend_Controller_Action
 
     public function savehomeAction(){
         $this->_helper->layout()->setLayout('empty');
-        // no necesita vista para renderizarse
+        // don't need a view to render
         $this->_helper->viewRenderer->setNoRender();
         $Home = new Table_Home();
         $tr = $Home->getAdapter()->beginTransaction();
@@ -70,7 +69,7 @@ class Admin_FhomeController extends Zend_Controller_Action
             $accion  		= $this->getRequest()->getParam('accion'	 , null);
             $data	 		= $this->getRequest()->getParam('data'		 , null);
 
-            if( !is_null($accion) && !is_null($data) ){ // editar o añadir
+            if( !is_null($accion) && !is_null($data) ){ // add or edit
                 $SectionRow = null;
 
                 if($accion === 'edit'){
@@ -99,14 +98,10 @@ class Admin_FhomeController extends Zend_Controller_Action
 
     public function homegridAction(){
         $this->_helper->layout()->setLayout('empty');
-        // no necesita vista para renderizarse
+        // don't need a view to render
         $this->_helper->viewRenderer->setNoRender();
         $filters = Zend_Json_Decoder::decode($this->getRequest()->getParam('filters', '{}'));
         $where = '';
-        //if(!is_null($filters)){
-            //$where = $this->buildWherelp($filters) . $where;
-        //}
-
         $i = 0;
 
         $sEcho = $this->getRequest()->getParam('sEcho', 4);
@@ -118,7 +113,7 @@ class Admin_FhomeController extends Zend_Controller_Action
         $iDisplayLength=$this->getRequest()->getParam('iDisplayLength', 50); // limit
         $iDisplayStart = $this->getRequest()->getParam('iDisplayStart', 0); // offset
         $limit = array('limit'=>$iDisplayLength, 'offset'=> $iDisplayStart);
-        //search de la grilla
+        //search
         $sSearch = $this->getRequest()->getParam('sSearch', '');
 
         $Home= new Table_Home();
@@ -136,8 +131,7 @@ class Admin_FhomeController extends Zend_Controller_Action
                     echo ",";
                 }
                 $json = '{"DT_RowId": "'.$row[0].'", ';
-                $PK = array_shift($row); // se asume que la primer fila tiene PK
-                //$json = Zend_Json_Encoder::encode($row);
+                $PK = array_shift($row);
                 foreach($row AS $k => $v){
                     $json.= '"'.$k.'":'.Zend_Json_Encoder::encode($v).',';
                 }
@@ -168,7 +162,7 @@ class Admin_FhomeController extends Zend_Controller_Action
             $data	 		= $this->getRequest()->getParam('data'		 , null);
             $action	 		= $this->getRequest()->getParam('accion'	 , null);
 
-            if( !is_null($action) && !is_null($data) ){ // editar o añadir
+            if( !is_null($action) && !is_null($data) ){ // add or edit
                 $SectionRow = null;
 
                 if($action === 'edit'){
@@ -186,20 +180,9 @@ class Admin_FhomeController extends Zend_Controller_Action
 
                 if(!is_null($filez)) {
                     /********************save file*********************/
-                    /*$command = 'cat ' . "./frontend/css/bk/" . $filez;
-                    $out = shell_exec($command);
-
-                    if (empty($out)) {
-                        // copiar el original al /bk
-                        $command = 'cp -R ' . "./frontend/" . $filez . ' ' . "./frontend/css/bk/" . $filez;
-                        shell_exec($command);
-                    }*/
-
-                    // grabar
                     $fh = fopen("./frontend/" . $filez, 'w') or die("Error al abrir fichero de salida");
                     fwrite($fh, $editor);
                     fclose($fh);
-
                     /*************************************************/
                 }
                 $idGr = $Row->save();
@@ -229,7 +212,6 @@ class Admin_FhomeController extends Zend_Controller_Action
 
                 if(!is_null($filez)) {
                     /********************save file*********************/
-                    // copiar el original del /bk
                     $command = 'cp ' . "./frontend/css/bk/" . $filez . ' ' . "./frontend/" . $filez;
                     shell_exec($command);
                     /*************************************************/
@@ -256,7 +238,7 @@ class Admin_FhomeController extends Zend_Controller_Action
                 throw new Exception( 'Insufficient parameters' );
             }
             $resp = $Sections->delete("id = $id");
-            $this->_forward('index', 'fhome', 'admin');//echo Zend_Json_Encoder::encode(array('Id'=> $Id));
+            $this->_forward('index', 'fhome', 'admin');
         } catch (Exception $e) {
             echo $e->getMessage();
         }
@@ -270,11 +252,10 @@ class Admin_FhomeController extends Zend_Controller_Action
             $this->view->headTitle('Frontend Home Design :: Custom');
 
             if(!is_null($id)) {
-                // busco los datos
                 $this->view->assign('customs', $Custom->fetchRow($Custom->select()->where('id = ?', $id)));
                 $this->view->assign('accion', 'edit');
             }
-            if(is_null($id)) { // nuevo
+            if(is_null($id)) {
                 $this->view->assign('accion', 'add');
                 $this->view->assign('id', null);
                 $this->view->assign('customs', null);

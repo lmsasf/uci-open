@@ -45,14 +45,12 @@ $ads = json_encode($ads_actives);
                 case 1: // courses
                     if(is_null($join->ocwBypassUrlCourse) || empty($join->ocwBypassUrlCourse)){
                         $target='/courses/'.$titleEncode.'.html';
-                        //d(is_null($join->ocwBypassUrlCourse));
                     } else {
                         $external = 'target="_blank"';
                         $target = $join->ocwBypassUrlCourse;
                     }
                     break;
                 case 2: // files
-                    //$target='/getfile/'.$titleEncode.'.html';
                     $target=$join->ocwUrlFile;
                     $external = 'target="_blank"';
                     break;

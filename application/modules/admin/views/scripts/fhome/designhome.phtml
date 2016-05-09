@@ -1,27 +1,15 @@
 <?php
 $this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
-    ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
-    ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js')
     ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
     ->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js')
 ;
-$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css')
+    ->appendStylesheet($this->baseUrl().'/backend/css/custom/headings.css')
+;
 ?>
 <style>
-    .step h1 { display: none;}
-    .widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
-    div.checker span { vertical-align: top !important;}
-    .editor {
-        border: dashed 2px #DDDDDD !important;
-        background-color: white;
-        height: 150px;
-        overflow: auto;
-        padding:10px;
-
-    }
     .ui-dialog form { text-align: left; }
     .ui-dialog .ui-dialog-content { overflow:visible;}
-
 </style>
 <div class="topHeader" style="top: 0;">
     <div class="titleArea">
@@ -39,7 +27,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
         </div>
     </div>
 </div>
-<!-- CONTENIDO -->
+<!-- CONTENT -->
 <div id="content">
     <div class="wrapper">
         <div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
@@ -190,7 +178,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
     }
 
     function save(){
-        // recorro los campos del formulario
+        // go through form filds
         if (jQuery('#validate').validationEngine('validate') ) {
             var data = new Array();
             $('#validate input[type="hidden"],#validate input[type="text"]').each(function(index, value){

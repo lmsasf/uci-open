@@ -1,41 +1,15 @@
 <?php
-$this->jQuery()->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/form-builder/form-builder.js');
-$this->jQuery()->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/form-builder/form-render.js');
 $this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
     ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
     ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js')
     ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
     ->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js')
 ;
-$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
-var_dump($this->contact[0]['title']);
-//$json = $this->contact[0]['educationalRole'];
-//$ar = json_decode($json, true);
-// access first element of $ar array
-//var_dump($ar[0]); // apple
-//die;
+$this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css')
+    ->appendStylesheet($this->baseUrl().'/backend/css/custom/editor.css')
+    ->appendStylesheet($this->baseUrl().'/backend/css/custom/headings.css')
+;
 ?>
-<!-- Only include on form edit page -->
-<link rel="stylesheet" type="text/css" media="screen" href="/backend/js/plugins/form-builder/form-builder.min.css">
-<!-- Only include on form render page -->
-<link rel="stylesheet" type="text/css" media="screen" href="/backend/js/plugins/form-builder/form-render.min.css">
-
-<style>
-    .step h1 { display: none;}
-    .widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
-    .aimgdown { background-image:url("/backend/images/backgrounds/arrows.png"); background-repeat: no-repeat; display:block; height:10px; width:12px; float:right; -ms-transform: rotate(90deg);-moz-transform: rotate(90deg); -webkit-transform: rotate(90deg); -moz-transform: rotate(90deg);rotation: 90deg; filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);}
-    .aimgup { background-image:url("/backend/images/backgrounds/arrows.png"); display:block; height:10px; width:12px; float:right; background-position: 0 bottom;	}
-
-    div.checker span { vertical-align: top !important;}
-    .qq-upload-list{ display:none;}
-    .editor {
-        border: dashed 2px #DDDDDD !important;
-        background-color: white;
-        height: 150px;
-        overflow: auto;
-        padding:10px;
-    }
-</style>
 
 <div class="topHeader" style="top:0px;">
     <div class="titleArea">
@@ -53,20 +27,16 @@ var_dump($this->contact[0]['title']);
     </div>
 </div>
 
-
-<!-- CODIGO NUEVO      *************************************************************************************** -->
+<!-- NEW CODE      *************************************************************************************** -->
 
 <script type="text/javascript">
 
-   
-    //Variable para contar la cantidad de libros que se agregaron
+    //Variable to count the number of books that were added
     var cantbook = 0; //book add
     var count = 0; //book add
     $(function() {
-
         var validStep = new Array();
         var mensaje;
-
 
         $('.editor').click(function() {
             var name;
@@ -81,8 +51,6 @@ var_dump($this->contact[0]['title']);
         });
         
     });
-
-
 
 </script>
 
@@ -115,16 +83,13 @@ var_dump($this->contact[0]['title']);
                         <label>Educational role:<span class="req">*</span></label>
                         <div class="formRight searchDrop">
                             <table id="tableRoles" width="100%">
-                              
                             </table>
-
                             
                             <button class="smallButton" id="addRole" style="line-height: 0; padding: 5px; float:left; margin-left:10px; margin-top:5px;" title="Add Role">
                                 <img alt="" src="/backend/images/icons/color/plus.png">
                             </button>
 
                             <div class="clear"></div>
-
                             
                         </div>
                        <div class="clear"></div>
@@ -142,7 +107,6 @@ var_dump($this->contact[0]['title']);
                             </button>
 
                             <div class="clear"></div>
-
                             
                         </div>
                         <div class="clear"></div>
@@ -166,7 +130,6 @@ var_dump($this->contact[0]['title']);
 
                 </fieldset>
 
-
                 <div class="wizButtons">
                     <div class="status" id="status2"></div>
 					<span class="wNavButtons">
@@ -184,7 +147,6 @@ var_dump($this->contact[0]['title']);
 
 <script>
     $(document).ready( function() {
-        //get dates: educationalRole
        var rol= '<?php echo $this->contact[0]['educationalRole'] ?>';
        var contentTableRoles = $("#tableRoles"); 
        var x = $("#tableRoles tr").length;
@@ -208,8 +170,7 @@ var_dump($this->contact[0]['title']);
        var inquiry= '<?php echo $this->contact[0]['natureOfInquiry'] ?>';
        var contentTableInquiry = $("#tableInquiry"); 
        var y = $("#tableInquiry tr").length;
-      // alert("y= " + y);
-       var FieldCountInquiry = y-1; //increment of fields 
+       var FieldCountInquiry = y-1; //increment of fields
        if (inquiry != "") {
            var arrayInquiry = inquiry.split(",");
            console.log(arrayInquiry[2]);
@@ -223,9 +184,7 @@ var_dump($this->contact[0]['title']);
        }else{
              $(contentTableInquiry).append('<tr><td width="99%"><input style="padding: 10px 5px;height: 14px;" type="text" id="txtInquiry['+ FieldCountInquiry +']" name="txtInquiry" class="campo inquiry" value=""></td><td width="1%" style="vertical-align: bottom;"><a class="smallButton delete" style="line-height: 0px;padding: 9px 5px; margin-left:2px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a></td></tr>'); 
        }
-
-
-        //Educational role--------> config options    
+        //Educational role--------> config options
         var contenedor       = $("#tableRoles"); //ID del contenedor
         var AddButton       = $("#addRole"); //ID of button add
 
@@ -240,12 +199,9 @@ var_dump($this->contact[0]['title']);
         var contenedorInquiry       = $("#tableInquiry"); //ID contenedor
         var AddButtonInquiry       = $("#addInquiry"); //ID of button add
 
-        
-
        $(AddButtonInquiry).click(function (e) {
              FieldCountInquiry++;   
-             //console.log(FieldCountInquiry);    
-             $(contenedorInquiry).append('<tr><td width="99%"><input style="padding: 10px 5px;height: 14px;" type="text" id="txtInquiry['+ FieldCountInquiry +']" name="txtInquiry" class="campo rol" value=""></td><td width="1%" style="vertical-align: bottom;"><a class="smallButton delete" style="line-height: 0px;padding: 9px 5px; margin-left:2px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a></td></tr>');        
+             $(contenedorInquiry).append('<tr><td width="99%"><input style="padding: 10px 5px;height: 14px;" type="text" id="txtInquiry['+ FieldCountInquiry +']" name="txtInquiry" class="campo rol" value=""></td><td width="1%" style="vertical-align: bottom;"><a class="smallButton delete" style="line-height: 0px;padding: 9px 5px; margin-left:2px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a></td></tr>');
             return false;
         
         });
@@ -272,7 +228,6 @@ var_dump($this->contact[0]['title']);
 function valid() {  
 $("html, body").animate({scrollTop:"0px"});    
     var isEmpty = false;
-  //  alert("entro");
     var inputsRol = $('#formContactUs :input[name=txtRoles]');
     var valueRol ="";
     inputsRol.each(function() { 
@@ -285,10 +240,9 @@ $("html, body").animate({scrollTop:"0px"});
     });
 
     var inputsInquiry = $('#formContactUs :input[name=txtInquiry]');
-    //console.log(inputsRol);
     var valueInquiry ="";
     inputsInquiry.each(function() { 
-        if($(this).val().length == 0 ){         //if input=""
+        if($(this).val().length == 0 ){  //if input=""
             displayMessage( 'error', 'Please complete fields empty.', '', '' );
             isEmpty= true;
         }else{

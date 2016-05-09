@@ -96,6 +96,7 @@ width:172px;
 					<p class="help-block"><?php echo $this->contact[0]['helpBlock'] ?></p>
 					<br>
 					<!-- RECAPTCHA -->
+					<!-- Uncomment the next lines to add a captcha validation. - Look at the controller in order to uncomment the appropriate lines too. -->
 					<script type="text/javascript">
 					/*var RecaptchaOptions = {
 						theme : 'custom',
@@ -135,8 +136,9 @@ width:172px;
 						<textarea name="recaptcha_challenge_field" rows="3" cols="40">
 						</textarea>
 						<input type="hidden" name="recaptcha_response_field" value="manual_challenge">
-					</noscript> -->
-					<!-- Inser reCaptcha code here -->
+					</noscript>
+					-->
+					<!-- END RECAPTCHA -->
 					<button type="submit" class="btn">Submit</button>
 				</fieldset>
 			</form>

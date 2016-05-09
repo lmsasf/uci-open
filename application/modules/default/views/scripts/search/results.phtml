@@ -1,14 +1,13 @@
 <?php $this->inlineScript()->appendFile($this->baseUrl()."/frontend/js/jquery.dotdotdot.min.js",'text/javascript');?>
 <style>
 <!--
-.ocwdescription { padding: 5px; /*max-height: 65px;*/ margin-bottom: 10px; }
+.ocwdescription { padding: 5px; margin-bottom: 10px; }
 .ocwTitle 		{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 95%; }
 .row-search 	{ border-bottom: 1px solid #CCCCCC;	margin-bottom: 15px; }
 -->
 </style>
 <script type="text/javascript" language="javascript">
 	$(function() {
-		// $('.ocwdescription').dotdotdot({ watch: 'window' });
 		$('.filter').on('change', function(){
 			
 			var gotoURL = '/search/results/keyword/<?php echo $this->keyword ?>/' ;
@@ -17,7 +16,6 @@
 					gotoURL += $(this).prop('id') + '/' + $(this).val() + '/' ;
 				} 
 			});
-			//console.debug(gotoURL);
 			window.location = gotoURL;
 		});
 	});

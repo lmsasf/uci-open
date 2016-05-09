@@ -5,7 +5,7 @@ class Table_OCWJoin extends Zend_Db_Table_Abstract {
 	protected $_primary = array('idOCWParent', 'idOCWChild');
 	
 	/**
-	 * Obtiene los OCW que estan en la tabla
+	 * Gets the OCW from the table
 	 * @param integer $idParent
 	 * @param boolean idType
 	 * @return Zend_Db_Table_Rowset_Abstract
@@ -34,25 +34,12 @@ class Table_OCWJoin extends Zend_Db_Table_Abstract {
 		return $joins;
 	}
 	/**
-	 * Devuelve todas las OCW que no estan 
+	 * Returns all OCW who are not
 	 * en la tabla Join para un padre
 	 * @param integer $idParent
 	 * @return Zend_Db_Table_Rowset_Abstract
 	 */
 	public function getNotJoins($idParent){
-// 		$sql = "SELECT 	  r0.id
-// 						, r0.ocwTitle
-// 						, r2.typName
-// 						, r3.uniName
-// 						, r4.schName
-// 						, r5.depName
-// 					FROM OCW r0 
-// 					INNER JOIN OCWTypes r2 ON r0.idType = r2.id
-// 					LEFT JOIN University r3 ON r0.idUniversity = r3.id
-// 					LEFT JOIN School r4 ON r0.idSchool = r4.id
-// 					LEFT JOIN Department r5 ON r0.idDepartment = r5.id
-// 					WHERE NOT EXISTS(SELECT r1.idOCWChild FROM OCWJoin r1  WHERE (r0.id=r1.idOCWChild OR r1.idOCWParent=r0.id ) AND r1.idOCWParent=$idParent)
-// 				";
 		$select = $this->select()->setIntegrityCheck(false)
 					->from(array('r0'=>'OCW'), array('r0.id', 'r0.ocwTitle'))
 					->joinInner(array('r5'=>'OCWTypes'), 'r0.idType = r5.id', array('r5.typName', 'r0.idType'))
@@ -67,7 +54,6 @@ class Table_OCWJoin extends Zend_Db_Table_Abstract {
 		return $return;		
 	}
 	/**
-	 * 
 	 * @param array $arrayType
 	 * @param array $arrayExclude
 	 * @param array $arrayUniversity
@@ -121,7 +107,7 @@ class Table_OCWJoin extends Zend_Db_Table_Abstract {
 		return $this->fetchAll($select)->toArray();
 	}
 	/**
-	 * Obtiene el listado de types que tiene asociado en Joins un ocw
+	 * Get the list of types that is associated in an OCW Joins
 	 * @param string $ocwTitleEncode Titulo codificado
 	 * @return array
 	 */

@@ -8,7 +8,7 @@ class Admin_AdsController extends Zend_Controller_Action
     }
 
     /**
-     * Listado de personas
+     * Ads List
      */
     public function indexAction()
     {
@@ -20,7 +20,7 @@ class Admin_AdsController extends Zend_Controller_Action
     }
 
     /**
-     * Borra un OCW
+     * Delete a OCW
      * @throws Exception
      */
     public function savepublishAction(){
@@ -49,7 +49,7 @@ class Admin_AdsController extends Zend_Controller_Action
     }
 
     /**
-     * Guarda un ADS
+     * Save ADS
      * @throws Exception
      */
     public function saveAction(){
@@ -63,7 +63,7 @@ class Admin_AdsController extends Zend_Controller_Action
             $Ads = new Table_Ads();
             $AdsOCW = new Table_AdsOCW();
             $AdsCategory = new Table_AdsCategory();
-            /*Para actualización*/
+            /*For update*/
             if($campos[10]) {
                 if (!empty($campos[11])){
                     $adsAllCategories = 0;
@@ -126,7 +126,7 @@ class Admin_AdsController extends Zend_Controller_Action
                 $dbAdapter->update('Ads', $data, 'idAds = '.$campos[10]);
 
             }else{
-                /*Para un nuevo ads*/
+                /*New ads*/
                 $newAds = $Ads->createRow();
                 $newAds->adsName = $campos[0];
                 $newAds->idAdsType = $campos[1];
@@ -229,7 +229,7 @@ class Admin_AdsController extends Zend_Controller_Action
     }
 
     /**
-     * Trae las Categories para un OCWType determinado
+     * Bring the categories for a given OCWType
      */
     public function getcategoryfortypeAction(){
         $this->_helper->layout()->setLayout('empty');
@@ -244,7 +244,7 @@ class Admin_AdsController extends Zend_Controller_Action
 
 
     /**
-     * Trae las OCWPage para una Category de un OCWType determinado
+     * Bring the OCWPage for a Category of a determined OCWType
      */
     public function getpagesAction(){
         $this->_helper->layout()->setLayout('empty');
@@ -270,7 +270,7 @@ class Admin_AdsController extends Zend_Controller_Action
             $Id = $this->getRequest()->getParam('id_row', null);
             $change_select = $this->getRequest()->getParam('change_select', null);
 
-            #Si es nuevo
+            #If is new
             if(!$Id) {
                 $OCWTypes = new Table_OCWTypes();
                 $ocwTypes = $OCWTypes->select() ->where('id in(1,3,4)')
@@ -293,7 +293,7 @@ class Admin_AdsController extends Zend_Controller_Action
 
             } else {
 
-                #Si es edicion
+                #If is for edit
                 $idADS = $this->getRequest()->getParam('id_row', null);
                 $this->view->assign('id_row', $idADS);
 
@@ -423,12 +423,12 @@ class Admin_AdsController extends Zend_Controller_Action
                     $includecategoriesids[] = $cat["id"];
                 }
 
-                $this->view->assign('includecategoriesids', $includecategoriesids);     //Categorias relacionadas a los OCW existentes - menu del select
-                $this->view->assign('allcategories', $categories_id[1]);                //Todas las Categorias - menu del select
-                $this->view->assign('pagecategories', $category_edit);                  //Categorias - listado elegido
+                $this->view->assign('includecategoriesids', $includecategoriesids);     //Categories related to existing OCW - select menu
+                $this->view->assign('allcategories', $categories_id[1]);                //All the Categories - select menu
+                $this->view->assign('pagecategories', $category_edit);                  //Categories - chosen list
                 $this->view->assign('pagecategories_ids', $adsCat_ids);
-                $this->view->assign('pages', $ocw_select);                              //OCW Page -  menu del select
-                $this->view->assign('ocwpages', $ocw_editList);                         //OCW Page - listado elegido
+                $this->view->assign('pages', $ocw_select);                              //OCW Page -  select menu
+                $this->view->assign('ocwpages', $ocw_editList);                         //OCW Page - chosen list
                 $this->view->assign('ocwpages_ids', $ocw_ids);
 
                 $boolTypeNew = 1;
@@ -468,7 +468,7 @@ class Admin_AdsController extends Zend_Controller_Action
     }
 
     /**
-    * Método para rellenar los datos de la grilla de ocw
+    * Method to fill the data grid ocw
     */
     public function adsgridAction(){
         $this->_helper->layout()->setLayout('empty');
@@ -492,7 +492,7 @@ class Admin_AdsController extends Zend_Controller_Action
         $iDisplayStart = $this->getRequest()->getParam('iDisplayStart', 0); // offset
         $limit = array('limit'=>$iDisplayLength, 'offset'=> $iDisplayStart);
 
-        //search de la grilla
+        //search
         $sSearch = $this->getRequest()->getParam('sSearch', '');
 
         $Ads= new Table_Ads();
@@ -529,39 +529,39 @@ class Admin_AdsController extends Zend_Controller_Action
     }
 
     /**
-     * Método para construcción del where para filtrar la grilla de ads
+     * Where construction method to filter the grid ads
      */
     private function buildWherelp($filters){
         $sql = '';
         foreach ($filters AS $campo => $opciones ) {
             $valores = $opciones['values'];
             $operador = $opciones['op'];
-            // conversion de operadores relacionales
+            // conversion of relational operators
             // EQ 	NE 	GT 	LT 	GE 	LE
             switch ($operador) {
                 case 'EQ':
-                    // igual, la lista de valores es igual al campo (Sirve para comparar un sólo valor)
-                    // ya que un campo no puede tener mas de un valor
+                    // Equal, the list of values is equal to the field (used to compare a single value)
+                    // because a field can not have more than one value
                     $operador = '= ALL';
                     break;
                 case 'NE':
-                    // No es igual o diferente a todos los elementos listados
+                    // It is not the same or different for all listed items
                     $operador = '!= ALL';
                     break;
                 case 'GT':
-                    // El campo es mayor al del listado de valores
+                    // The field is greater than the list of values
                     $operador = '> ANY';
                     break;
                 case 'LT':
-                    // El campo es menor al del listado de valores
+                    // The field is less than the list of values
                     $operador = '< ANY';
                     break;
                 case 'GE':
-                    // El campo es mayor o igual al del listado de valores
+                    // The field is greater than or equal to the list of values
                     $operador = '>=';
                     break;
                 case 'LE':
-                    // El campo es menor al del listado de valores
+                    // The field is less than the list of values
                     $operador = '<=';
                     break;
                 case 'IN':
@@ -589,11 +589,11 @@ class Admin_AdsController extends Zend_Controller_Action
                 }
                 $removeChars = $operador === 'BETWEEN' ?  5 : 1 ;
                 foreach ($valores AS $valor ){
-                    // detectar si es fecha
+                    // detect if date
                     $patron= "/[0-9]{2}-[0-9]{2}-[0-9]{4}$/";
-                    //Detecto si es fecha y agrego TO_DATE('27-06-2009','DD-MM-YYYY')
+                    // Detect if date and add TO_DATE('27-06-2009','DD-MM-YYYY')
                     $valor = preg_match($patron, $valor) ? "'".convFechaSQL($valor)."'" : ( is_numeric($valor) ? $valor : ( $operador !=='LIKE' ? "'" . $valor . "'": strtolower($valor) ) );
-                    // si el operador es LIKE el separador es % y debo añadirselos si la cadena tiene espacios
+                    // if the operator is LIKE the separator is % and must add it if the string has spaces
                     $valor = $operador === 'LIKE' ? str_replace( ' ', '%', $valor ) : $valor;
                     $separador = $operador === 'BETWEEN'? ' AND ' : ($operador==='LIKE' ? '%': ',');
                     $sql .= $valor . $separador;

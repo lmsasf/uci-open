@@ -10,7 +10,7 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
     ->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools_JUI.css')
 ;
 ?>
-<!-- Mueve el search de la tabla principal -->
+<!-- Move the search from the main table -->
 <style>
     #DataTables_Table_0_filter {margin-left: 80px !important;}
 </style>
@@ -231,23 +231,22 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
         $.jGrowl.defaults.closerTemplate = '<div>[close all]</div>';
         var calcDataTableHeight = function() {
             return $(window).height()-300 ;
-            // la altura de la tabla se calcula en base
+            // the height of the table is calculated
         };
         oTable = $('.dTable').dataTable( {
-            "bJQueryUI": true, // soporte para temas UI
-            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+            "bJQueryUI": true, // UI theme support
+            "sPaginationType": "full_numbers", // show the page number
             "bRetrieve"  : true,
             "bProcessing": true,
-            "bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+            "bServerSide": true, //not necessary
             "sDom": '<""flT>rt<"F"ip>',
             "aoColumns": [{ "sWidth": "7.5%","bSortable": false }, { "sWidth": "16.5%" }, { "sWidth": "16.5%" }, { "sWidth": "21.3%" }, { "sWidth": "8%" }, { "sWidth": "8%" }, { "sWidth": "10%" }, { "sWidth": "10%" }],
             "aaSorting":[[1,'asc']],
             "iDisplayLength": 50,
-            //"sScrollY": "400px", // altura
             "sScrollY": calcDataTableHeight() ,
             "sScrollX": "100%",
             "bScrollCollapse": true,
-            "bSortClasses": false, // no muestra las clases de ordenamiento
+            "bSortClasses": false, // don't show the order classes
             "sAjaxSource": '<?php echo $this->url(array( 'module'=>'admin','controller'=>'ads', 'action'=>'adsgrid'))?>',
 
             "sServerMethod": "POST",
@@ -262,11 +261,11 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
             },
 
             "fnCreatedRow": function( nRow, aData, iDataIndex ) {
-                // botones
+                // buttons
                 var editar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Edit" href="#"><img alt="" src="/backend/images/icons/color/pencil.png"></a>');
                 var borrar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
                 editar.on('click',function(){
-                    /* La variable aData contiene los datos de una fila*/
+                    /* The variable aData have the field data*/
                     var form = $('<form>').attr({
                         name:'editform',
                         method: 'post',
@@ -327,7 +326,7 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
             oSettings.oScroll.sY = calcDataTableHeight();
             oTable.fnDraw();
         });
-        // dibujar los filtros si los hubiese
+        // draw the filters if they exists
         drawfbreadcrumbs(getAdvancedFilters());
 
     } );

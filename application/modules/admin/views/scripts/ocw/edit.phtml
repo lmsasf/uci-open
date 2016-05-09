@@ -1,6 +1,6 @@
 <?php
 /**
- * Agrego las JS de plupload para archivos e imágenes
+ * Add JS of plupload for files and images
  */
 
 $this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
@@ -9,48 +9,18 @@ $this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fin
 				->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
 				->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js')
 ;
-$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css')
+	->appendStylesheet($this->baseUrl().'/backend/css/custom/sortable.css')
+	->appendStylesheet($this->baseUrl().'/backend/css/custom/editor.css')
+;
 ?>
 <style>
 <!--
 .step h1 { display: none;}
-.widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
-.aimgdown { background-image:url("/backend/images/backgrounds/arrows.png"); background-repeat: no-repeat; display:block; height:10px; width:12px; float:right; -ms-transform: rotate(90deg);-moz-transform: rotate(90deg); -webkit-transform: rotate(90deg); -moz-transform: rotate(90deg);rotation: 90deg; filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);}
-.aimgup { background-image:url("/backend/images/backgrounds/arrows.png"); display:block; height:10px; width:12px; float:right; background-position: 0 bottom;	}
-#listAuthors_chzn{float:left;}
-#listCategories_chzn {float: left;}
-.liLeft {float: left; width: 70%; padding: 5px;}
-.liRight{float: right;}
-.buttonLi{padding: 5px; line-height: 0;}
-.placeholder { background-color: white; border:1px dashed #c5c5c5; margin:5px; height: 25px;}
-.degreeItem {padding: 3px;border: solid 1px lime;}
-#sortable-categories li{ cursor: pointer; margin: 0 0 4px; padding: 3px;}
-#sortable-author li{ cursor: pointer; margin: 0 0 4px; padding: 0px; height: 37px;}
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { background: url("/backend/images/jquery/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6; border: 1px solid #D3D3D3;}
 
-#sortable-categories .ui-state-default a { color: #555555; margin-top: 0px; text-decoration: none;}
-#sortable-author .ui-state-default a { color: #555555; margin-top: 3px; text-decoration: none;}
-#sortable-categories {margin-top:5px;}
-#sortable-categories li {height:28px;}
-.dd3-handle {height: 34px;}
-#sortable-author {margin-top:5px;}
-#sortable-author li {height:34px;}
-div.checker span { vertical-align: top !important;}
-.qq-upload-list{ display:none;}
-.editor {
-	border: dashed 2px #DDDDDD !important;
-	background-color: white;
-	height: 150px;
-	overflow: auto;
-	padding:10px;
-
- }
 .ui-dialog{padding:1px;}
 .ui-dialog form { text-align: left; }
 .ui-dialog .ui-dialog-content { overflow:visible;}
-
-#license-editor .formRight {margin-right: 0px;width: 45%;}
-#license-editor label {	width: 50%;	margin: 3px 3px 0;}
 
 #accept {display: none;}
 -->
@@ -90,7 +60,7 @@ idauthors = <?php if(!empty($idauthors)){ echo json_encode($idauthors ); }else{ 
 var idcats= new Array();
 idcats = <?php if(!empty($this->idcats)){ echo json_encode($this->idcats ); }else{ ?> new Array(); <?php }?>;
 
-//Variable para contar la cantidad de libros que se agregaron
+//Variable to count the number of books that were added
 var cantbook = 0; //book add
 var count = 0; //book add
 $(function() {
@@ -117,7 +87,7 @@ $(function() {
 		$(this).parents('li').remove();
 	});
 
-    // combos dependientes
+    // dependents combos
     $('#idUniversity').on('change', function(){
        var idUniversity = $(this).val();
  	   $.ajax({
@@ -280,7 +250,7 @@ $(function() {
     });
   	// pretty
   	$('#purlimagen').prettyPhoto({show_title: false, social_tools: false});
-	// ocultar por defecto los pasos del wizard
+	// hide default wizard steps
   	$('#step2').hide();
   	$('#w2confirmation').hide();
   	$('#step4template').hide();
@@ -295,8 +265,8 @@ $(function() {
 	     	displayMessage( 'error', 'Please complete the required data "University"', 'Error', '' );
 			return false;
 		} else {
-			// Obtener los campos
-			// busco los campos del primer form
+			// get fields
+			// search fields from the first form
 			var inputs = new Array();
 			$('.formRow input[type=radio]:checked, .formRow input[type=text]:not(.chzn-search), .formRow select:not([name=listAuthors]), .formRow input[type=hidden]').each(function(index, element){
 				if( $(element).attr('name') ){
@@ -317,7 +287,7 @@ $(function() {
 				degrees.push({ campo:$(element).attr('id'), valor: $(element).val() });
 			});
 
-			//constuyo el arreglo para guardar
+			//build the array to save
 			var data = { typeID: $('#idType').val(), campos: inputs, autores: authors, categorias: categories, accion: "edit", id: "<?php if(!empty($this->Ocw->id)) echo $this->Ocw->id; else null; ?>", degrees: degrees};
 			if(is_empty(authors)){
 		     	displayMessage( 'error', 'Please select an author', 'Error', '' );
@@ -360,11 +330,11 @@ function edsaveOCW(data){
 }
 
 function viewoption(seccion, button){
-	//tomó el valor del display ej: none
+	//get the display value
 	var muestra = $("#extradata"+seccion).css('display')
-	//Nombro la clase como aimgup	
+	//name the class
 	if(muestra == 'none'){
-		//Cambio el estado del display
+		//change display status
 		button.html('<span> &#9660;</span>');		
 		$("#extradata"+seccion).css('display','block');
 	}else{
@@ -401,9 +371,9 @@ function addBook(){
 
 function generateTemplate(){
 	
-	//Tomo el contenido del template y lo pedo en el div childrenbook
+	//I take the contents of the template and stick it in the div childrenbook
 	$('#childrenBook').append($('#templateBook').html());
-	//modifico los id para identificarlos
+	//modify the id to identify them
 	$('#childrenBook #templateBookAdd').attr('id','templateBookAdd'+cantbook);
 	$('#templateBookAdd'+cantbook+' #headTemplateBook').attr('id','headTemplateBook'+cantbook);
 	$('#headTemplateBook'+cantbook+' #eliminarBook').attr('id','eliminarBook'+cantbook);
@@ -443,9 +413,7 @@ function change_name(){
 }
 
 function deleteBook(id){
-
 	$(id).remove();
-
 }
 
 
@@ -802,7 +770,7 @@ function isValidISBN (str, elemt) {
 							<!-- Other books -->
 							<div id="childrenBook"></div>
 							
-							<!-- Template para agregar libros -->
+							<!-- Template to add books -->
 							<div id="templateBook">
 								<div id="templateBookAdd">
 									<div id="headTemplateBook" style="margin-left: 2%; display: none;">
@@ -838,7 +806,7 @@ function isValidISBN (str, elemt) {
 									</div>
 								</div>
 							</div>
-							<!-- FIN Template para agregar libros -->
+							<!-- FIN Template to add books -->
 						  <!-- FIN Other books -->     
 						</div>
 					
@@ -1062,7 +1030,7 @@ function isValidISBN (str, elemt) {
                         <div class="clear"></div>
                     </div>
 
-                    <!-- asignación de imagen a cualquier tipo de ocw -->
+                    <!-- picture assignment to any ocw -->
                      <div class="formRow ">
 				    	<label>Upload image:</label>
 				        <div class="formRight">

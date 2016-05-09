@@ -1,6 +1,6 @@
 <?php
 /**
- * Clase que mapea a la tabla File
+ * Class that maps to the File table
  */
 class Table_File extends Zend_Db_Table_Abstract {
 	protected $_name    = 'File';

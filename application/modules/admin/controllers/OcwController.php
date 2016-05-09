@@ -14,7 +14,7 @@ class Admin_OcwController extends Zend_Controller_Action
     	$this->_helper->layout()->setLayout('admin');
     }
 	/**
-	 * Listado de personas
+	 * Person list
 	 */
     public function indexAction()
     {
@@ -25,7 +25,7 @@ class Admin_OcwController extends Zend_Controller_Action
     }
 
 	/**
-	 * Pantalla principal de joins
+	 * Joins main screen
 	 */
 
     public function joinsAction(){
@@ -34,11 +34,11 @@ class Admin_OcwController extends Zend_Controller_Action
 
 			$OCW= new Table_OCW();
 			$OCWJoin= new Table_OCWJoin();
-			// el propio OCW mas sus joins
+			// the own OCW and his joins
 			$this->view->assign('Id', $Id);
 			$this->view->assign('OCW', $OCW->getOCWinfo($Id));
 			$this->view->assign('joins', $OCWJoin->getJoins($Id));
-			// los filtros
+			// the filters
 			$filtersList = array();
 			$Author = new Table_Author();
 			$filtersList['Author'] = $Author->getOCWAuthorFilter();
@@ -59,7 +59,7 @@ class Admin_OcwController extends Zend_Controller_Action
 		}
     }
     /**
-     * Borra un OCW
+     * Delete OCW
      * @throws Exception
      */
 	public function savepublishAction(){
@@ -96,9 +96,9 @@ class Admin_OcwController extends Zend_Controller_Action
     	try {
     		$child	 		= $this->getRequest()->getParam('Id' , null);
     		if( !is_null($child)){
-    			// borro el cache si hay
+    			// delete cache if exists
     			$OCW->removeFromCache($child);
-    			// borro el ocw
+    			// delete ocw
     			$OCW->delete( "id  = $child " );
     			$tr->commit();
     		} else {
@@ -112,7 +112,7 @@ class Admin_OcwController extends Zend_Controller_Action
     	}
     }
     /**
-     * Obtiene los OCW disponibles para asociar en la ventana de JOINS
+     * ets the OCW available to associate in the JOINS window
      */
     public function getocwjoinAction(){
     	$this->_helper->layout()->setLayout('empty');
@@ -129,7 +129,7 @@ class Admin_OcwController extends Zend_Controller_Action
     			}
     		}
     		$exclude[]= $Id;
-    		// texto
+    		// text
     		$text = $this->getRequest()->getParam('text', '');
     		$text =  empty($text) ? '' : '%' . str_replace(' ', '%', $text) . '%';
     		// combo
@@ -140,7 +140,7 @@ class Admin_OcwController extends Zend_Controller_Action
     			$filters[$parts[0]][] = $parts[1];
     		}
     		$type = $this->getRequest()->getParam('type', array());
-    		//armo todo para enviar al modelo
+    		//all to send the model
     		$arrayType			= $type;
     		$arrayExclude 		= $exclude;
     		$arrayUniversity 	= array_key_exists('University', $filters) ? $filters['University']: array() ;
@@ -156,23 +156,23 @@ class Admin_OcwController extends Zend_Controller_Action
     }
 
     /**
-     * Guarda por ajax las asociaciones
+     * Save associations by ajax
      * @throws Exception
      */
     public function saveocwjoinAction(){
 
     	$this->_helper->layout()->setLayout('empty');
-    	// no necesita vista para renderizarse
+    	// don't need a view to render
     	$this->_helper->viewRenderer->setNoRender();
     	$OCWJoin = new Table_OCWJoin();
     	$OCW = new Table_OCW();
 
-    	// Obtener parámetros
+    	// get parameters
     	$tr = $OCWJoin->getAdapter()->beginTransaction();
     	try {
     		$data	 	= $this->getRequest()->getParam('data' , null);
     		$Id	 		= $this->getRequest()->getParam('id' , null);
-    		if( !is_null($Id) ){ // editar o añadir
+    		if( !is_null($Id) ){ // add or edit
     			$OCWJoin->delete( "idOCWParent  = $Id" );
     			$OCWJoinRow = null;
     			if( !is_null($data) ){
@@ -189,7 +189,7 @@ class Admin_OcwController extends Zend_Controller_Action
     			}
 
     			$tr->commit();
-    			// borro del cache si es necesario
+    			// delete cache if nessesary
     			$OCW->removeFromCache($Id);
     		} else {
     			throw new Exception("Insufficient parameters");
@@ -201,27 +201,27 @@ class Admin_OcwController extends Zend_Controller_Action
     	}
     }
     /**
-     * Guarda un OCW
+     * Save OCW
      * @throws Exception
      */
  	public function saveAction(){
     	$this->_helper->layout()->setLayout('empty');
-    	// no necesita vista para renderizarse
+    	// don't need a view to render
     	$this->_helper->viewRenderer->setNoRender();
     	$OCW = new Table_OCW();
-    	// borro el cache si existiera no importa si puede o no
+    	//delete cache if already exists
     	$OCW->removeFromCache( $this->getRequest()->getParam('id', null) );
     	$tr = $OCW->getAdapter()->beginTransaction();
     	try {
-			$campos = $this->getRequest()->getParam('campos'); // todos los campos a guardar
-			$categories = $this->getRequest()->getParam('categorias'); // categorias asociadas
-			$authors = $this->getRequest()->getParam('autores'); // autores asociadas
+			$campos = $this->getRequest()->getParam('campos'); // all fields to save
+			$categories = $this->getRequest()->getParam('categorias'); // associated categories
+			$authors = $this->getRequest()->getParam('autores'); // authors associated
 			$accion = $this->getRequest()->getParam('accion');
 			$Id = $this->getRequest()->getParam('id', null);
-			$degrees = $this->getRequest()->getParam('degrees'); // degrees asociadas
+			$degrees = $this->getRequest()->getParam('degrees'); // associated degrees
 						
-			if( !is_null($campos) ){ // editar o añadir
-				$camposOCW = $OCW->getFields(); // array de campos a guardar en OCW
+			if( !is_null($campos) ){ // add or edit
+				$camposOCW = $OCW->getFields(); // array fields to save
 				if(!is_null($accion) && $accion == 'edit'){
 					$newOcw = $OCW->fetchRow($OCW->select()->where('id = ?', $Id));
 				}else{
@@ -236,8 +236,8 @@ class Admin_OcwController extends Zend_Controller_Action
 						if($campo['campo'] == 'ocwTitle'){
 
 							if($type != 2 && $type != 5 ){
-								$OCW->removeCacheIndex($type); // remuevo el indice del cache
-								//verifico si existe el title para cualquier type != de 2 y 5
+								$OCW->removeCacheIndex($type); // remove index from cache
+								//verify title from any type != de 2 y 5
 								$buscotitle = $OCW->fetchRow($OCW->select()->where('ocwTitle = ?', "'".$campo['valor']."'")->where('idType = ?', $type));
 								if(!empty($buscotitle) || $buscotitle <> null){ throw new Exception("The title is already exists");}
 								$newOcw->ocwTitleEncode = codificar_titulo($campo['valor']);
@@ -257,7 +257,7 @@ class Admin_OcwController extends Zend_Controller_Action
 				}
 				$ocwID= $newOcw->save();
 
-				//guardo course
+				//save course
 				if($type == 1){
 					$Course = new Table_Course();
 					$Course->delete('idOCW='.$ocwID);
@@ -293,7 +293,7 @@ class Admin_OcwController extends Zend_Controller_Action
 
 					//Books code
 					
-					// Guardo los libros
+					// save books
 					$books = new Table_Books();
 					$camposBooks = $books->getFields();
 
@@ -341,7 +341,7 @@ class Admin_OcwController extends Zend_Controller_Action
 					}
 					//Books code END
 				}
-				//guardo file
+				//save file
 				if($type == 2){
 					$File = new Table_File();
 					$File->delete('idOCW='.$ocwID);
@@ -361,7 +361,7 @@ class Admin_OcwController extends Zend_Controller_Action
 					$newFile->save();
 				}
 				
-				//guardo lecture
+				//save lecture
 				if($type == 3){
 					$Lecture = new Table_Lecture();
 					$Lecture->delete('idOCW='.$ocwID);
@@ -386,7 +386,7 @@ class Admin_OcwController extends Zend_Controller_Action
 					$newLecture->save();
 				}
 				
-				//guardo collection
+				//save collection
 				if($type == 4){
 					$Collection = new Table_Collection();
 					$Collection->delete('idOCW='.$ocwID);
@@ -401,7 +401,7 @@ class Admin_OcwController extends Zend_Controller_Action
 					$newCollection->save();
 				}
 
-				//guardo conference
+				//save conference
 				if($type == 6){
 					$Conference = new Table_Conference();
 					$Conference->delete('idOCW='.$ocwID);
@@ -416,7 +416,7 @@ class Admin_OcwController extends Zend_Controller_Action
 					$newConference->save();
 				}
 
-				//insertar categories
+				//insert categories
 				if(!empty($categories)){
 					$OCWCategories = new Table_OCWCategory();
 					$OCWCategories->delete('idOCW='.$ocwID);
@@ -442,7 +442,7 @@ class Admin_OcwController extends Zend_Controller_Action
 						$newAuthor->save();
 					}
 				}
-				//guardo los grados seleccionados
+				//save degrees selected
 				$AuthorOCW = new Table_AuthorOCW();
 				$AuthorOCW->delete('idOCW='.$ocwID);
 				if(!empty($degrees)){
@@ -470,7 +470,7 @@ class Admin_OcwController extends Zend_Controller_Action
 
     }
     /**
-     * Wizard de edicion y creacion de un OCW
+     * Wizard to edit and create a OCW
      */
     public function editocwAction(){
     	try{
@@ -482,7 +482,7 @@ class Admin_OcwController extends Zend_Controller_Action
     		$accion = $this->getRequest()->getParam('accion', null);
     		$where = "1=1";
     		$cats = null;
-    		if(is_null($Id)) { // nuevo ocw
+    		if(is_null($Id)) { // new ocw
     			$this->view->headTitle('Ocw :: Add');
     			$this->view->assign('accion', 'add');
     			$this->view->assign('id', null);
@@ -540,7 +540,7 @@ class Admin_OcwController extends Zend_Controller_Action
 
     }
     /**
-     * Edición con un método separado del wizard de creación
+     * Editing with a separate method of creation wizard
      */
     public function editAction(){
         try{
@@ -574,7 +574,6 @@ class Admin_OcwController extends Zend_Controller_Action
 							$booksocw = $BooksOCW->fetchAll($BooksOCW->select()->from('BooksOCW',array('idBooks'))->where('idOCW = ?', $Id));
 							
 							if(count($booksocw) > 0){
-                                //var_dump($booksocw);
                                 $alert = array();
                                 foreach($booksocw as $valor) {
 									$alert[] = $valor['idBooks'];
@@ -641,7 +640,7 @@ class Admin_OcwController extends Zend_Controller_Action
                 $this->view->assign('idcats', explode(',',$cats) );
                 $this->view->assign('accion', 'edit');
             }
-            if(is_null($Id)) { // nuevo ocw
+            if(is_null($Id)) { // new ocw
                 $this->view->headTitle('Ocw :: Add');
                 $this->view->assign('accion', 'add');
                 $this->view->assign('id', null);
@@ -784,7 +783,7 @@ class Admin_OcwController extends Zend_Controller_Action
                 $this->view->assign('idcats', explode(',',$cats) );
                 $this->view->assign('accion', 'edit');
             }
-            if(is_null($Id)) { // nuevo ocw
+            if(is_null($Id)) { // new ocw
                 $this->view->headTitle('Ocw :: Add');
                 $this->view->assign('accion', 'add');
                 $this->view->assign('id', null);
@@ -844,22 +843,21 @@ class Admin_OcwController extends Zend_Controller_Action
     }  
 
 	/**
-	 * obtiene las schools para llenar el combo del wizard
+	 * You get the schools to fill the combo wizard
 	 */
     public function getschoolajaxAction(){
     	$this->_helper->layout()->setLayout('empty');
-    	// no necesita vista para renderizarse
+    	// don't need a view to render
     	$this->_helper->viewRenderer->setNoRender();
 		$idUniversity = $this->getRequest()->getParam('idUniversity', null);
 		$School = new Table_School();
 		$where = $School->select()->where('idUniversity = ?', $idUniversity);
-		//echo $where->assemble(); exit;
 		$school = $School->fetchAll($where)->toArray();
 		echo Zend_Json_Encoder::encode($school);
     }
 	
     /**
-     * Obtiene los Deparments para llenar el combo del wizard
+     * Gets the Departments to fill the combo wizard
      */
     public function getdepartmentajaxAction(){
     	$this->_helper->layout()->setLayout('empty');
@@ -872,7 +870,7 @@ class Admin_OcwController extends Zend_Controller_Action
     }
 
     /**
-     * Método para subir files o images
+     * Method to upload files or images
      */
     public function uploadfileAction(){
     	$this->_helper->layout()->setLayout('empty');
@@ -925,7 +923,7 @@ class Admin_OcwController extends Zend_Controller_Action
 				if(!empty($file['error'])){
 					$error = ($error_text) ? $upload_errors[$file['error']] : $file['error'] ;
 					throw new Exception($error);
-				} else { // se puede subir el archivo
+				} else { // can upload the file
 					try{
 
 						 $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
@@ -956,11 +954,11 @@ class Admin_OcwController extends Zend_Controller_Action
     }
 
      /**
-     * Método para rellenar los datos de la grilla de ocw
+     * Method to populate the data grid ocw
      */
     public function ocwgridAction(){
     	$this->_helper->layout()->setLayout('empty');
-    	// no necesita vista para renderizarse
+    	// don't need a view to render
     	$this->_helper->viewRenderer->setNoRender();
     	$filters = Zend_Json_Decoder::decode($this->getRequest()->getParam('filters', '{}'));
 		$where = '';
@@ -979,7 +977,7 @@ class Admin_OcwController extends Zend_Controller_Action
 		$iDisplayLength=$this->getRequest()->getParam('iDisplayLength', 50); // limit
 		$iDisplayStart = $this->getRequest()->getParam('iDisplayStart', 0); // offset
 		$limit = array('limit'=>$iDisplayLength, 'offset'=> $iDisplayStart);
-		//search de la grilla
+		//search
 		$sSearch = $this->getRequest()->getParam('sSearch', '');
 
 		$us = new Table_User();
@@ -1000,7 +998,7 @@ class Admin_OcwController extends Zend_Controller_Action
     				echo ",";
     			}
     			$json = '{"DT_RowId": "'.$row[0].'", ';
-    			$PK = array_shift($row); // se asume que la primer fila tiene PK
+    			$PK = array_shift($row);
     			foreach($row AS $k => $v){
     				$json.= '"'.$k.'":'.Zend_Json_Encoder::encode($v).',';
     			}
@@ -1020,18 +1018,18 @@ class Admin_OcwController extends Zend_Controller_Action
     }
 	
     /**
-     * Agrega un Encabezado a los joins
+     * Add header to joins
      */
     public function addocwheaderAction(){
     	$this->_helper->layout()->setLayout('empty');
-    	// no necesita vista para renderizarse
+    	// don't need a view to render
     	$this->_helper->viewRenderer->setNoRender();
     	try {
     		$ocwTitle = $this->getRequest()->getParam('ocwTitle','Error');
     		$OCW = new Table_OCW();
     		$new = $OCW->createRow();
-    		$new->idType = 5; // tipo header
-    		$new->idLanguage = 1; //cualquier lenguaje
+    		$new->idType = 5; // header type
+    		$new->idLanguage = 1; //any language
     		$new->ocwTitle = $ocwTitle;
     		$new->ocwGolive = 1;
     		$id = $new->save();
@@ -1043,18 +1041,18 @@ class Admin_OcwController extends Zend_Controller_Action
     }
 	
     /**
-     * Agrega un Label a los joins
+     * Add a Label to the joins
      */
     public function addocwlabelAction(){
     	$this->_helper->layout()->setLayout('empty');
-    	// no necesita vista para renderizarse
+    	// don't need a view to render
     	$this->_helper->viewRenderer->setNoRender();
     	try {
     		$ocwDescription = $this->getRequest()->getParam('ocwDescription','Error');
     		$OCW = new Table_OCW();
     		$new = $OCW->createRow();
-    		$new->idType = 7; // tipo Label
-    		$new->idLanguage = 1; //cualquier lenguaje
+    		$new->idType = 7; // Label type
+    		$new->idLanguage = 1; //any languages
     		$new->ocwTitle = 'Label';
     		$new->ocwDescription = $ocwDescription;
     		$new->ocwGolive = 1;
@@ -1067,12 +1065,12 @@ class Admin_OcwController extends Zend_Controller_Action
     }
 
     /**
-     * Elimina un header/label de los Joins
+     * Removes a header / label of Joins
      * @throws Exception
      */
     public function removeocwjoinAction(){
     	$this->_helper->layout()->setLayout('empty');
-    	// no necesita vista para renderizarse
+    	// don't need a view to render
     	$this->_helper->viewRenderer->setNoRender();
     	$OCW = new Table_OCW();
     	$OCWJOINS = new Table_OCWJoin();
@@ -1082,7 +1080,7 @@ class Admin_OcwController extends Zend_Controller_Action
     		if (is_null($ocwId)){
     			throw new Exception('OCW Id is null');
     		}
-			// borro los Joins
+			// delete joins
     		$OCWJOINS->delete("idOCWChild  = $ocwId ");
     		$OCW->delete("id = $ocwId");
     		$result = array('res' => true);
@@ -1096,7 +1094,7 @@ class Admin_OcwController extends Zend_Controller_Action
 
     public function getlicenseAction(){
     	$this->_helper->layout()->setLayout('empty');
-    	// no necesita vista para renderizarse
+    	// don't need a view to render
     	$this->_helper->viewRenderer->setNoRender();
 
     	$authors = $this->getRequest()->getParam( 'attribution_name', array() );
@@ -1209,39 +1207,39 @@ class Admin_OcwController extends Zend_Controller_Action
     }
 
     /**
-     * Método para construcción del where para filtrar la grilla de ocw
+     * Where construction method to filter the grid ocw
      */
     private function buildWherelp($filters){
 		$sql = '';
 		foreach ($filters AS $campo => $opciones ) {
 			$valores = $opciones['values'];
 			$operador = $opciones['op'];
-			// conversion de operadores relacionales
+			// conversion of relational operators
 			// EQ 	NE 	GT 	LT 	GE 	LE
 			switch ($operador) {
 				case 'EQ':
-					// igual, la lista de valores es igual al campo (Sirve para comparar un sólo valor)
-					// ya que un campo no puede tener mas de un valor
+					// equal, the list of values is equal to the field (used to compare a single value)
+					// because a field can not have more than one value
 					$operador = '= ALL';
 					break;
 				case 'NE':
-					// No es igual o diferente a todos los elementos listados
+					// It is not the same or different for all listed items
 					$operador = '!= ALL';
 					break;
 				case 'GT':
-					// El campo es mayor al del listado de valores
+					// The field is greater than the list of values
 					$operador = '> ANY';
 					break;
 				case 'LT':
-					// El campo es menor al del listado de valores
+					// The field is less than the list of values
 					$operador = '< ANY';
 					break;
 				case 'GE':
-					// El campo es mayor o igual al del listado de valores
+					// The field is greater than or equal to the list of values
 					$operador = '>=';
 					break;
 				case 'LE':
-					// El campo es menor al del listado de valores
+					// The field is less than or equal the list of values
 					$operador = '<=';
 					break;
 				case 'IN':
@@ -1254,7 +1252,7 @@ class Admin_OcwController extends Zend_Controller_Action
 					$operador = 'LIKE';
 					break;
 				default:
-					throw new Exception('Operador de filtro avanzado no soportado');
+					throw new Exception('Advanced Filter operator not supported');
 					break;
 			}
 
@@ -1268,11 +1266,11 @@ class Admin_OcwController extends Zend_Controller_Action
 				}
 				$removeChars = $operador === 'BETWEEN' ?  5 : 1 ;
 				foreach ($valores AS $valor ){
-					// detectar si es fecha
+					// detect if date
 					$patron= "/[0-9]{2}-[0-9]{2}-[0-9]{4}$/";
-					//Detecto si es fecha y agrego TO_DATE('27-06-2009','DD-MM-YYYY')
+					//Detect if date and add TO_DATE('27-06-2009','DD-MM-YYYY')
 					$valor = preg_match($patron, $valor) ? "'".convFechaSQL($valor)."'" : ( is_numeric($valor) ? $valor : ( $operador !=='LIKE' ? "'" . $valor . "'": strtolower($valor) ) );
-					// si el operador es LIKE el separador es % y debo añadirselos si la cadena tiene espacios
+					// if the operator is LIKE the separator is% and must add that space if the string has spaces
 					$valor = $operador === 'LIKE' ? str_replace( ' ', '%', $valor ) : $valor;
 					$separador = $operador === 'BETWEEN'? ' AND ' : ($operador==='LIKE' ? '%': ',');
 					$sql .= $valor . $separador;
@@ -1305,18 +1303,18 @@ class Admin_OcwController extends Zend_Controller_Action
 	}
 	
 	/**
-	 * Devuelve el tamaño de un archivo si exite
+	 * Returns the size of a file if it exists
 	 * @param String $typName
 	 * @param String $ocwTitleEncode
 	 * @return mixed string | boolean
 	 */
 	private function getDownloadSize($typName, $ocwTitleEncode){
-		// lo mas probable es que exitsa el paquete como ZIP, verifico eso primero
+		// chances are there is the package as ZIP, verify that first
 		$root = $_SERVER['DOCUMENT_ROOT'];
 		$packageName= strtolower($typName) . '_' . $ocwTitleEncode;
 		$zipFile = $root.'/packages/'.$packageName.".zip";
 		$imsccFile = $root.'/packages/'.$packageName.".imscc";
-		// verificar zip
+		// verify zip
 		if(file_exists($zipFile)){
 			return $this->human_filesize(filesize($zipFile), 2);
 		} elseif (file_exists($imsccFile)){

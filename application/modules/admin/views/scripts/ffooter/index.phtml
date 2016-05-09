@@ -73,25 +73,22 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
         $.jGrowl.defaults.closerTemplate = '<div>[close all]</div>';
         var calcDataTableHeight = function() {
             return $(window).height()-300 ;
-            // la altura de la tabla se calcula en base 
         };
 
         oTable = $('.dTable').dataTable( {
             "bFilter": false,
-            "bJQueryUI": true, // soporte para temas UI
-            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+            "bJQueryUI": true, // UI theme support
+            "sPaginationType": "full_numbers", // show the page numbers
             "bRetrieve"  : true,
             "bProcessing": true,
-            "bServerSide": true, // no hace falta ya que no voy a paginar via servidor
-            //"sDom": '<""flT>rt<"F"ip>',
+            "bServerSide": true, // not necessary
             "aoColumns": [{ "sWidth": "70px", "bSortable": false }, { "sWidth": "auto" }, { "sWidth": "auto" }, { "sWidth": "auto" }, { "sWidth": "auto" }, { "sWidth": "auto" }, { "sWidth": "auto" }],
             "aaSorting":[[1,'asc']],
             "iDisplayLength": 50,
             "sScrollx": "100%",
             "sScrollY": calcDataTableHeight() ,
             "bScrollCollapse": true,
-            "bSortClasses": true, // no muestra las clases de ordenamiento
-            //"bDeferRender": true, // similar al smartrendering de DHTMLX
+            "bSortClasses": true, // don't show the order classes
             "sAjaxSource": '<?php echo $this->url(array( 'controller'=>'ffooter', 'action'=>'footergrid'))?>',
 
             "fnServerParams": function ( aoData ) {
@@ -112,7 +109,7 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 
             "fnCreatedRow": function( nRow, aData, iDataIndex ) {
 
-                // botones
+                // buttons
                 var editar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Edit" href="#"><img alt="" src="/backend/images/icons/color/pencil.png"></a>');
                 var borrar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
                 editar.on('click',function(){

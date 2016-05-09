@@ -24,11 +24,11 @@ class Default_RedirectorController extends Zend_Controller_Action
 
 	public function redirectAction()
 	{
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		$id 	= $this->getRequest()->getParam('id', null);
 		$type 	= $this->getRequest()->getParam('type', null);
-		// redirección para RSS de cursos
+		// redirect to RSS from courses
 		$redirector = $this->_helper->getHelper('Redirector');
 		if($id=='rss' && $type == 'courses'){
 			$this->_forward("index",'rss','default', array('strType'=>'course'));
@@ -48,12 +48,12 @@ class Default_RedirectorController extends Zend_Controller_Action
 		$results = $OCW->fetchAll($select);
 		$contador = $results->count();
 		
-		if($contador == 1 ){ // redirigir a la página correcta del curso
+		if($contador == 1 ){ // redirect to right course page
 			$curso = $results->toArray();
 			$url = '/'.strtolower($curso[0]['typName']).'s/'.$curso[0]['ocwTitleEncode'].'.html';
 			$redirector->setCode(301)->gotoUrl($url);
 			return;
-		}elseif ($contador > 1 ){ // enviar al buscador con los parametros adecuados
+		}elseif ($contador > 1 ){ // send to the browser with the appropriate parameters
 			$redirector->setCode(301)
 					   ->gotoSimple('results',
 									'search',
@@ -61,7 +61,7 @@ class Default_RedirectorController extends Zend_Controller_Action
 									array('keyword' => $str)
 			);
 			return;
-		}else{ // no hay resultados
+		}else{ // not results
 			throw new Zend_Controller_Action_Exception('This page does not exist', 404);
 		}
 		

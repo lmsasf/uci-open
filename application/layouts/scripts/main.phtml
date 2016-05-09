@@ -37,7 +37,6 @@
 										->appendFile($this->baseUrl()."/frontend/js/jquery.expander.min.js",'text/javascript')
 										->appendFile($this->baseUrl()."/frontend/js/custom.js",'text/javascript')
 										->appendFile($this->baseUrl()."/frontend/js/bootstrap-tour.min.js",'text/javascript')
-										//->appendFile($this->baseUrl()."/frontend/js/pace.min.js",'text/javascript')
 		;
 		?>
 		<!-- Self Stylesheet -->
@@ -183,8 +182,6 @@
 							fooAdd[datos[data]['areaSequence']] += '<div class="span2" id="sitemap">';
 						else
 							fooAdd[datos[data]['areaSequence']] += '<div>';
-
-						//fooAdd[datos[data]['areaSequence']] += '<div class="span2" id="sitemap">';
 					}
 				}else {
 					fooAdd[datos[data]['areaSequence']] += '<li><a href="' + datos[data]['fooUrl'] + '">' + datos[data]['fooDescription'] + '</a></li>';
@@ -361,9 +358,9 @@
 		
 		var side_secc = $("#side"+side);
 
-		// Sino existe la columna especificada utiliza la central
+		// If there is no specified column uses the center
 		if(side_secc.length == 0)
-			side_secc = $("#sidec"); // Usa la columna central
+			side_secc = $("#sidec");
 
 		var add_id = 'ac'+side+'_'+side_secc.children().length;
 		var add;

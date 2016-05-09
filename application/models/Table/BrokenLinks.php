@@ -16,10 +16,10 @@ class Table_BrokenLinks extends Zend_Db_Table_Abstract {
 	public function getLinksGrid($where = null, $sort=array('columna'=>1, 'direccion'=>'ASC'), $limit = array('limit'=>-1, 'offset'=>0), $sSearch='')
 	{
 		try {
-			//validaciones de parámetros
+			//parameters validation
 			$where       = is_null($where) ? 'AND 1=1 ' : $where;
 				
-			if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verifico que los argumentos sean validos
+			if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verify valid arguments
 				throw new Exception('Invalid parameters');
 			} else {
 				if( !array_key_exists('columna', $sort) || !array_key_exists('direccion', $sort) || !array_key_exists('limit', $limit) || !array_key_exists('offset', $limit) ){
@@ -28,8 +28,9 @@ class Table_BrokenLinks extends Zend_Db_Table_Abstract {
 			}
 				
 			$columsSortable = array();
-			$columsSortable[1] = "field";
-			$columsSortable[2] = "link";
+			$columsSortable[1] = "ocwTitle";
+			$columsSortable[2] = "field";
+			$columsSortable[3] = "link";
 				
 			if(!empty($sSearch)){
 				$implode_array_d1 = implode(',', $columsSortable);
@@ -65,7 +66,6 @@ class Table_BrokenLinks extends Zend_Db_Table_Abstract {
 			$sqlCountWhere = "SELECT count(1) as total
 								FROM BrokenLinks
 								WHERE 1=1 ". $where;
-			//echo $sqlCountWhere;
 			$res = $this->getDefaultAdapter()->fetchRow($sqlCountWhere);
 			$totalCountWhere = $res['total'];
 	

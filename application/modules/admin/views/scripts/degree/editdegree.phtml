@@ -2,8 +2,6 @@
 	<div class="titleArea">
 		<div class="wrapper">
 			<div class="TopPageTitle">
-	        	<!-- <h5>Degree</h5>
-	            <span><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></span>-->
 	            <div class="bc">
 					<ul id="breadcrumbs" class="breadcrumbs">
 						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
@@ -15,10 +13,9 @@
 		</div>
 	</div>
 </div>
-<!-- CONTENIDO -->
+<!-- CONTENT -->
 <div id="content">
 	<div class="wrapper">
-	<!-- <div id="ejecmens" class="body textC" style="display:none; float:left;"><img style="margin: 5px;" alt="" src="/backend/images/loaders/loader1.gif"></div> -->
 	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
 	<div id="mensajes"></div>
 		
@@ -67,12 +64,10 @@
 	});	
 
 	function save(){
-		// recorro los campos del formulario
-		// console.debug( jQuery('#validate').validationEngine('validate') );
+		// go throught each field of the form
 		if (jQuery('#validate').validationEngine('validate') ) {
 			var data = new Array();
 			$('#validate input[type="text"], #validate input[type="hidden"]').each(function(index, value){
-				//console.debug(this);
 				if($(this).attr('name') !=='' && $(this).val() !==''){
 					data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
 				}
@@ -99,16 +94,13 @@
 		        	window.setTimeout(function() {
 		        		$(".loader").hide();
 		        		displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'degree', 'action'=>'index'))?>' );
-		        	}, 2000); 
-		        	//return datos.ordenId;
+		        	}, 2000);
 
 		        },
 		        error: function(request, status, error)
 		        {
 		        	var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
-		            //$.msgbox(mensaje, {type: "error"});
-		            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
-		            displayMessage( 'error', mensaje, 'Error', '' );  
+		            displayMessage( 'error', mensaje, 'Error', '' );
 		        },
 		        timeout: 20000,
 		        type: "POST"

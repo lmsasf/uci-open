@@ -8,7 +8,7 @@ class Admin_DegreeController extends Zend_Controller_Action
     	$this->_helper->layout()->setLayout('admin');
     }
 	/**
-	 * Listado de grados
+	 * Degree list
 	 */
     public function indexAction()
     {
@@ -17,7 +17,7 @@ class Admin_DegreeController extends Zend_Controller_Action
     }
     
     /**
-     * Levanta el formulario de edición de grados
+     * Lift the edit form degrees
      * @throws Exception
      */
     public function editdegreeAction(){
@@ -31,11 +31,11 @@ class Admin_DegreeController extends Zend_Controller_Action
     		
     		if(!is_null($Id) && is_null($accion)) {
     			$this->view->headTitle('Degree :: Edit');
-    			// busco los datos del grado
+    			// search data
     			$this->view->assign('Degree', $Degree->fetchRow($Degree->select()->where('id = ?', $Id)));
     			$this->view->assign('accion', 'edit');
     		}
-    		if(is_null($Id)) { // nuevo grado
+    		if(is_null($Id)) { // new degree
     			$this->view->headTitle('Degree :: Add');
     			$this->view->assign('accion', 'add');
     			$this->view->assign('id', null);
@@ -49,7 +49,7 @@ class Admin_DegreeController extends Zend_Controller_Action
     }
     
     /**
-	 * Ajax para eliminar grados
+	 * Ajax to delete degrees
 	 */
 	public function deleteAction(){
     	$this->_helper->layout()->setLayout('empty');
@@ -62,19 +62,19 @@ class Admin_DegreeController extends Zend_Controller_Action
 				throw new Exception( 'Insufficient parameters' );
 			}
 			$resp = $Degree->delete("id = $Id");
-			$this->_forward('index', 'degree', 'admin');//echo Zend_Json_Encoder::encode(array('Id'=> $Id));
+			$this->_forward('index', 'degree', 'admin');
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}	
     }
     
     /**
-     * Ajax que guarda la información del formulario de grados
+     * Ajax keeps information form degrees
      * @throws Exception
      */
     public function savedegreeAction(){
     	$this->_helper->layout()->setLayout('empty');
-    	// no necesita vista para renderizarse
+    	// don't need a view to render
     	$this->_helper->viewRenderer->setNoRender();
     	$Degree = new Table_Degree();    	
     	$tr = $Degree->getAdapter()->beginTransaction();
@@ -83,12 +83,11 @@ class Admin_DegreeController extends Zend_Controller_Action
     		$accion  		= $this->getRequest()->getParam('accion'	 , null);
     		$data	 		= $this->getRequest()->getParam('data'		 , null);
     		    		
-    		if( !is_null($accion) && !is_null($data) ){ // editar o añadir
+    		if( !is_null($accion) && !is_null($data) ){ // add or edit
     			$DegreeRow = null;
     			
     			if($accion === 'edit'){
     				$DegreeRow = $Degree->fetchRow($Degree->select()->where('id = ?', $Id));
-    				//d($PersonRow); exit;
     			} else {
     				$DegreeRow = $Degree->createRow();
     			}
@@ -111,11 +110,11 @@ class Admin_DegreeController extends Zend_Controller_Action
     }    
     
     /**
-     * Método para rellenar los datos de la grilla de grados
+     * Method to fill the data grid degrees
      */
     public function degreegridAction(){
     	$this->_helper->layout()->setLayout('empty');
-    	// no necesita vista para renderizarse
+    	// don't need a view to render
     	$this->_helper->viewRenderer->setNoRender();
     	$filters = Zend_Json_Decoder::decode($this->getRequest()->getParam('filters', '{}'));
 		$where = '';
@@ -134,7 +133,7 @@ class Admin_DegreeController extends Zend_Controller_Action
 		$iDisplayLength=$this->getRequest()->getParam('iDisplayLength', 50); // limit
 		$iDisplayStart = $this->getRequest()->getParam('iDisplayStart', 0); // offset
 		$limit = array('limit'=>$iDisplayLength, 'offset'=> $iDisplayStart);
-		//search de la grilla
+		//search
 		$sSearch = $this->getRequest()->getParam('sSearch', '');
 		
 		
@@ -153,8 +152,7 @@ class Admin_DegreeController extends Zend_Controller_Action
     				echo ",";
     			}
     			$json = '{"DT_RowId": "'.$row[0].'", ';
-    			$PK = array_shift($row); // se asume que la primer fila tiene PK
-    			//$json = Zend_Json_Encoder::encode($row);
+    			$PK = array_shift($row);
     			foreach($row AS $k => $v){
     				$json.= '"'.$k.'":'.Zend_Json_Encoder::encode($v).',';
     			}
@@ -173,39 +171,32 @@ class Admin_DegreeController extends Zend_Controller_Action
 		echo "}";
     }
     /**
-     * Método para construcción del where para filtrar la grilla de grados
+     * Where construction method to filter the grid degrees
      */
     private function buildWherelp($filters){
 		$sql = '';
 		foreach ($filters AS $campo => $opciones ) {
 			$valores = $opciones['values'];
 			$operador = $opciones['op'];
-			// conversion de operadores relacionales
+			// conversion of relational operators
 			// EQ 	NE 	GT 	LT 	GE 	LE
 			switch ($operador) {
 				case 'EQ':
-					// igual, la lista de valores es igual al campo (Sirve para comparar un sólo valor)
-					// ya que un campo no puede tener mas de un valor
 					$operador = '= ALL';
 					break;
 				case 'NE':
-					// No es igual o diferente a todos los elementos listados
 					$operador = '!= ALL';
 					break;
 				case 'GT':
-					// El campo es mayor al del listado de valores
 					$operador = '> ANY';
 					break;
 				case 'LT':
-					// El campo es menor al del listado de valores
 					$operador = '< ANY';
 					break;
 				case 'GE':
-					// El campo es mayor o igual al del listado de valores
 					$operador = '>=';
 					break;
 				case 'LE':
-					// El campo es menor al del listado de valores
 					$operador = '<=';
 					break;
 				case 'IN':
@@ -233,11 +224,8 @@ class Admin_DegreeController extends Zend_Controller_Action
 				}
 				$removeChars = $operador === 'BETWEEN' ?  5 : 1 ;
 				foreach ($valores AS $valor ){
-					// detectar si es fecha
 					$patron= "/[0-9]{2}-[0-9]{2}-[0-9]{4}$/";
-					//Detecto si es fecha y agrego TO_DATE('27-06-2009','DD-MM-YYYY')
 					$valor = preg_match($patron, $valor) ? "'".convFechaSQL($valor)."'" : ( is_numeric($valor) ? $valor : ( $operador !=='LIKE' ? "'" . $valor . "'": strtolower($valor) ) );
-					// si el operador es LIKE el separador es % y debo añadirselos si la cadena tiene espacios
 					$valor = $operador === 'LIKE' ? str_replace( ' ', '%', $valor ) : $valor;
 					$separador = $operador === 'BETWEEN'? ' AND ' : ($operador==='LIKE' ? '%': ',');
 					$sql .= $valor . $separador;

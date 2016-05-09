@@ -1,6 +1,6 @@
 <?php
 /**
- * Mapeo de tabla CreditType
+ * CreditType mapping table
  * @author lmoyano
  *
  */

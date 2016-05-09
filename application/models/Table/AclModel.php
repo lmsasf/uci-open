@@ -4,7 +4,7 @@ require_once 'Zend/Db.php';
 require_once 'Zend/Config/Ini.php';
 
 /**
- * Esta clase obtiene de la db todos los datos para crear las listas de acceso
+ * This class gets all data from DB to create access lists
  * @package		application/models
  * @copyright	Aconcagua Software Factory 
  * @author		damills
@@ -14,18 +14,18 @@ class AclModel {
 	
 	protected $_db;
 	/**
-	 * Carga el archivo de configuracion ini e inicializa y conecta a la Base de Datos
+	 * Load the ini configuration file and initializes and connects to the database
 	 */
 	public function __construct()
 	{
-		/*Carga el archivo de configuracion ini */
+		/*Load the configuration file ini */
 		$config = new Zend_Config_Ini(APPLICATION_PATH . '/configs/application.ini', 'production');		
-		/*conecta a la Base de Datos*/
+		/*connects to the database*/
 		$this->_db = Zend_Db::factory($config->resources->db);
 		$this->_db->setFetchMode(Zend_Db::FETCH_OBJ);
 	}
 	/**
-	 * Obtiene los Roles
+	 * Gets Roles
 	 * @return array
 	 */
 	public function getRoles(){
@@ -34,7 +34,7 @@ class AclModel {
 		return $this->_db->fetchAll($select);
 	}
 	/**
-	 * Obtiene los recursos
+	 * Get Resource
 	 * @return array
 	 */
 	public function getRecursos(){
@@ -43,7 +43,7 @@ class AclModel {
 		return $this->_db->fetchAll($select);
 	}	
 	/**
-	 * Obtiene los recursos por grupo de usuarios
+	 * Get resources by users groups
 	 * @return array:
 	 */
 	public function getRecursosXgrupos(){
@@ -51,7 +51,6 @@ class AclModel {
 		$select->from(array('r0'=> 'Role'), array('r0.roleName'))
 		->joinInner(array('r1'=>'RoleResource'), 'r1.idRole = r0.id', array())
 		->joinInner(array('r2'=>'Resource'), 'r2.id = r1.idResource', array('r2.resourceName'))
-		//->order('r0.grNombre')
 		;
 		$resultado = $this->_db->fetchAll($select);
 		$acl = array();

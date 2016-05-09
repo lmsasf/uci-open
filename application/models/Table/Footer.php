@@ -6,21 +6,21 @@ class Table_Footer extends Zend_Db_Table_Abstract {
 
 
     /**
-     * Obtiene los datos para mostrar en grilla de Frontend Sections Text
-     * @param string $where cadena a aplicar en el where de la consulta
-     * @param array $sort array('columna'=>1, 'direccion'=>'ASC')
-     * @param array $limit array('limit'=>-1, 'offset'=>0)
-     * @param string $sSearch cadena a buscar
+     * Gets the data to show grid Frontend Text Sections
+     * @param string $where - string to apply into the where of the query
+     * @param array $sort - array('column'=>1, 'direction'=>'ASC')
+     * @param array $limit - array('limit'=>-1, 'offset'=>0)
+     * @param string $sSearch - search string
      * @throws Exception
-     * @return array Array que contiene un cursor, cantidad de registros y cantidad de registros filtrados
+     * @return array - Array containing a cursor, number of records and number of filtered records
      */
     public function getFooterGrid($where = null, $sort=array('columna'=>1, 'direccion'=>'ASC'), $limit = array('limit'=>-1, 'offset'=>0), $sSearch='')
     {
         try {
-            //validaciones de parámetros
+            //parameters validation
             $where       = is_null($where) ? 'AND 1=1 ' : $where;
 
-            if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verifico que los argumentos sean validos
+            if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verify valid arguments
                 throw new Exception('Invalid parameters');
             } else {
                 if( !array_key_exists('columna', $sort) || !array_key_exists('direccion', $sort) || !array_key_exists('limit', $limit) || !array_key_exists('offset', $limit) ){
@@ -79,7 +79,6 @@ class Table_Footer extends Zend_Db_Table_Abstract {
             $sqlCountWhere = "SELECT count(1) as total
 								FROM FE_Footer
 								WHERE 1 = 1 ". $where;
-            //echo $sqlCountWhere;
             $res = $this->getDefaultAdapter()->fetchRow($sqlCountWhere);
             $totalCountWhere = $res['total'];
 

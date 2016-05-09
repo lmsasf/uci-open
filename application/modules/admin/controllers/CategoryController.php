@@ -11,7 +11,7 @@ class Admin_CategoryController extends Zend_Controller_Action
 		$this->_helper->layout()->setLayout('admin');
 	}
 	/**
-	 * Listado de Categorias
+	 * List of Categories
 	 */
 	public function indexAction()
 	{
@@ -20,21 +20,21 @@ class Admin_CategoryController extends Zend_Controller_Action
 		$this->view->assign( 'tree', $Category->treeAsHtml() );
 	}
 	/**
-	 * Levanta el formulario de dición de personas
+	 * Lift the addition of people form
 	 * @throws Exception
 	 */
 	public function editcategoryAction(){
 		 
 		$Category = new Table_Category();
-		// Obtener parámetros
+		// Get parameters
 		try{
 			$Id = $this->getRequest()->getParam('id', null);
 
 			$accion = $this->getRequest()->getParam('accion', null);
-			if(!is_null($Id) && is_null($accion)) { // viene del listado para editar
+			if(!is_null($Id) && is_null($accion)) {
 
 				$this->view->headTitle('Category :: Edit');
-				// busco los datos del cliente
+				// Seeking customer data
 				$rows = $Category->fetchRow($Category->select()->where('id = ?', $Id));
 				if(!$rows){
 					throw new Exception('Invalid ID: ');
@@ -42,7 +42,7 @@ class Admin_CategoryController extends Zend_Controller_Action
 				$this->view->assign('Category', $rows);
 				$this->view->assign('accion', 'edit');
 			}
-			if(is_null($Id)) { // nueva Persona
+			if(is_null($Id)) { // new Person
 				$this->view->headTitle('Category :: Add');
 				$this->view->assign('accion', 'add');
 				$this->view->assign('id', null);
@@ -54,26 +54,25 @@ class Admin_CategoryController extends Zend_Controller_Action
 			}else{
 				$this->view->assign( 'error', $e->getMessage() );
 			}
-			//echo $e->getMessage();
 			$this->_forward('index', 'category', 'admin');
 		}
 	}	
 	/**
-	 * Agregar o editar una categoria
+	 * Add or edit a category
 	 * @throws Exception
 	 */
 	public function savecategoryAction(){
 		$this->_helper->layout()->setLayout('empty');
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		$Category = new Table_Category();
-		// Obtener parámetros
+		// get parameters
 		try {
 			$Id 	 = $this->getRequest()->getParam('id'		, null);
 			$accion  = $this->getRequest()->getParam('accion'	, null);
 			$data	 = $this->getRequest()->getParam('data'		, null);
-			//d($degrees); exit();
-			if( !is_null($accion) && !is_null($data) ){ // editar o añadir
+
+			if( !is_null($accion) && !is_null($data) ){ // add or edit
 				$catRow = null;
 				 
 				if($accion === 'edit'){
@@ -84,7 +83,7 @@ class Admin_CategoryController extends Zend_Controller_Action
 						}
 					}
 					$idCat = $catRow->save();
-				} else { // nueva la agrego como root
+				} else { // new
 					foreach($data as $dato){
 						if($dato['campo']!== 'accion'){
 							$name = $dato['valor'];
@@ -102,15 +101,15 @@ class Admin_CategoryController extends Zend_Controller_Action
 		}
 	}	
 	/**
-	 * Guarda los cambios del arbol de categorias
+	 * Saves changes the category tree
 	 * @throws Exception
 	 */
 	public function savetreeAction(){
 		$this->_helper->layout()->setLayout('empty');
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		$Category = new Table_Category();
-		// Obtener parámetros
+		// get parameters
 		try {
 			$data	 = $this->getRequest()->getParam('data'		, null);
 			if( !is_null($data) ){ 
@@ -125,15 +124,15 @@ class Admin_CategoryController extends Zend_Controller_Action
 		}
 	}
 	/**
-	 * Elimina categoriay sub categorias asociadas
+	 * Delete categories and subcategories related
 	 * @throws Exception
 	 */
 	public function delcategoryAction(){
 		$this->_helper->layout()->setLayout('empty');
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		$Category = new Table_Category();
-		// Obtener parámetros
+		// get parameters
 		try {
 			$idCat	 = $this->getRequest()->getParam('id'		, null);
 			if( !is_null($idCat) ){

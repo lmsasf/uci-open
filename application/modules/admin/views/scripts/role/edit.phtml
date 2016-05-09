@@ -3,8 +3,6 @@
 	<div class="titleArea">
 		<div class="wrapper">
 			<div class="TopPageTitle">
-	        	<!-- <h5>Degree</h5>
-	            <span><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></span>-->
 	            <div class="bc">
 					<ul id="breadcrumbs" class="breadcrumbs">
 						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
@@ -16,15 +14,15 @@
 		</div>
 	</div>
 </div>
-<!-- CONTENIDO -->
+<!-- CONTENT -->
 <div id="content" class="noLeftMenu" >
-<!-- La clase noLeftMenu fuerza a usar un margin left=0 anulando el espacio para el menú izquierdo -->
+<!-- The noLeftMenu class force to use a margin left = 0 annulling space for the left menu -->
 	<div class="wrapper" style="margin-top: 40px; margin-bottom: 20px;">
 	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
 	<div id="mensajes"></div>
 		<!-- <div class="widgets"> -->
 		<form id="validate" class="form" method="post" action="">
-		<fieldset > <!-- style="background-color:#EEEEF0; padding:10px 30px 30px 30px"> -->
+		<fieldset >
 			<div class="oneTwo">
 	        <!-- Validation form -->
 		        	<input type="hidden" name="id" id ="id" value="<?php echo is_null($this->id) && $this->accion ==='add' ? '' : $this->Role->id ?>" />
@@ -67,21 +65,19 @@
 						                     <?php $i++;?>
 				                    <?php } ?>
 			                    <?php } ?>
-	                    </div>  
-	                    <div class="formSubmit" style="float:none;">			                     
+	                    	</div>
+	                    	<div class="formSubmit" style="float:none;">
 				                     <input type="button" value="Save" class="blueB" onclick="save()" />
 				                     <input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancelar()" />
-			            </div>		                    
-	                     </div>
-		                    
-		                    		                    	                   		                   
-		                </div>			                		                	                
-		         </div>       
+			            	</div>
+	                    </div>
+			</div>
+	 </div>
 		                		                 		          		       
-                 <div class="clear"></div>                                               
+	 <div class="clear"></div>
  
-            </fieldset>         
-		 </form>          	
+		</fieldset>
+	 </form>
     	        	        
   </div>	
 </div>
@@ -91,24 +87,19 @@ function checkAll(accion){
 	$.uniform.update(o);
 }
 function save(){
-	// recorro los campos del formulario
-	// console.debug( jQuery('#validate').validationEngine('validate') );
+	// go throught each field from the form
 	if (jQuery('#validate').validationEngine('validate') ) {
 		var data = new Array();
 		var resource = new Array();
 		$('#validate input[type="text"], #validate input[type="hidden"], #validate input[type="password"],  input:checked, #validate select').each(function(index, value){
-			//input[type="checkbox"]
-			//console.debug(this);
 			if($(this).attr('name') !=='' && $(this).val() !=='' && $(this).attr('name') !== undefined){
 				if($(this).attr('type')=='checkbox'){
-						//var habilitado = $(this).is(':checked')?1:0;
 						resource.push( {campo: $(this).attr('name'), valor: $(this).val() } );
 					}else{ 
 						data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
 					}
 			}
 		});
-		//console.debug(data);
 		var id = $('#id').val();
 		var accion = $('#accion').val();
 	   $.ajax( {

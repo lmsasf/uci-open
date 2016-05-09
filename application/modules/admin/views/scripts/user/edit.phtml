@@ -3,8 +3,6 @@
 	<div class="titleArea">
 		<div class="wrapper">
 			<div class="TopPageTitle">
-	        	<!-- <h5>Degree</h5>
-	            <span><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></span>-->
 	            <div class="bc">
 					<ul id="breadcrumbs" class="breadcrumbs">
 						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
@@ -16,15 +14,14 @@
 		</div>
 	</div>
 </div>
-<!-- CONTENIDO -->
+<!-- CONTENT -->
 <div id="content" class="noLeftMenu" >
-<!-- La clase noLeftMenu fuerza a usar un margin left=0 anulando el espacio para el menú izquierdo -->
+<!-- The noLeftMenu class force to use a margin left = 0 annulling space for the left menu -->
 	<div class="wrapper" style="margin-top: 40px; margin-bottom: 20px;">
 	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
 	<div id="mensajes"></div>
-		<!-- <div class="widgets"> -->
 		<form id="validate" class="form" method="post" action="">
-		<fieldset > <!-- style="background-color:#EEEEF0; padding:10px 30px 30px 30px"> -->
+		<fieldset >
 			<div class="oneTwo">
 	        <!-- Validation form -->
 		        	<input type="hidden" name="id" id ="id" value="<?php echo is_null($this->id) && $this->accion ==='add' ? '' : $this->User->id ?>" />
@@ -45,7 +42,6 @@
 		                        <?php if( $this->accion =='add' ){ ?>
 		                        	<div><input TYPE="password" class="validate[required]" name="usrPassword" id="usrPassword" value=""/></div>
 		                        <?php }else{ ?>
-		                        	<!-- <div><input TYPE="password" class="validate[required]" name="usrPassword" id="usrPassword" value="<?php echo empty($this->User->usrPassword) ? '' : $this->User->usrPassword ?>"/></div>-->
 		                        	<div style="float:left;width:70%"><input style="background-color:#F8F8F8" disabled="disabled" TYPE="password" class="validate[required]" name="usrPassword" id="usrPassword" value=""/></div>
 		                        	<div style="float:left; margin-left:20px;width:26%"><input  id="checkmodif" type="checkbox" onclick="javascript:modificarPass('<?php echo $this->User->usrPassword ?>')"><label style="padding-top:4px;">Change password</label></div> 
 		                        	<?php }?>
@@ -99,29 +95,20 @@
 				                     <input type="button" value="Save" class="blueB" onclick="save()" />
 				                     <input type="button" value="Cancel" class="redB" style="margin-left: 5px;" onclick="cancelar()" />
 			                 </div>			                    	                   		                   
-		                </div>	
-		                
-		                	                
-		         </div>       
-		                		                 		          		       
-                 <div class="clear"></div>             
-                 
-                 
- 
+		                </div>
+		         </div>
+                 <div class="clear"></div>
             </fieldset>         
-		 </form>          	
-	  <!-- </div>
-	  <div class="clear"></div>		 -->        	        	        
+		 </form>
   </div>	
 </div>
 <script>
 function save(){
-	// recorro los campos del formulario
-	// console.debug( jQuery('#validate').validationEngine('validate') );
+	// go through each field of the form
 	if (jQuery('#validate').validationEngine('validate') ) {
 		var data = new Array();
 		$('#validate input[type="text"], #validate input[type="hidden"], #validate input[type="password"], input[type="checkbox"], #validate select').each(function(index, value){
-			//console.debug(this);
+
 			if($(this).attr('name') !=='' && $(this).val() !=='' && $(this).attr('name') !== undefined){
 				if($(this).attr('type')=='checkbox'){
 						var habilitado = $(this).is(':checked')?1:0;
@@ -131,7 +118,7 @@ function save(){
 					}
 			}
 		});
-		//console.debug(data);
+
 		var id = $('#id').val();
 		var accion = $('#accion').val();
 	   $.ajax( {

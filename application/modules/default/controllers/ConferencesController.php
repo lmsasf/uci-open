@@ -36,7 +36,7 @@ class Default_ConferencesController extends Zend_Controller_Action
         $this->view->headMeta()->setProperty('og:description', 'List of conferences :: UC Irvine, OpenCourseWare');	
         $this->view->headMeta()->setName('description', 'List of conferences :: UC Irvine, OpenCourseWare' );
 
-        /*Actualiza el HTML de conferences.html*/
+        /*Update the HTML of conferences.html*/
         $OCW->removeCacheIndex(6);
 
     }
@@ -50,7 +50,7 @@ class Default_ConferencesController extends Zend_Controller_Action
         $Conferenes = new Table_OCW();
 
         $ocwTitleEncode = $this->getRequest()->getParam('id');
-        $golive = $this->getRequest()->getParam('golive', 1); // por defecto muestra el publicado
+        $golive = $this->getRequest()->getParam('golive', 1); // published by default
         
         $select = $Conferenes->select()->setIntegrityCheck(false)
                                         ->from( array('r0'=>'OCW'), array('ocwTitle', 'ocwTitleEncode', 'id', 'thumbnail', 'ocwDescription', 'ocwKeywords') )
@@ -89,7 +89,7 @@ class Default_ConferencesController extends Zend_Controller_Action
         $this->view->assign('Conference'   , $conference  );
         $this->view->assign('Joins'    , $joins );		
         //-----
-        // Tags para facebook
+        // Facebook tags
         $this->view->doctype('XHTML1_RDFA'); // controller
         $this->view->headMeta()->setProperty('og:type', 'website');
         $this->view->headMeta()->setProperty('og:title', $conference->ocwTitle);
@@ -106,7 +106,7 @@ class Default_ConferencesController extends Zend_Controller_Action
         }
         $this->view->assign('shortUrl', $shortUrl);
         $this->view->headTitle($conference->ocwTitle);
-        $this->view->title = $conference->ocwTitle; // sirve para el breadcrums
+        $this->view->title = $conference->ocwTitle; // useful for the breadcrums
     }
 
 }

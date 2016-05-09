@@ -13,8 +13,6 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 	<div class="titleArea">
 		<div class="wrapper">
 			<div class="TopPageTitle">
-				<!-- <h5>Degrees</h5>
-				<span>List</span> -->
 				<div class="bc">
 					<ul id="breadcrumbs" class="breadcrumbs">
 						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>						
@@ -27,11 +25,6 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 </div>
 <div id="content">
 	<div class="wrapper">
-		<!-- <div id="mensajes">
-			<?php //$this->success ? $this->messages()->success($this->success . ' [Click to hide]', 'Success'): null; ?>
-			<?php //$this->error ? $this->messages()->error($this->error . ' [Click to hide]', 'Error:'): null; ?>
-	 		<?php //$this->messages()->warning('La tabla esta mostrando los &uacute;ltimos 5000 registros, para trabajar con el conjunto de datos diferente pulse el &iacute;cono "filtrar" del men&uacute; de opciones', 'IMPORTANTE') ?>
-	 	</div>-->
 	 	<div id="mensajes"></div>
 	 	<div id="breadcrumbs-wrapper" style="display: none;" >
 	       <div class="fbc">
@@ -69,24 +62,21 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 
     	$.jGrowl.defaults.closerTemplate = '<div>[close all]</div>';
     	var calcDataTableHeight = function() {
-            return $(window).height()-300 ; 
-            // la altura de la tabla se calcula en base 
+            return $(window).height()-300 ;
         };
     	oTable = $('.dTable').dataTable( { 
-            "bJQueryUI": true, // soporte para temas UI
-            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+            "bJQueryUI": true, // UI themes support
+            "sPaginationType": "full_numbers", // show page numbers
             "bRetrieve"  : true,
             "bProcessing": true,
-        	"bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+        	"bServerSide": true,
         	"sDom": '<""flT>rt<"F"ip>',
     		"aoColumns": [{ "sWidth": "90px","bSortable": false }, { "sWidth": "auto" }, { "sWidth": "auto" }],
     		"aaSorting":[[1,'asc']], 
         	"iDisplayLength": 50,
-            //"sScrollY": "400px", // altura
             "sScrollY": calcDataTableHeight() ,
             "bScrollCollapse": true,
             "bSortClasses": false, // no muestra las clases de ordenamiento
-            //"bDeferRender": true, // similar al smartrendering de DHTMLX
             "sAjaxSource": '<?php echo $this->url(array( 'controller'=>'degree', 'action'=>'degreegrid'))?>',
 
             "fnServerParams": function ( aoData ) {
@@ -102,19 +92,11 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
             },
 
             "oTableTools": {
-            	"aButtons": [ 
-   			    		  /*{
-			                    "sExtends":    "text",
-			                    "sButtonText": "",
-			                    "fnClick": function ( nButton, oConfig, oFlash ) {
-			                        window.location = '<?php //echo $this->url( array( 'module'=>'admin', 'controller'=>'degree', 'action'=>'editdegree') )?>';			                       
-			                    }
-			                }*/
-   			    		]
+            	"aButtons": []
     		},
     		
             "fnCreatedRow": function( nRow, aData, iDataIndex ) {
-                // botones
+                // buttons
                	var editar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Edit" href="#"><img alt="" src="/backend/images/icons/color/pencil.png"></a>');
                 var borrar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
                 editar.on('click',function(){
@@ -172,7 +154,7 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 	        oSettings.oScroll.sY = calcDataTableHeight(); 
 	        oTable.fnDraw();
         }); 
-		// dibujar los filtros si los hubiese
+		// draw the filter if they exists
 		drawfbreadcrumbs(getAdvancedFilters()); 
 
     } );

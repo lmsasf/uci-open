@@ -17,8 +17,6 @@
 	<div class="titleArea">
 		<div class="wrapper">
 			<div class="TopPageTitle">
-	        	<!-- <h5>University</h5>
-	            <span><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></span> -->
 	            <div class="bc">
 					<ul id="breadcrumbs" class="breadcrumbs">
 						<li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
@@ -30,7 +28,7 @@
 		</div>
 	</div>
 </div>
-<!-- CONTENIDO -->
+<!-- CONTENT -->
 <div id="content">
 	<div class="wrapper">
 	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
@@ -120,7 +118,6 @@
 		if (jQuery('#validate').validationEngine('validate') ) {
 			var data = new Array();
 			$('#validate input[type="text"], #validate input[type="hidden"], #validate textarea').each(function(index, value){
-				//console.debug(this);
 				if($(this).attr('name') !=='' && $(this).val() !==''){
 					data.push( {campo: $(this).attr('name'), valor: $(this).val() } );
 				}
@@ -177,7 +174,6 @@
 				    $.ajax( {
 				        url: "<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=> 'deleteschool'))?>",
 				        data: { Id : id } , 
-				        //async: false,
 				        beforeSend: function(objeto){},
 				        complete: function(objeto, exito) { },
 				        dataType: "json",
@@ -189,21 +185,12 @@
 				        {
 				        	var row = document.getElementById("Degree_"+datos.Id);
     						var table = document.getElementById("tbody");
-						   
-						   /* $(".loader").show();
-				        	window.setTimeout(function() {
-				        		$(".loader").hide();
-				        		displayMessage( 'success', 'Data deleted successfully', 'Success', '' );
-				        	}, 2000); */
-				        	 table.removeChild(row);
+							table.removeChild(row);
 				        },
 				        error: function(request, status, error)
 				        {
-				           /* var mensaje = request.responseText != '' ? request.responseText : 'Tiempo de espera agotado o sesión interrumpida, puede que se estén presentando problemas en la red' ;
-				            $.jGrowl(mensaje, { header: 'ERROR', sticky: true, theme: 'error' });*/
-				        	 var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
-					         //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
-					         displayMessage( 'error', mensaje, 'Error', '' );
+				        	var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+					        displayMessage( 'error', mensaje, 'Error', '' );
 				        },
 				        timeout: 20000,
 				        type: "POST"
@@ -224,8 +211,7 @@
 				if(result === 'Yes'){
 				    $.ajax( {
 				        url: "<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=> 'deletedepp'))?>",
-				        data: { Id : id } , 
-				        //async: false,
+				        data: { Id : id } ,
 				        beforeSend: function(objeto){},
 				        complete: function(objeto, exito) { },
 				        dataType: "json",
@@ -238,20 +224,12 @@
 					        var td = document.getElementById("deppartments_"+schoolid);
 				    		var div = document.getElementById("deppartment_"+id);
 				    		
-				    		/* $(".loader").show();
-					        	window.setTimeout(function() {
-					        		$(".loader").hide();
-					        		displayMessage( 'success', 'Data deleted successfully', 'Success', '' );
-					        	}, 2000); */
-					        	td.removeChild(div);
+				    		td.removeChild(div);
 				        },
 				        error: function(request, status, error)
 				        {
-				           /* var mensaje = request.responseText != '' ? request.responseText : 'Tiempo de espera agotado o sesión interrumpida, puede que se estén presentando problemas en la red' ;
-				            $.jGrowl(mensaje, { header: 'ERROR', sticky: true, theme: 'error' });*/
-				        	 var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
-					         //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
-					         displayMessage( 'error', mensaje, 'Error', '' );
+				        	var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
+					        displayMessage( 'error', mensaje, 'Error', '' );
 				        },
 				        timeout: 20000,
 				        type: "POST"
@@ -435,12 +413,6 @@ function guardarUni(callback){
 					var a = document.getElementById("aedituni_"+datos.id);
 					a.setAttribute('href', 'javascript:editUni('+datos.id+', "'+datos.uniName+'")');
 		        },
-		       /* error: function(request, status, error)
-		        {
-		            var mensaje = request.responseText != '' ? request.responseText : 'Tiempo de espera agotado o sesión interrumpida, puede que se estén presentando problemas en la red' ;
-		            $.jGrowl(mensaje, { header: 'ERROR', sticky: true, theme: 'error' });
-		        },
-		        timeout: 20000,*/
 		        type: "POST"
 		    } ); 
 	} 
@@ -475,18 +447,12 @@ function guardarUni(callback){
 					    tds += '</tr>';
 						$("#tbody").append(tds);					
 			       	}else{
-						//aca es cuando ya existe, actualizo el input
+						//if already exist then update the input
 						document.getElementById("nameschool_"+schoolId).innerHTML = datos.schName;
 						var aedit = document.getElementById("aedit_"+schoolId)
 						aedit.setAttribute("href", 'javascript:editSchool('+schoolId+', "'+datos.schName+'")');			
 				    }
 		        },
-		       /* error: function(request, status, error)
-		        {
-		            var mensaje = request.responseText != '' ? request.responseText : 'Tiempo de espera agotado o sesión interrumpida, puede que se estén presentando problemas en la red' ;
-		            $.jGrowl(mensaje, { header: 'ERROR', sticky: true, theme: 'error' });
-		        },
-		        timeout: 20000,*/
 		        type: "POST"
 		    } ); 
 		} 
@@ -502,7 +468,7 @@ function guardarUni(callback){
 			});
 			var deppId = $( "#deppId" ).val();
 			var Id = $( "#idSchool" ).val();
-		   $.ajax( {
+		   	$.ajax( {
 		        url: "<?php echo $this->url(array('module'=>'admin','controller'=>'university', 'action'=> 'savedeppartment'))?>",
 		        data: { data:data, Id:Id, deppId:deppId  } , 
 		        async: false,
@@ -527,12 +493,6 @@ function guardarUni(callback){
 				    }
 
 		        },
-		       /* error: function(request, status, error)
-		        {
-		            var mensaje = request.responseText != '' ? request.responseText : 'Tiempo de espera agotado o sesión interrumpida, puede que se estén presentando problemas en la red' ;
-		            $.jGrowl(mensaje, { header: 'ERROR', sticky: true, theme: 'error' });
-		        },
-		        timeout: 20000,*/
 		        type: "POST"
 		    } ); 
 		} 

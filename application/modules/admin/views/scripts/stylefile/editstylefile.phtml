@@ -1,18 +1,12 @@
-<!--<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/codemirror/CodeMirror/master/lib/codemirror.css">-->
 <link rel="stylesheet" type="text/css" href="/backend/css/codemirror.css">
 <script type="text/javascript" src="/backend/js/codemirror/codemirror.js"></script>
 <script type="text/javascript" src="/backend/js/codemirror/css.js"></script>
 <script type="text/javascript" src="/backend/js/codemirror/jquery.base64.min.js"></script>
-<!--<script type="text/javascript" src="https://cdn.rawgit.com/codemirror/CodeMirror/master/lib/codemirror.js"></script>
-<script type="text/javascript" src="https://cdn.rawgit.com/codemirror/CodeMirror/master/mode/css/css.js"></script>
-<script type="text/javascript" src="https://cdn.rawgit.com/carlo/jquery-base64/master/jquery.base64.min.js"></script>-->
 
 <div class="topHeader" style="top: 0;">
     <div class="titleArea">
         <div class="wrapper">
             <div class="TopPageTitle">
-                <!-- <h5>Degree</h5>
-	            <span><?php echo $this->accion ==='add' ? 'Add':'Edit' ?></span>-->
                 <div class="bc">
                     <ul id="breadcrumbs" class="breadcrumbs">
                         <li><a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'index', 'action'=>'index') )?>">Home</a></li>
@@ -24,7 +18,7 @@
         </div>
     </div>
 </div>
-<!-- CONTENIDO -->
+<!-- CONTENT -->
 <div id="content">
     <div class="wrapper">
         <div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
@@ -68,7 +62,6 @@
                                 <label for="editor">CSS File:<span class="req">*</span></label>
                                 <div class="formRight">
 		                            <textarea id="editor"><?php
-                                        //echo file_get_contents("./frontend/css/style.css",true);
                                         echo file_get_contents("./frontend/css/".$this->Degree->stylefile,true);
                                         ?></textarea>
                                 </div>
@@ -91,12 +84,9 @@
     </div>
 </div>
 <script type="text/javascript">
-
-
 function save(){
     var code = document.getElementById("editor").value;
     var data_url = "data:text/html;charset=utf-8;base64," + $.base64.encode(code);
-    //document.getElementById("result").src = data_url;
 
     if (jQuery('#validate').validationEngine('validate') ) {
         var data = new Array();
@@ -132,8 +122,6 @@ function save(){
                     $(".loader").hide();
                     displayMessage( 'success', 'Data saved successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'stylefile', 'action'=>'index'))?>' );
                 }, 2000);
-                //return datos.ordenId;
-
             },
             error: function(request, status, error)
             {

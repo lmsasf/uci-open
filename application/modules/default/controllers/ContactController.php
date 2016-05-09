@@ -17,41 +17,45 @@ class Default_ContactController extends Zend_Controller_Action
 		$this->view->headTitle('Contact Us ');
 
 		$ContactUs= new Table_ContactUsSettings();
-        //$camposOCW = $ContactUs->getFields();
         $contact = $ContactUs->fetchAll('Id=1');
         $this->view->assign('contact', $contact);
 				
 		if($this->getRequest()->isPost() ) {
 			
-			// obtener de a uno por uno los campos
+			// get one by one the fields
 			$conFirstName 	= $this->getRequest()->getParam('conFirstName'	, 'Anonymous');
 			$conLastName 	= $this->getRequest()->getParam('conLastName'	, 'Anonymous');
 			$conEmail 		= $this->getRequest()->getParam('conEmail'		, 'Anonymous');
 			$conCountry 	= $this->getRequest()->getParam('conCountry'	, 'Anonymous');
-			//$conRole		= $this->getRequest()->getParam('conRole'		, null);
-			///$conInquiriType	= $this->getRequest()->getParam('conInquiriType', null);
+			$conRole		= $this->getRequest()->getParam('conRole'		, null);
+			$conInquiriType	= $this->getRequest()->getParam('conInquiriType', null);
 			$conComents		= $this->getRequest()->getParam('conComents'	, null);
 						
 			try {
-				// d($this->getRequest()->getParams());
-				$recaptcha = new Zend_Service_ReCaptcha($config->recaptcha->pubkey, $config->recaptcha->privkey );
-				$result = $recaptcha->verify( 
-						$this->getRequest()->getParam('recaptcha_challenge_field', null ),
-						$this->getRequest()->getParam('recaptcha_response_field', null )
-				);
-				
+
 				$validator = new Zend_Validate_EmailAddress();
 				
 				if(!$validator->isValid($conEmail)){
 					throw new Exception("Invalid email");
 				}
+
+				/* Uncomment the next lines to add a captcha validation. - Look at the view in order to uncomment the appropriate lines too.*/
+				/*
+				$recaptcha = new Zend_Service_ReCaptcha($config->recaptcha->pubkey, $config->recaptcha->privkey );
+				$result = $recaptcha->verify(
+						$this->getRequest()->getParam('recaptcha_challenge_field', null ),
+						$this->getRequest()->getParam('recaptcha_response_field', null )
+				);
+
 				if( !$result->isValid() ) {
 					throw new Exception("Invalid captcha");
 				}
+				*/
+
 				if( is_null($conComents) ) {
 					throw new Exception("Comments can't be empty");
 				}
-				// guardar en la DB
+				// save on DB
 				try {
 					$Contact = new Table_Contact();
 					$newComment		= $Contact->createRow(); 
@@ -80,10 +84,9 @@ class Default_ContactController extends Zend_Controller_Action
 				$this->view->conComents 	= $conComents;
 				
 			}
-			
+
 		}
-		//$this->view->capcha = $recaptcha->getHTML();
-		
+
 	}
 	
 	

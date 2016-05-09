@@ -1,6 +1,6 @@
 <?php
 /**
- * Mapeo de tabla Author
+ * Role Mapping Table
  * @author damills
  *
  */
@@ -12,10 +12,10 @@ class Table_Role extends Zend_Db_Table_Abstract {
 	public function getRoles($where = null, $sort=array('columna'=>1, 'direccion'=>'ASC'), $limit = array('limit'=>-1, 'offset'=>0), $sSearch='')
 	{
 		try {
-			//validaciones de parámetros
+			//parameter validation
 			$where       = is_null($where) ? 'AND 1=1 ' : $where;
 	
-			if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verifico que los argumentos sean validos
+			if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verify valid arguments
 				throw new Exception('Invalid parameters');
 			} else {
 				if( !array_key_exists('columna', $sort) || !array_key_exists('direccion', $sort) || !array_key_exists('limit', $limit) || !array_key_exists('offset', $limit) ){

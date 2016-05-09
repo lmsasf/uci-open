@@ -1,6 +1,6 @@
 <?php
 /**
- * Clase que mapea a la tabla Conference
+ * Class that maps to the Conference Table
  */
 class Table_Conference extends Zend_Db_Table_Abstract {
 	protected $_name    = 'Conference';

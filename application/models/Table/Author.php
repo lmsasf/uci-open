@@ -1,6 +1,6 @@
 <?php
 /**
- * Mapeo de tabla Author
+ * Author mapping table
  * @author damills
  *
  */
@@ -27,30 +27,20 @@ class Table_Author extends Zend_Db_Table_Abstract {
 		$select = $this->select()->setIntegrityCheck(false);
 		$select->from(  array('r0'=>'Person') , 
 						array('r0.id', new Zend_Db_Expr("CONCAT_WS(' ', r0.perLastName, r0.perFirstName ) authorName")
-								//, new Zend_Db_Expr("GROUP_CONCAT( r2.degDescription ORDER BY r1.pdeSequence DESC SEPARATOR ', ') degree")
 								, new Zend_Db_Expr("GROUP_CONCAT( cast(concat(r2.degDescription,'_',r2.id) as char(100)) ORDER BY r1.pdeSequence DESC SEPARATOR ', ') degree")
 							  )
 					)
 				->joinLeft(array('r1'=>'PersonDegree'), "r0.id = r1.idPer", '')
 				->joinLeft(array('r2'=>'Degree'), "r2.id = r1.idDeg",'')
-				//->joinLeft(array('r3'=>'Author'), "r3.idPer = r0.id", array('r3.idOCW'))
 				->group("r0.id")
 				->order('authorName');
 		return $this->fetchAll( $select );
 	}
 	/**
-	 * Obtener los autores de todos los OCW
+	 * Get the authors of all OCW
 	 * @return multitype:
 	 */
 	public function getOCWAuthorFilter(){
-		/*$sql ="SELECT 
-					'Author' as filterGroup
-					, CONCAT_WS(', ', perFirstName, perLastName , CONCAT('(', degDescription,')')) as filterName
-					, r0.id as idFilter
-				FROM Person r0
-				LEFT JOIN PersonDegree r2 ON r2.idPer = r0.id
-				LEFT JOIN Degree r3 ON r3.id = r2.idDeg
-				INNER JOIN Author r1 ON r1.idPer = r0.id";*/
 		$select = $this->select()->setIntegrityCheck(false);
 		$select ->from(array('r0'=>'Person'), array( new Zend_Db_Expr("'Author' as filterGroup"), new Zend_Db_Expr("CONCAT_WS(', ', perLastName, perFirstName , CONCAT('(', degDescription,')')) as filterName"), 'r0.id as idFilter' ))
 				->joinLeft (array('r2'=> 'PersonDegree'), 'r2.idPer = r0.id')

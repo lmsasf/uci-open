@@ -17,7 +17,6 @@ class Default_ErrorController extends Zend_Controller_Action
         	$this->view->headTitle("Not error");
             $this->view->message = 'It has asked the error page. Use your browsers Back button to navigate to the page you have prevously come from';
             $this->view->code = 0;
-            //return;
         } else {
 	        switch ($errors->type) {
 	            case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
@@ -43,12 +42,6 @@ class Default_ErrorController extends Zend_Controller_Action
 	        }
         
         $this->view->referer = $this->getRequest()->getServer('HTTP_REFERER');
-        // Log exception, if logger available
-//         if ($log = $this->getLog()) {
-//             $log->log($this->view->message, $priority, $errors->exception);
-//             $log->log('Request Parameters', $priority, $errors->request->getParams());
-//         }
-        
         // conditionally display exceptions
         if ($this->getInvokeArg('displayExceptions') == true) {
             $this->view->exception = $errors->exception;
@@ -59,13 +52,7 @@ class Default_ErrorController extends Zend_Controller_Action
 
     public function getLog()
     {
-        /*$bootstrap = $this->getInvokeArg('bootstrap');
-        if (!$bootstrap->hasResource('Log')) {
-            return false;
-        }
-        $log = $bootstrap->getResource('Log');
-        return $log;*/
-    	return false;
+        return false;
     }
 
 

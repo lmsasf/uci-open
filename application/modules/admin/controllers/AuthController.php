@@ -5,17 +5,16 @@ class Admin_AuthController extends Zend_Controller_Action
     {
         /* Initialize action controller here */
     	$this->_helper->layout()->setLayout('admin');
-
     }
 
     public function indexAction()
     {
-        // redirecciona a login
+        // redirec to login
         $this->_forward('login');
     }
     /**
      *
-     * Formulario de Login
+     * Login form
      */
 	public function loginAction()
 	{
@@ -54,7 +53,7 @@ class Admin_AuthController extends Zend_Controller_Action
 		$this->getResponse()->setHttpResponseCode(401);
 	}
 	/**
-	 * Sólo para propositos de testing del Error controller
+	 * Only for purposes of testing the controller Error
 	 */
 	public function errorAction(){
 		$this->_helper->layout()->setLayout('empty');

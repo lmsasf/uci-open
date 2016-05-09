@@ -72,7 +72,7 @@ http://www.imsglobal.org/profile/cc/ccv1p3/LOM/ccv1p3_lommanifest_v1p0.xsd"
 			if($key < $k ):
 				$external = '';
 				if($v->type == 5) { break; }
-				if($v->type != 5 || $v->type != 7  ) : // otro header
+				if($v->type != 5 || $v->type != 7  ) : // other header
 				$titleEncode = is_null($v->titleEncode) ? codificar_titulo($v->title) : $v->titleEncode;
 		  ?>
 			<item identifier="I_<?php echo $titleEncode ?>" identifierref="I_<?php echo $titleEncode ?>_R">
@@ -98,8 +98,6 @@ http://www.imsglobal.org/profile/cc/ccv1p3/LOM/ccv1p3_lommanifest_v1p0.xsd"
 					case 1: // courses
 						$target = $this->ocw->titleEncode . '/courses/'.$titleEncode.'.html'; break;
 					case 2: // files
-						//$target='getfile/'.$titleEncode.'.html';
-						//$target = $v->ownData['ocwUrlFile'];
 						$stripped_url = preg_replace('/\\?.*/', '', $v->ownData['ocwUrlFile']);
 						$realfilename = basename($stripped_url);
 						$target= $this->ocw->titleEncode .'/files/'. $realfilename;
@@ -115,7 +113,6 @@ http://www.imsglobal.org/profile/cc/ccv1p3/LOM/ccv1p3_lommanifest_v1p0.xsd"
 						break;
 				}
 				$filename = $this->tmpFolder . $this->ocw->titleEncode.'/' . $target;
-				//echo $filename .' ---  ';
 				if(file_exists($filename)){
 					echo '<resource identifier="r_'. $titleEncode . '" type="webcontent" href="'.$target.'" >';
 					echo '<file href="'.$target.'"/>';

@@ -1,7 +1,7 @@
 <div class="span12" id="content">
     <div class=" <?php if ($this->count_ads > 0){ ?>span8<?php }else{?>span11<?php }?>" id="content_left"<?php if($this->count_ads > 0) echo ' style="width: 830px"'?>>
         <h2><?php echo is_null($this->section) ? 'What is a Collection?' : addslashes($this->section->secTitle); ?></h2>
-        <?php echo is_null($this->section) ? '<b>...</b>' : addslashes($this->section->secText); ?>
+        <?php echo is_null($this->section) ? '<b>...</b>' : $this->section->secText; ?>
 
         <h2>Current Collections</h2>
 

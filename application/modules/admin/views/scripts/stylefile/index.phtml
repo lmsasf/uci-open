@@ -37,7 +37,6 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
             <!-- Dynamic table -->
             <div class="widget">
                 <div class="title">
-                    <!--<a href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'stylefile', 'action'=>'editstylefile') )?>"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/add.png"></a>-->
                     <div class="clear"></div>
                 </div>
                 <table class="display dTable">
@@ -102,18 +101,18 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 
         };
         oTable = $('.dTable').dataTable( {
-            "bJQueryUI": true, // soporte para temas UI
-            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+            "bJQueryUI": true, // UI themes support
+            "sPaginationType": "full_numbers", // show page numbers
             "bRetrieve"  : true,
             "bProcessing": true,
-            "bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+            "bServerSide": true,
             "sDom": '<""flT>rt<"F"ip>',
             "aoColumns": [{ "sWidth": "100px","bSortable": false }, { "sWidth": "auto" }, { "sWidth": "auto" }],
             "aaSorting":[[1,'asc']],
             "iDisplayLength": 50,
             "sScrollY": calcDataTableHeight() ,
             "bScrollCollapse": true,
-            "bSortClasses": false, // no muestra las clases de ordenamiento
+            "bSortClasses": false,
             "sAjaxSource": '<?php echo $this->url(array( 'controller'=>'stylefile', 'action'=>'degreegrid'))?>',
 
             "fnServerParams": function ( aoData ) {
@@ -231,9 +230,7 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
             oTable.fnDraw();
         });
 
-
-
-        // dibujar los filtros si los hubiese
+        // draw the filter if they exists
         drawfbreadcrumbs(getAdvancedFilters());
 
     } );

@@ -16,21 +16,21 @@ class Table_Contact extends Zend_Db_Table_Abstract {
 	}
 
 	/**
-	 * Obtiene los datos para mostrar en grilla de Contact
-	 * @param string $where cadena a aplicar en el where de la consulta
-	 * @param array $sort array('columna'=>1, 'direccion'=>'ASC')
-	 * @param array $limit array('limit'=>-1, 'offset'=>0)
-	 * @param string $sSearch cadena a buscar
+	 * Gets the data to show grid Contact
+	 * @param string $where - string to apply into the where of the query
+	 * @param array $sort - array('column'=>1, 'direction'=>'ASC')
+	 * @param array $limit - array('limit'=>-1, 'offset'=>0)
+	 * @param string $sSearch - search string
 	 * @throws Exception
-	 * @return array Array que contiene un cursor, cantidad de registros y cantidad de registros filtrados
+	 * @return array - Array que contiene un cursor, cantidad de registros y cantidad de registros filtrados
 	 */
 	public function getContactGrid($where = null, $sort=array('columna'=>1, 'direccion'=>'ASC'), $limit = array('limit'=>-1, 'offset'=>0), $sSearch='')
 	{
 		try {
-			//validaciones de parámetros
+			//parameters validation
 			$where       = is_null($where) ? 'AND 1=1 ' : $where;
 			
-			if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verifico que los argumentos sean validos
+			if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verify valid arguments
 				throw new Exception('Invalid parameters');	
 			} else {
 				if( !array_key_exists('columna', $sort) || !array_key_exists('direccion', $sort) || !array_key_exists('limit', $limit) || !array_key_exists('offset', $limit) ){
@@ -75,7 +75,6 @@ class Table_Contact extends Zend_Db_Table_Abstract {
 							From Contact r0 
 							LEFT JOIN Countries r3 ON r0.conCountry = r3.code
 							WHERE 1=1 " . $where;
-			//echo $sql; 
 			$cache = Zend_Registry::get('cache');
 			if ( ($totalCount = $cache->load('getContactGrid')) === false )
 			{
@@ -92,7 +91,6 @@ class Table_Contact extends Zend_Db_Table_Abstract {
 								From Contact r0 
 								LEFT JOIN Countries r3 ON r0.conCountry = r3.code
 								WHERE 1=1 ". $where;
-			//echo $sqlCountWhere;
 			$res = $this->getDefaultAdapter()->fetchRow($sqlCountWhere);
 			$totalCountWhere = $res['total'];
 	

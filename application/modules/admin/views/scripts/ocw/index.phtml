@@ -10,7 +10,7 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 ->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools_JUI.css')
 ;
 ?>
-<!-- Mueve el search de la tabla principal -->
+<!-- Move the search from main table-->
 <style>
     #DataTables_Table_0_filter {margin-left: 80px !important;}
 </style>
@@ -235,24 +235,21 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
     	$.jGrowl.defaults.closerTemplate = '<div>[close all]</div>';
     	var calcDataTableHeight = function() {
             return $(window).height()-300 ; 
-            // la altura de la tabla se calcula en base 
         };
     	oTable = $('.dTable').dataTable( { 
-            "bJQueryUI": true, // soporte para temas UI
-            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+            "bJQueryUI": true, // UI themes support
+            "sPaginationType": "full_numbers", // show the page numbers
             "bRetrieve"  : true,
             "bProcessing": true,
-        	"bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+        	"bServerSide": true, // not necessary, to pagin in the server side
         	"sDom": '<""flT>rt<"F"ip>',
     		"aoColumns": [{ "sWidth": "145px","bSortable": false }, { "sWidth": "30%" }, { "sWidth": "100px" }, { "sWidth": "175px" }, { "sWidth": "15%" }, { "sWidth": "15%" }, { "sWidth": "15%" }, { "sWidth": "50px" }, { "sWidth": "50px" }],
     		"aaSorting":[[1,'asc']], 
         	"iDisplayLength": 50,
-            //"sScrollY": "400px", // altura
             "sScrollY": calcDataTableHeight() ,
             "sScrollX": "100%",
             "bScrollCollapse": true,
-            "bSortClasses": false, // no muestra las clases de ordenamiento
-            //"bDeferRender": true, // similar al smartrendering de DHTMLX
+            "bSortClasses": false, // don't show the order classes
             "sAjaxSource": '<?php echo $this->url(array( 'module'=>'admin','controller'=>'ocw', 'action'=>'ocwgrid'))?>',
             "fnServerParams": function ( aoData ) {
                 var filters = getAdvancedFilters();
@@ -271,7 +268,7 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
     		}, 
     		                       
             "fnCreatedRow": function( nRow, aData, iDataIndex ) {
-                // botones
+                // buttons
                	var editar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Edit" href="#"><img alt="" src="/backend/images/icons/color/pencil.png"></a>');
                 var borrar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Delete" href="#"><img alt="" src="/backend/images/icons/color/cross.png"></a>');
                 var asociar = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="Join" href="#"><img alt="" src="/backend/images/icons/color/block.png"></a>');
@@ -389,7 +386,6 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 							$.ajax( { 
 	      	                	url: "<?php echo $this->url(array( 'module'=>'admin','controller'=>'ocw', 'action'=>'savepublish'))?>",
 	      	                    data:  { Id: $(nRow).attr('id'), value: $(this).is(':checked') ? 1 : 0 },
-	      	                    //async: false,
 	      	                    type: "POST",
 	      	                    beforeSend: function(objeto){
 		      	                    me.prop("disabled", true);
@@ -427,7 +423,7 @@ $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables
 	        oSettings.oScroll.sY = calcDataTableHeight(); 
 	        oTable.fnDraw();
         }); 
-		// dibujar los filtros si los hubiese
+		// draw filter if they exists
 		drawfbreadcrumbs(getAdvancedFilters()); 
 
     } );

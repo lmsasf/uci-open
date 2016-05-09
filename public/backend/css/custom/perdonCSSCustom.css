@@ -1,0 +1,42 @@
+.dd3-handle { height: 34px; }
+#listDegree_chzn { width: 95% !important; }
+
+.chzn-drop{width: 95% !important;}
+.chzn-search{width: 95% !important;}
+
+.chzn-container-single .chzn-search {
+    margin: 0;
+    padding: 3px 4px;
+    position: relative;
+    white-space: nowrap;
+    width: 95% !important;
+    z-index: 1010;
+}
+.chzn-container .chzn-drop {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: -moz-use-text-color #D5D5D5 #D5D5D5;
+    border-image: none;
+    border-right: 1px solid #D5D5D5;
+    border-style: none solid solid;
+    border-width: 0 1px 1px;
+    left: 0;
+    margin-top: 1px;
+    position: absolute;
+    top: 29px;
+    width: 95% !important;
+    z-index: 998;
+}
+.chzn-container-single .chzn-search input {
+    background: url("../images/searchSmall.png") no-repeat scroll 320px center rgba(0, 0, 0, 0) !important;
+    border: 1px solid #AAAAAA;
+    font-family: sans-serif;
+    font-size: 11px;
+    margin: 1px 0;
+    outline: 0 none;
+    padding: 4px 0 4px 5px;
+    width: 95% !important;
+}

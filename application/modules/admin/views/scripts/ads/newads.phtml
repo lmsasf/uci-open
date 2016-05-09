@@ -1,6 +1,6 @@
 <?php
 /**
- * Agrego las JS de plupload para archivos e imágenes
+ * He added the JS of plupload for files and images
  */
 $this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
     ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
@@ -26,7 +26,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/modules/admi
     </div>
 </div>
 
-<!-- CONTENIDO -->
+<!-- CONTENT -->
 <div id="content">
     <div class="wrapper">
         <div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
@@ -359,7 +359,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/modules/admi
         $("#idOCWpage").trigger("liszt:updated");
         <?php endif;?>
 
-        /*Cargar Imagen*/
+        /*Upload Image*/
         $('#image-upload-ads').fineUploader({
             request: {
                 endpoint: '/admin/ocw/uploadfile/target/images'
@@ -396,7 +396,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/modules/admi
             $('#urlimagen-ads').attr('src', $(this).val());
         });
 
-        /*FIN Cargar Imagen*/
+        /*FIN Upload Image*/
 
         $("#idOCWTypes").change(function() {
             OCWTypes = $("#idOCWTypes option:selected").val();
@@ -415,7 +415,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/modules/admi
             $("#btnAddPages").unbind('click');
             $("#idOCWpage").trigger("liszt:updated");
 
-            //Ajax para habilitar las Categorias y Subcategorias de un tipo
+            //Ajax to enabled the categories and sub categories from a type
             $.ajax({
                 url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ads', 'action'=> 'getcategoryfortype'))?>",
                 data: {OCWTypes: OCWTypes},
@@ -547,13 +547,6 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/modules/admi
                 }
             }
 
-            // if(adsImage){
-            //     if(!isValidUrl(adsImage)){
-            //         displayMessage( 'error', 'Invalid Image Url', 'Error', '' );
-            //         return false;
-            //     }
-            // }
-
             if(adsSection.is(':checked')){
                 adsSection = '1';
             }else{
@@ -622,7 +615,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/modules/admi
         if(itemselected.val() !== '' && itemselected.val() != undefined) {
             if(idcats.length > 0){
                 for(i=0; i<idcats.length; i++){
-                    //Compara el nuevo valor con los ya ingresados
+                    //Compare the new value with the already entered
                     if(idcats[i] == itemselected.val()){
                         mensaje = 'Please, select another category, this already exists';
                         displayMessage( 'error', mensaje, 'Error', '' );
@@ -657,7 +650,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/css/modules/admi
                     arrayData.push(idCategoria);
 
                     $(this).data("category-del", arrayDataDel.toString());
-                    $(this).attr("data-category-del", arrayDataDel.toString()); //guardo el array sin el id ingresado
+                    $(this).attr("data-category-del", arrayDataDel.toString()); //keep the array without the input id
 
                     $(this).data("category", arrayData.toString());
                     $(this).attr("data-category", arrayData.toString());

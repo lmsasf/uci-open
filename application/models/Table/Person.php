@@ -5,19 +5,18 @@ class Table_Person extends Zend_Db_Table_Abstract {
 	protected $_primary = 'id';
 
 	/**
-     * Método para llenar la grilla de personas
+     * Method to fill the grid persons
      */
 	
-	public function getPersonsGrid($where = null, $sort=array('columna'=>1, 'direccion'=>'ASC'), $limit = array('limit'=>-1, 'offset'=>0), $sSearch='')
-	{
+	public function getPersonsGrid($where = null, $sort=array('columna'=>1, 'direccion'=>'ASC'), $limit = array('limit'=>-1, 'offset'=>0), $sSearch='') {
 		try {
-			//validaciones de parámetros
+			//parameters validations
 			$where       = is_null($where) ? 'AND 1=1 ' : $where;
 			
-			if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verifico que los argumentos sean validos
+			if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)) { // verify that the arguments are valid
 				throw new Exception('Invalid parameters');	
 			} else {
-				if( !array_key_exists('columna', $sort) || !array_key_exists('direccion', $sort) || !array_key_exists('limit', $limit) || !array_key_exists('offset', $limit) ){
+				if( !array_key_exists('columna', $sort) || !array_key_exists('direccion', $sort) || !array_key_exists('limit', $limit) || !array_key_exists('offset', $limit) ) {
 					throw new Exception('Invalid parameters');
 				}
 			}
@@ -33,7 +32,7 @@ class Table_Person extends Zend_Db_Table_Abstract {
 			$columsSortable[8] = 'perCountry';
 			$columsSortable[9] = 'perUrlPersonal';
 			
-			if(!empty($sSearch)){
+			if(!empty($sSearch)) {
 				$implode_array_d1 = implode(',', $columsSortable);
 				$implode_array_d2 = implode(',', array_reverse($columsSortable));
 				$sSearch = str_replace(' ', '%', $sSearch);
@@ -55,7 +54,7 @@ class Table_Person extends Zend_Db_Table_Abstract {
 									, perState
 									, perCountry
 									
-							From Person
+							FROM Person
 							WHERE 1=1
 							$where
 							";
@@ -79,19 +78,16 @@ class Table_Person extends Zend_Db_Table_Abstract {
 	
 			$pag = $limit['limit'];
 			$start = $limit['offset'];
-			if($pag == -1 || $pag == '-1' ){
+			if($pag == -1 || $pag == '-1' ) {
 				$sql .= $where. " ORDER BY $sSort";
 			} else {
 				$sql .= $where. " ORDER BY $sSort LIMIT $pag OFFSET $start";
 			}
-			//$sql .=" $where	ORDER BY $sSort LIMIT $pag OFFSET $start";
 					
 			$rs = array('cursor'=>$this->getDefaultAdapter()->query($sql) , 'count'=>$totalCount, 'countWhere'=>$totalCountWhere );
 			return $rs;
-		} catch (Exception $e){
+		} catch (Exception $e) {
 			throw new Exception( $e->getMessage() );
-		}		
-		
+		}
 	}
-
 }

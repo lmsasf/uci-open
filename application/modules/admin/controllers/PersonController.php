@@ -8,7 +8,7 @@ class Admin_PersonController extends Zend_Controller_Action
     	$this->_helper->layout()->setLayout('admin');
     }
 	/**
-	 * Listado de personas
+	 * Person list
 	 */
     public function indexAction()
     {
@@ -17,7 +17,7 @@ class Admin_PersonController extends Zend_Controller_Action
     }
     
     /**
-     * Levanta el formulario de edición de personas
+     * Lift the edit form
      * @throws Exception
      */
     public function editpersonAction(){
@@ -26,7 +26,7 @@ class Admin_PersonController extends Zend_Controller_Action
     	$PersonDegree = new Table_PersonDegree();
     	$PersonDepartment = new Table_PersonDepartment();
     	$Sponsor = new Table_Sponsor();
-    	// Obtener parámetros
+    	// get parameters
     	try{
     		$Id = $this->getRequest()->getParam('id', null);
     		$accion = $this->getRequest()->getParam('accion', null);
@@ -37,9 +37,9 @@ class Admin_PersonController extends Zend_Controller_Action
 	    	$this->view->assign('universitys', $university);
 	    	 
 	    	 
-    		if(!is_null($Id) && is_null($accion)) { // viene del listado para editar
+    		if(!is_null($Id) && is_null($accion)) {
     			$this->view->headTitle('Person :: Edit');
-    			// busco los datos del cliente
+    			// search client data
     			$this->view->assign('Person', $Person->fetchRow($Person->select()->where('id = ?', $Id)));
     			$select = $PersonDegree->select()
 	    			->setIntegrityCheck(false)
@@ -65,7 +65,7 @@ class Admin_PersonController extends Zend_Controller_Action
     			$perdep = $PersonDepartment->getAdapter()->fetchAll( $select ) ;
     			$this->view->assign('PersonDepartment', $perdep );
     			
-    			//verifico si es sponsor
+    			//verify sponsor
     			$this->view->assign('Sponsor', $Sponsor->fetchRow($Sponsor->select()->where('personId = ?', $Id)));
     			
     			if(count($grados)> 0 ){
@@ -78,14 +78,14 @@ class Admin_PersonController extends Zend_Controller_Action
     			}
     			$this->view->assign('accion', 'edit');
     		}
-    		if(is_null($Id)) { // nueva Persona
+    		if(is_null($Id)) { // new person
     			$this->view->headTitle('Person :: Add');
     			$this->view->assign('accion', 'add');
     			$this->view->assign('id', null);
     			$this->view->assign('Person', null);
     		}
     	
-    		// busco los datos generales 
+    		// search general data
     		$Degree = new Table_Degree();
     		$this->view->assign('Degrees', $Degree->fetchAll($where, 'degShortDescription asc'));    		
     			
@@ -96,7 +96,7 @@ class Admin_PersonController extends Zend_Controller_Action
     }
     
     /**
-	 * Ajax para eliminar personas
+	 * Ajax  to delete persons
 	 */
 	public function deleteAction(){
     	$this->_helper->layout()->setLayout('empty');
@@ -110,7 +110,7 @@ class Admin_PersonController extends Zend_Controller_Action
 			}
 			$resp = $Person->delete("id = $Id");
 			$this->view->assign('success', 'Person removed successfully');
-			$this->_forward('index', 'person', 'admin');//echo Zend_Json_Encoder::encode(array('Id'=> $Id));
+			$this->_forward('index', 'person', 'admin');
 		} catch (Exception $e) {
 			$this->view->assign('error', 'An error occurred while removing the person');
 			$this->_forward('index', 'person', 'admin');
@@ -118,16 +118,16 @@ class Admin_PersonController extends Zend_Controller_Action
     }
     
     /**
-     * Ajax que guarda la información del formulario de personas
+     * Ajax to save persons form
      * @throws Exception
      */
     public function savepersonAction(){
     	$this->_helper->layout()->setLayout('empty');
-    	// no necesita vista para renderizarse
+    	// don't need a view to render
     	$this->_helper->viewRenderer->setNoRender();
     	$Person = new Table_Person();
     	$Sponsor = new Table_Sponsor();
-    	// Obtener parámetros
+    	// get parameters
     	$tr = $Person->getAdapter()->beginTransaction();
     	try {
     		$Id 	 		= $this->getRequest()->getParam('id'		 , null);
@@ -136,19 +136,16 @@ class Admin_PersonController extends Zend_Controller_Action
     		$degrees 		= $this->getRequest()->getParam('degrees'	 , null);
     		$datasponsor	= $this->getRequest()->getParam('datasponsor', null);
     		$departments 	= $this->getRequest()->getParam('departments', null);
-			//d($degrees); exit();    		
-    		if( !is_null($accion) && !is_null($data) ){ // editar o añadir
+
+			if( !is_null($accion) && !is_null($data) ){ // edit or add
     			$PersonRow = null;
     			
     			if($accion === 'edit'){
     				$PersonRow = $Person->fetchRow($Person->select()->where('id = ?', $Id));
-    				//d($PersonRow); exit;
     			} else {
     				$PersonRow = $Person->createRow();
     			}
-    			
-    			//echo "<pre>";var_dump($data);exit;
-    			
+
     			foreach($data as $dato){
     				if(isset($dato['campo'])){
     					if($dato['campo']!== 'accion'){
@@ -159,7 +156,7 @@ class Admin_PersonController extends Zend_Controller_Action
     			$idPer = $PersonRow->save();
     			
     			//sponsor
-    			if(!is_null($datasponsor)){ //echo "<pre>";var_dump($datasponsor);exit;
+    			if(!is_null($datasponsor)){
     				$Sponsor->delete( "personId = $idPer" );
     				$spoIsOrganization = null; 
     				$spoCompanyName = null; 
@@ -169,27 +166,24 @@ class Admin_PersonController extends Zend_Controller_Action
     				$spoPhone = null;
     				$spoAddress = null;
     				if($datasponsor[0]["valor"] == 'on'){
-	    				//echo "<pre>";var_dump($datasponsor);exit;
 	    				foreach($datasponsor as $datasp){
 	    					$SponsorRow = $Sponsor->createRow();
-	    					
 	    						
-	    						if($datasp['campo'] == "spoIsOrganization")
-	    							$spoIsOrganization = $datasp['valor'];
-	    						elseif($datasp['campo'] == "spoCompanyName") 
-	    							$spoCompanyName = $datasp['valor'];
-	    						elseif($datasp['campo'] == "spoCompanyURL")
-	    							$spoCompanyURL = $datasp['valor'];
-	    						elseif($datasp['campo'] == "spoImageURL") 
-	    							$spoImageURL = $datasp['valor'];
-	    						elseif($datasp['campo'] == "spoEmail") 
-	    							$spoEmail = $datasp['valor'];
-	    						elseif($datasp['campo'] == "spoPhone")
-	    							$spoPhone = $datasp['valor'];
-	    						elseif($datasp['campo'] == "spoAddress")
-	    							$spoAddress = $datasp['valor'];
-	    						    					
-	    					
+							if($datasp['campo'] == "spoIsOrganization")
+								$spoIsOrganization = $datasp['valor'];
+							elseif($datasp['campo'] == "spoCompanyName")
+								$spoCompanyName = $datasp['valor'];
+							elseif($datasp['campo'] == "spoCompanyURL")
+								$spoCompanyURL = $datasp['valor'];
+							elseif($datasp['campo'] == "spoImageURL")
+								$spoImageURL = $datasp['valor'];
+							elseif($datasp['campo'] == "spoEmail")
+								$spoEmail = $datasp['valor'];
+							elseif($datasp['campo'] == "spoPhone")
+								$spoPhone = $datasp['valor'];
+							elseif($datasp['campo'] == "spoAddress")
+								$spoAddress = $datasp['valor'];
+
 	    				}
 	    				$spoIsOrganization = ($spoIsOrganization=='off') ? 0 : 1;
 		    			$SponsorRow->spoIsOrganization = $spoIsOrganization;
@@ -210,7 +204,7 @@ class Admin_PersonController extends Zend_Controller_Action
     			$PersonDegree->delete( "idPer = $idPer" );
     			if(!empty($degrees)){
 	    			
-	    			// los vuelvo ainsertar
+	    			// insert again
 					foreach ( $degrees as $degree ){
 						$newPersonDegree = $PersonDegree->createRow();
 						$newPersonDegree->idDeg = $degree['id'];
@@ -223,7 +217,7 @@ class Admin_PersonController extends Zend_Controller_Action
 				$PersonDepartment->delete( "idPer = $idPer" );
     			if(!empty($departments)){
 	    			
-	    			// los vuelvo ainsertar
+	    			// insert again
 					foreach ( $departments as $department ){
 						
 						$newPersonDep = $PersonDepartment->createRow();
@@ -246,64 +240,13 @@ class Admin_PersonController extends Zend_Controller_Action
     		echo( $e->getMessage() );
     	}
     }    
-    /*
-    function savedepartmentAction(){
-    	//$data	= $this->getRequest()->getParam('data', null);
-    	//echo $data[0]["valor"];echo "<pre>";var_dump($data);exit;
-    	
-    	$this->_helper->layout()->setLayout('empty');
-    	$this->_helper->viewRenderer->setNoRender();
-    	$Deppartment = new Table_Department();
-    	$PersonDeppartment = new Table_PersonDepartment();
-    	try{
-    		$data	= $this->getRequest()->getParam('data', null);
-    		    		
-    		if(!empty($data)){
-    			foreach($data as $dato){
-					if($dato['campo']=='perId'){
-						$idPer = $dato['valor'];
-					}
-    				if($dato['campo']=='idUniversity'){
-						$idUni = $dato['valor'];
-						$uni = $dato['texto'];
-    				}
-    				if($dato['campo']=='idSchool'){
-						$idSchool = $dato['valor'];
-						$school = $dato['texto'];
-    				}	
-    				if($dato['campo']=='idDepartment'){
-						$idDep = $dato['valor'];
-						$dep = $dato['texto'];
-    				}		
-				}
-				//verifico si ya existe
-				$perdep = $PersonDeppartment->fetchRow(' idPer = ' . $idPer . ' and idDep = ' . $idDep );
-				if(empty($perdep)){
-					$persondeppartment = $PersonDeppartment->createRow();
-					
-					$persondeppartment->idPer = $idPer;
-					$persondeppartment->idDep = $idDep;
-					$persondeppartment->save();
-					echo Zend_Json_Encoder::encode(array('idDep'=> $idDep, 'dep'=>$dep, 'idSchool'=>$idSchool, 'school'=>$school, 'idPer'=>$idPer, 'idUni'=>$idUni, 'uni'=> $uni));
-				}else{
-					$this->view->assign('error', 'The deppartment already exists'); 
-				}
-    		}  		
-    		
-    				
-    	} catch (Exception $e){
-    		$this->view->assign( 'error', $e->getMessage() );
-    		$this->_forward('index', 'university', 'admin');
-    	}
-    	
-    }*/
 
     /**
-     * Método para rellenar los datos de la grilla de personas
+     * Method to fill the data grid persons
      */
     public function persongridAction(){
     	$this->_helper->layout()->setLayout('empty');
-    	// no necesita vista para renderizarse
+    	// don't a view to render
     	$this->_helper->viewRenderer->setNoRender();
     	$filters = Zend_Json_Decoder::decode($this->getRequest()->getParam('filters', '{}'));
 		$where = '';
@@ -322,7 +265,7 @@ class Admin_PersonController extends Zend_Controller_Action
 		$iDisplayLength=$this->getRequest()->getParam('iDisplayLength', 50); // limit
 		$iDisplayStart = $this->getRequest()->getParam('iDisplayStart', 0); // offset
 		$limit = array('limit'=>$iDisplayLength, 'offset'=> $iDisplayStart);
-		//search de la grilla
+		//search
 		$sSearch = $this->getRequest()->getParam('sSearch', '');
 		
 		
@@ -341,8 +284,7 @@ class Admin_PersonController extends Zend_Controller_Action
     				echo ",";
     			}
     			$json = '{"DT_RowId": "'.$row[0].'", ';
-    			$PK = array_shift($row); // se asume que la primer fila tiene PK
-    			//$json = Zend_Json_Encoder::encode($row);
+    			$PK = array_shift($row);
     			foreach($row AS $k => $v){
     				$json.= '"'.$k.'":'.Zend_Json_Encoder::encode($v).',';
     			}
@@ -361,39 +303,30 @@ class Admin_PersonController extends Zend_Controller_Action
 		echo "}";
     }
     /**
-     * Método para construcción del where para filtrar la grilla de personas
+     * Where construction method to filter the grid persons
      */
     private function buildWherelp($filters){
 		$sql = '';
 		foreach ($filters AS $campo => $opciones ) {
 			$valores = $opciones['values'];
 			$operador = $opciones['op'];
-			// conversion de operadores relacionales
-			// EQ 	NE 	GT 	LT 	GE 	LE
 			switch ($operador) {
 				case 'EQ':
-					// igual, la lista de valores es igual al campo (Sirve para comparar un sólo valor)
-					// ya que un campo no puede tener mas de un valor
 					$operador = '= ALL';
 					break;
 				case 'NE':
-					// No es igual o diferente a todos los elementos listados
 					$operador = '!= ALL';
 					break;
 				case 'GT':
-					// El campo es mayor al del listado de valores
 					$operador = '> ANY';
 					break;
 				case 'LT':
-					// El campo es menor al del listado de valores
 					$operador = '< ANY';
 					break;
 				case 'GE':
-					// El campo es mayor o igual al del listado de valores
 					$operador = '>=';
 					break;
 				case 'LE':
-					// El campo es menor al del listado de valores
 					$operador = '<=';
 					break;
 				case 'IN':
@@ -421,11 +354,8 @@ class Admin_PersonController extends Zend_Controller_Action
 				}
 				$removeChars = $operador === 'BETWEEN' ?  5 : 1 ;
 				foreach ($valores AS $valor ){
-					// detectar si es fecha
 					$patron= "/[0-9]{2}-[0-9]{2}-[0-9]{4}$/";
-					//Detecto si es fecha y agrego TO_DATE('27-06-2009','DD-MM-YYYY')
 					$valor = preg_match($patron, $valor) ? "'".convFechaSQL($valor)."'" : ( is_numeric($valor) ? $valor : ( $operador !=='LIKE' ? "'" . $valor . "'": strtolower($valor) ) );
-					// si el operador es LIKE el separador es % y debo añadirselos si la cadena tiene espacios
 					$valor = $operador === 'LIKE' ? str_replace( ' ', '%', $valor ) : $valor;
 					$separador = $operador === 'BETWEEN'? ' AND ' : ($operador==='LIKE' ? '%': ',');
 					$sql .= $valor . $separador;

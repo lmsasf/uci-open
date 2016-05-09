@@ -8,7 +8,7 @@ class Admin_UniversityController extends Zend_Controller_Action
     	$this->_helper->layout()->setLayout('admin');
     }
 	/**
-	 * Listado de universidades
+	 * Universities List
 	 */
     public function indexAction()
     {
@@ -33,7 +33,7 @@ class Admin_UniversityController extends Zend_Controller_Action
     }
     
     /**
-     * Guardar school por ajax (nueva o edit)
+     * Save school by ajax (new or edit)
      * @throws Exception
      */
     public function saveschoolAction(){
@@ -73,7 +73,7 @@ class Admin_UniversityController extends Zend_Controller_Action
     }
     
     /**
-     * Guardar deppartment por ajax (nuevo o edit)
+     * Save department by ajax (new or edit)
      * @throws Exception
      */
 	public function savedeppartmentAction(){
@@ -164,7 +164,7 @@ class Admin_UniversityController extends Zend_Controller_Action
     }
     
  /**
-     * ajax para eliminar universities
+     * ajax to delete universities
      * @throws Exception
      */
     
@@ -179,14 +179,14 @@ class Admin_UniversityController extends Zend_Controller_Action
 				throw new Exception( 'Insufficient parameters' );
 			}
 			$resp = $University->delete("Id = $Id");
-			echo Zend_Json_Encoder::encode(array('Id'=> $Id));//$this->_forward('index', 'university', 'admin');//echo Zend_Json_Encoder::encode(array('Id'=> $Id));
+			echo Zend_Json_Encoder::encode(array('Id'=> $Id));
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}	
     }
     
     /**
-     * ajax para eliminar schools
+     * ajax to delete schools
      * @throws Exception
      */
     
@@ -208,7 +208,7 @@ class Admin_UniversityController extends Zend_Controller_Action
 		}	
     }
     /**
-     *ajax para eliminar deppartments
+     * ajax to delete departments
      * @throws Exception
      */
 	public function deletedeppAction(){
@@ -230,21 +230,21 @@ class Admin_UniversityController extends Zend_Controller_Action
     }
     
     /**
-     * Ajax que guarda la información del formulario de universidades
+     * Ajax keeps information form universities
      * @throws Exception
      */
     public function saveuniversityAction(){
     	$this->_helper->layout()->setLayout('empty');
     	$this->_helper->viewRenderer->setNoRender();
     	$University = new Table_University();
-    	// Obtener parámetros
+    	// Get parameters
     	$tr = $University->getAdapter()->beginTransaction();
     	try {
     		$Id 	 = $this->getRequest()->getParam('id'		, null);
     		$accion  = $this->getRequest()->getParam('accion'	, null);
     		$data	 = $this->getRequest()->getParam('data'		, null);
    		
-    		if( !is_null($accion) && !is_null($data) ){ // editar o añadir
+    		if( !is_null($accion) && !is_null($data) ){ // add or edit
     			$UniversityRow = null;
     			
     			if (is_null($Id) || empty($Id)){ 				

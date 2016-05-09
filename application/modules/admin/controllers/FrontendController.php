@@ -8,7 +8,7 @@ class Admin_FrontendController extends Zend_Controller_Action
         $this->_helper->layout()->setLayout('admin');
     }
     /**
-     * Listado de textos
+     * Texts List
      */
     public function indexAction()
     {

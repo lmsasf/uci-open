@@ -5,25 +5,14 @@ $this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fin
 	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
 	->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js');
 
-$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css')
+	->appendStylesheet($this->baseUrl().'/backend/css/custom/editor.css')
+	->appendStylesheet($this->baseUrl().'/backend/css/custom/headings.css')
+;
 ?>
 <style>
-	.step h1 { display: none;}
-	.widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
-	div.checker span { vertical-align: top !important;}
-	.editor {
-		border: dashed 2px #DDDDDD !important;
-		background-color: white;
-		height: 150px;
-		overflow: auto;
-		padding:10px;
-
-	}
 	.ui-dialog form { text-align: left; }
 	.ui-dialog .ui-dialog-content { overflow:visible;}
-
-	#license-editor .formRight {margin-right: 0px;width: 45%;}
-	#license-editor label {	width: 50%;	margin: 3px 3px 0;}
 </style>
 <div class="topHeader" style="top: 0;">
 	<div class="titleArea">
@@ -41,7 +30,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 		</div>
 	</div>
 </div>
-<!-- CONTENIDO -->
+<!-- CONTENT -->
 <div id="content">
 	<div class="wrapper">
 	<div class="loader" style="display:none;margin-top:20px;"><img alt="" src="/backend/images/loaders/loader.gif"></div>
@@ -116,7 +105,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 								</div>
 							</div>
 
-							<!-- Imagen -->
+							<!-- Image -->
 							<div id="imageShow" class="show" style="display: <?=(!empty($this->home) && ($this->home->homeType == 'slide_i'||$this->home->homeType == 'banner'))?'':'none'?>;">
 								<div class="formRow courseForm">
 									<label for="homeImageURL">Upload image:</label>
@@ -136,12 +125,12 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 								<div class="formRow courseForm">
 									<label>Preview:</label>
 									<div class="formRight">
-										<div id="simg_target"><img id="urlimagen-home" style="width:100px;" src="<?php  if($this->home){ echo $this->home->homeUrl; }else{?>/backend/images/not-available.jpg<?php }?>"></div>
+										<div id="simg_target"><img id="urlimagen-home" style="width:100px;" src="<?php  if($this->home){ echo $this->home->homeImageUrl; }else{?>/backend/images/not-available.jpg<?php }?>"></div>
 									</div>
 									<div class="clear"></div>
 								</div>
 							</div>
-							<!-- FIN Imagen -->
+							<!-- END Image -->
 
 							<div id="urlShow" class="show" style="display: <?=(!empty($this->home) && $this->home->homeType == 'slide_v')?'':'none'?>;">
 								<div class="formRow">
@@ -192,7 +181,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 			return false;
 		});
 
-		/*Texto enriquecido*/
+		/*Rich text*/
 		$('.editor').click(function() {
 			var name;
 			for(name in CKEDITOR.instances) {
@@ -205,7 +194,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 			CKEDITOR.inline(this);
 		});
 
-		/*Cargar Imagen*/
+		/*Upload Image*/
 		$('#image-upload-home').fineUploader({
 			request: {
 				endpoint: '/admin/ocw/uploadfile/target/images'
@@ -241,7 +230,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 			}
 			$('#urlimagen-home').attr('src', $(this).val());
 		});
-		/*FIN Cargar Imagen*/
+		/*END Upload Image*/
 
 		$('#homeType').on('change', function(){
 			var type = $(this).val();
@@ -322,7 +311,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 	});
 
 	function save(){
-		// recorro los campos del formulario
+		// go through form fields
 		if (jQuery('#validate').validationEngine('validate') ) {
 			if($('#homeSquare').val()==''){
 				displayMessage( 'error', 'Block selections is required.', 'Error', '' );

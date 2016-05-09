@@ -15,7 +15,6 @@ class Admin_MigraController extends Zend_Controller_Action
     	$this->_helper->layout()->setLayout('empty');
     	$OCW = new Table_OCW();
     	foreach ($OCW->fetchAll( 'idType in( 1, 2, 3, 4, 6)' ) AS $ocwRow ) {
-    	//foreach ($OCW->fetchAll( 'idType in(2)' ) AS $ocwRow ) {
     		d($ocwRow->ocwTitleEncode);
     		$ocwTitle = $ocwRow->ocwTitle;
     		$sql="SELECT count(ocwTitle) FROM OCW WHERE ocwTitle ='$ocwTitle' group by ocwTitle HAVING count(ocwTitle)>1";
@@ -43,7 +42,6 @@ class Admin_MigraController extends Zend_Controller_Action
     	$this->_helper->viewRenderer->setNoRender();
     	$OCW = new Table_OCW();
     	foreach ($OCW->fetchAll( 'idType in( 1, 2, 3, 4, 6)' ) AS $ocwRow ) {
-    	//foreach ($OCW->fetchAll( 'idType in( 2)' ) AS $ocwRow ) {
     		d($ocwRow->ocwTitleEncode);
     		$ocwTitle = $ocwRow->ocwTitleEncode;
     		$sql="SELECT count(ocwTitle) FROM OCW WHERE ocwTitleEncode ='$ocwTitle' group by ocwTitle HAVING count(ocwTitleEncode)>1";
@@ -52,7 +50,6 @@ class Admin_MigraController extends Zend_Controller_Action
 				    		->where('ocwTitleEncode = ?', $ocwTitle )
 				    		->group('ocwTitle')
 				    		->having('count(ocwTitleEncode)>1');
-    		//echo $sql; exit;
     		$contar = $OCW->getAdapter()->fetchOne($select);
     		if( $contar > 1 ){
     			$ocwRow->ocwTitleEncode = codificar_titulo($ocwRow->ocwTitle . '_' . $ocwRow->id);

@@ -6,24 +6,9 @@ $this->jQuery()->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/tabl
 ;
 $this->headLink()->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools.css')
 ->appendStylesheet($this->baseUrl().'/backend/js/plugins/tables/TableTools/media/css/TableTools_JUI.css')
+->appendStylesheet($this->baseUrl().'/backend/css/custom/dialog.css')
 ;
 ?>
-<style>
-
-.ui-dialog form {
-    text-align: left;
-}
-form.dialog > div.row {
-    float: right;
-    width: 60%;
-    padding-top: 9px;
-}
-.ui-dialog form label {
-    cursor: pointer;
-    float: left;
-    margin: 9px 0 0 10px;
-}
-</style>
 <div class="topHeader" style="top:0px;">
 	<div class="titleArea">
 		<div class="wrapper">
@@ -249,7 +234,7 @@ form.dialog > div.row {
 			 autoOpen: false,
 			 width: $(window).width() < 600 ? ($(window).width() - 10) : 500,
 			 open: function( event, ui ) {
-				// actualizar el estado a read
+				// update the status to read
 				   $.ajax( {
 				        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'contact', 'action'=> 'updatestatus'))?>",
 				        data: { id: $( "#contact-info-box" ).data('contactID') } , 
@@ -263,7 +248,7 @@ form.dialog > div.row {
 				        processData:true,
 				        success: function(datos)
 				        {
-				        	//$.jGrowl('Marked as read', { header: 'Info', sticky: false, theme: 'success' });
+				        	//do something
 				        },
 				        error: function(request, status, error)
 				        {
@@ -282,15 +267,14 @@ form.dialog > div.row {
 		 });
 
     	var calcDataTableHeight = function() {
-            return $(window).height()-300 ; 
-            // la altura de la tabla se calcula en base 
+            return $(window).height()-300 ;
         };
     	oTable = $('.dTable').dataTable( { 
-            "bJQueryUI": true, // soporte para temas UI
-            "sPaginationType": "full_numbers", // muestra los numeros de las paginas
+            "bJQueryUI": true, // UI theme support
+            "sPaginationType": "full_numbers", // show the page numbers
             "bRetrieve"  : true,
             "bProcessing": true,
-        	"bServerSide": true, // no hace falta ya que no voy a paginar via servidor
+        	"bServerSide": true, // not necessary
         	"sDom": '<""flT>rt<"F"ip>',
     		"aoColumns": [    { "sWidth": "90px", "bSortable": false }
     						, { "sWidth": "300px" }
@@ -308,8 +292,7 @@ form.dialog > div.row {
             "sScrollY": calcDataTableHeight() ,
             "bScrollCollapse": true,
             "sScrollX": "100%",
-            "bSortClasses": false, // no muestra las clases de ordenamiento
-            //"bDeferRender": true, // similar al smartrendering de DHTMLX
+            "bSortClasses": false, // don't show the order classes
             "sAjaxSource": '<?php echo $this->url(array( 'controller'=>'contact', 'action'=>'contactrequestsgrid'))?>',
             "fnServerParams": function ( aoData ) {
                 var filters = getAdvancedFilters();
@@ -323,7 +306,7 @@ form.dialog > div.row {
 
             "oTableTools": { "aButtons": [ ] },
             "fnCreatedRow": function( nRow, aData, iDataIndex ) {
-                // botones 
+                // buttons
                  var view = $('<a class="smallButton" style="line-height: 0px; margin-left:5px" title="View" href="#"><img alt="" src="/backend/images/icons/control/16/search.png"></a>');    
 	                 view.on('click',function(){
 		                 
@@ -365,7 +348,7 @@ form.dialog > div.row {
 	        oSettings.oScroll.sY = calcDataTableHeight(); 
 	        oTable.fnDraw();
         }); 
-		// dibujar los filtros si los hubiese
+		// draw filters if they exists
 		drawfbreadcrumbs(getAdvancedFilters()); 
 
     } );

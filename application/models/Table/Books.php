@@ -1,6 +1,6 @@
 <?php
 /**
- * Clase que mapea a la tabla Books
+ * Class that maps to the Books table
  */
 class Table_Books extends Zend_Db_Table_Abstract {
 	protected $_name    = 'Books';

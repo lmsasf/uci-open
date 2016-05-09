@@ -39,14 +39,6 @@ echo $this->headScript()->appendFile($this->baseUrl() . '/backend/js/jquery/jque
 			    	->appendFile($this->baseUrl() . "/backend/js/custom.js")
 ;
 ?>
-<style>
-<!--
- .active { pointer-events: none; cursor: default; color:red}
--->
-
-.editcat { background: url("/backend/images/icons/dark/add.png") repeat-x scroll 0 0 transparent; height: 37px; padding-right: 15px; margin-left: 10px;}
-.savecat { background: url("/backend/images/icons/dark/save.png") repeat-x scroll 0 0 transparent; height: 37px; padding-right: 15px; margin-left: 10px;}
-</style>
 <div class="topHeader" style="top:0px;">
 	<div class="titleArea">
 		<div class="wrapper">
@@ -77,7 +69,7 @@ echo $this->headScript()->appendFile($this->baseUrl() . '/backend/js/jquery/jque
             	<a title="Add category" href="<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'category', 'action'=>'editcategory') )?>"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/add.png"></a>		
 				<a title="Save changes" href="javascript:saveChanges()"><img class="titleIcon" alt="" src="<?php echo $this->baseUrl()?>/backend/images/icons/dark/save.png"></a>
             </div>              
-			<!-- Edición de categorias -->
+			<!-- edit categories -->
 		    <div class="dd" id="nestable2">
 				<?php echo $this->tree?>
 		    </div>
@@ -90,9 +82,6 @@ echo $this->headScript()->appendFile($this->baseUrl() . '/backend/js/jquery/jque
     $(document).ready(function() {   	
     	$('.dd').nestable({ maxDepth:10 });
         $('.dd').on('change', function() {
-            /* on change event */
-            //console.debug($(this));
-        	//console.debug($('.dd').nestable('serialize'));
         });
     } );
 	function saveChanges(){
@@ -115,18 +104,14 @@ echo $this->headScript()->appendFile($this->baseUrl() . '/backend/js/jquery/jque
 		        success: function(datos)
 		        {
 		        	$.unblockUI();
-		        	// tipo, mensaje, prefrase, url_redirect
+		        	// type, menssage, pre phrase, url_redirect
 		        	displayMessage( 'success', 'Data saved successfully', 'Success', '' );
-		        	//$.jGrowl('Data saved successfully', { header: 'Success', sticky: false, theme: 'success' });
-
 		        },
 		        error: function(request, status, error)
 		        {
 		        	$.unblockUI();
 		            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
-        		    // tipo, mensaje, prefrase, url_redirect
-		        	displayMessage( 'error', mensaje, 'Error', '' );
-		            // $.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
+        		    displayMessage( 'error', mensaje, 'Error', '' );
 		        },
 		        timeout: 200000,
 		        type: "POST"
@@ -162,7 +147,7 @@ echo $this->headScript()->appendFile($this->baseUrl() . '/backend/js/jquery/jque
 				           message:  '<div id="loadingBUI"> Please wait. When completed, this page will reload</div>'
 				       }); 
 
-				       // guardar antes
+				       // save first
 				       
 				       $.ajax( {
 					        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'category', 'action'=> 'savetree'))?>",
@@ -177,7 +162,7 @@ echo $this->headScript()->appendFile($this->baseUrl() . '/backend/js/jquery/jque
 					        processData:true,
 					        success: function(datos)
 					        {
-						        //Elimino 
+						        //delete
 								   $.ajax( {
 								        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'category', 'action'=> 'delcategory'))?>",
 								        data: { id:idCat } , 
@@ -191,26 +176,13 @@ echo $this->headScript()->appendFile($this->baseUrl() . '/backend/js/jquery/jque
 								        processData:true,
 								        success: function(datos)
 								        {
-								        	//$.unblockUI();
 								        	displayMessage( 'success', 'Data deleted successfully', 'Success', '<?php echo $this->url(array('module'=>'admin','controller'=>'category', 'action'=>'index'))?>' );
-								        	/*var form = $('<form>').attr({
-								                name:'delform', 
-								                method: 'post', 
-								                action: ''
-								            });
-								             form.appendTo($('body'));
-								             form.submit();	*/	        	
-								        	//$.jGrowl('Data deleted successfully', { header: 'Success', sticky: false, theme: 'success' });
-
-								        },
+										},
 								        error: function(request, status, error)
 								        {
 								        	$.unblockUI();
 								            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
-								            //$.msgbox(mensaje, {type: "error"});
 								            displayMessage( 'error', mensaje, 'Error', '' );
-								            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
-								            
 								        },
 								        timeout: 20000,
 								        type: "POST"
@@ -221,8 +193,6 @@ echo $this->headScript()->appendFile($this->baseUrl() . '/backend/js/jquery/jque
 					        {
 					        	$.unblockUI();
 					            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
-					            //$.msgbox(mensaje, {type: "error"});
-					            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
 					            displayMessage( 'error', mensaje, 'Error', '' );
 					        },
 					        timeout: 20000,

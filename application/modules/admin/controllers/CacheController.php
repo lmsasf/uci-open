@@ -11,20 +11,17 @@ class Admin_CacheController extends Zend_Controller_Action
 		$this->_helper->layout()->setLayout('admin');
 	}
 	/**
-	 * Listado de Categorias
+	 * Categories list
 	 */
 	public function indexAction()
 	{
 		$this->view->headTitle('Cache :: Tree');
-		///////////////////////////////////////////
-		//d( $this->dirToArray(CACHE_PUBLIC) );
 		$this->view->cached = $this->dirToArray(CACHE_PUBLIC);
-
-		
 	}
+
 	public function cleanAction()
 	{
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		try {
 			$output = array();
@@ -39,7 +36,7 @@ class Admin_CacheController extends Zend_Controller_Action
 	
 	public function removeAction()
 	{
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		$data = $this->getRequest()->getParam('data', null);
 		try {
@@ -60,12 +57,12 @@ class Admin_CacheController extends Zend_Controller_Action
 	public function refreshAction()
 	{
 		$this->_helper->layout()->setLayout('empty');
-		// no necesita vista para renderizarse
+		// don't need a view to render
 		$this->_helper->viewRenderer->setNoRender();
 		$idOCW = $this->getRequest()->getParam('Id', null);
 		$cron = $this->getRequest()->getParam('cron', null);
                 
-                $redirect = true;
+		$redirect = true;
                 
 		try {
 			if(is_null($idOCW)){
@@ -103,13 +100,13 @@ class Admin_CacheController extends Zend_Controller_Action
 			echo $e->getMessage();
 		}
                 
-                if($redirect){
-                    $this->_forward('index','ocw','admin');
-                }
+		if($redirect){
+			$this->_forward('index','ocw','admin');
+		}
                 
 	}
 	/**
-	 * Devuelve el arbol de directorios en un array
+	 * Returns the directory tree into an array
 	 * 
 	 * @param String $dir
 	 * @return array

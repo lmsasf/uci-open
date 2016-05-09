@@ -5,25 +5,14 @@ $this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fin
 	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
 	->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js');
 
-$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css');
+$this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineuploader/fineuploader-3.5.0.css')
+	->appendStylesheet($this->baseUrl().'/backend/css/custom/editor.css')
+	->appendStylesheet($this->baseUrl().'/backend/css/custom/headings.css')
+;
 ?>
 <style>
-	.step h1 { display: none;}
-	.widget .title h6 { float: right; font-size: 12px; font-weight: bold; padding: 9px 12px 8px;}
-	div.checker span { vertical-align: top !important;}
-	.editor {
-		border: dashed 2px #DDDDDD !important;
-		background-color: white;
-		height: 150px;
-		overflow: auto;
-		padding:10px;
-
-	}
 	.ui-dialog form { text-align: left; }
 	.ui-dialog .ui-dialog-content { overflow:visible;}
-
-	#license-editor .formRight {margin-right: 0px;width: 45%;}
-	#license-editor label {	width: 50%;	margin: 3px 3px 0;}
 </style>
 <div class="topHeader" style="top: 0;">
 	<div class="titleArea">

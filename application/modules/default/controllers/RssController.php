@@ -22,12 +22,11 @@ class Default_RssController extends Zend_Controller_Action
             'charset'=>'utf-8',
             'entries'=>array()
         );
-		// construir el arreglo del ITEM
+		// build the arrangement ITEM
 		$entries = $ocw->getOcwRss( $ocwType );
-		//d($entries); exit();
+
 		foreach ($entries as $entrie ){
 			$cat = $category->getPath($entrie->idCat);
-			//$descriptionBody = $entrie->ocwDescription;
 			if(!empty($entrie->ocwBypassUrlCourse) || !empty($entrie->ocwBypassUrlLecture)){
 				$ocwLink = empty($entrie->ocwBypassUrlLecture)? $entrie->ocwBypassUrlCourse: $entrie->ocwBypassUrlLecture;
 			} else {
@@ -61,10 +60,8 @@ class Default_RssController extends Zend_Controller_Action
 							,'link'			=> $ocwLink
 							,'guid'			=> $entrie->id
 			);
-// 			d($category->getPath($entrie->idCat)); exit;
 			array_push( $feedData['entries'], $item );
 		}
-		//d($feedData); exit;
         // create our feed object and import the data
         $feed = @Zend_Feed::importArray ( $feedData, 'rss' );
         // set the Content Type of the document

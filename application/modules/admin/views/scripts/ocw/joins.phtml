@@ -5,14 +5,14 @@ $this->jQuery() ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/cke
 				->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js');
 ?>
  <style>
-  	#ocw-all, #ocw-join { list-style-type: none; margin: 0; padding: 0; width: 100%; float:left; min-height:50px;}  
-	#ocw-all li,#ocw-join li { float:left; margin: 4px; } 
+  	#ocw-all, #ocw-join { list-style-type: none; margin: 0; padding: 0; width: 100%; float:left; min-height:50px;}
+	#ocw-all li,#ocw-join li { float:left; margin: 4px; }
 	.smallButton {float: right;	height: 16px; margin: 2px;	line-height: 15px;}
 	.smallButtonSep {background: url("/backend/images/backgrounds/titleBg.png") repeat-x scroll 0 0 transparent; border: 1px solid #CDCDCD; display: inline-block; padding: 3px;float: right;	height: 16px; margin: 2px;	line-height: 15px;}
 	.widget-content-ocw, .widget-content-all { overflow: auto;height: 500px;	padding: 5px;}
 	.oneThree { width: 32%; display: inline; float: left; margin-left: 2%; }
 	.oneThree:first-child { margin-left: 0; float: left; }
-	.twoOne { width: 66%; float: right; margin-left: 2%;  clear: none;} 
+	.twoOne { width: 66%; float: right; margin-left: 2%;  clear: none;}
 	.twoOne:first-child { margin-left: 0; float: left; }
 	.chzn-container-multi { width: 100% !important; }
 	.chzn-container-multi .chzn-choices .search-choice { max-width: 150px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;}
@@ -39,40 +39,37 @@ $this->jQuery() ->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/cke
 	}
 	.label h1 { color: #FFFFFF; float: left; font-size: 12px; letter-spacing: 1px; margin: 4px; overflow: hidden; padding-left: 4px; text-overflow: ellipsis; text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3); white-space: nowrap; width: 80%; }
 	.infoTitle {overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 110px;}
-	.editor { 
+	.editor {
 		border: dashed 2px #DDDDDD !important;
 		background-color: white;
 		height: 200px;
 		overflow: auto;
 		padding:10px;
-		
-	 }	
+
+	 }
 	@media only screen and (min-width: 768px) and (max-width: 1470px) {
 		.formRow .formRight {width: 65%;}
-	}	
+	}
 	@media only screen and (min-width: 980px) and (max-width: 1280px) {
 		.formRow .formRight {width: 72%;}
-	}	
+	}
 	.cke_dialog_body { z-index: 10200 !important; }
 </style>
   <script>
 $(function() {
-	
-	//$.fx.off = true;
-
-	$( "#ocw-join , #ocw-all" ).sortable( 
+	$( "#ocw-join , #ocw-all" ).sortable(
 		{ 	 connectWith: ".connectedSortable"
 			,placeholder: "placeholder"
 			,receive: function( event, ui ) {
 				if( ui.sender.prop('id') == 'ocw-all'){ 
-					// le cambio el icomo al boton
+					// change the icon to the button
 					ui.item.find('.smallButton').text('►');
 				}else{
 					var id = ui.item.find('.smallButtonSep').parents('li').prop('id');
-					if(id){ // Boton x de los joins
+					if(id){ // X button of the joins
 						removejoin(id);
 					}
-					// le cambio el icomo al boton
+					// change the icon to the button
 					ui.item.find('.smallButton').text('◄');
 				}
 			}
@@ -96,7 +93,7 @@ $(function() {
 			type_filter.push( $(this).val() );
 		});
 		all_filters = {combo:select_filter, joins:exclude_join, text: text_filter, type: type_filter, id: <?php echo $this->Id?> };
-		// enviar por ajax
+		// send by ajax
 		$('.twoOne').block({ 
 			theme:     true, 
 		    title:    'Loading', 
@@ -135,20 +132,17 @@ $(function() {
 		        	$('#startMessage').show();
 		        }
 				$('.twoOne').unblock();
-				//$.jGrowl('Data saved successfully', { header: 'Success', sticky: false, theme: 'success' });
 		    },
 	        error: function(request, status, error)
 	        {
 	        	$('.twoOne').unblock();
 	            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
-	            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
 	            displayMessage( 'error', mensaje, 'Error', '' );
 	        },
 	        timeout: 20000,
 	        type: "POST"
-	    } );		
-		//console.debug( all_filters );
-		// remuevo los toolTip que se quedan flotando en Firefox
+	    } );
+		// remove all the toolTip that are floating in Firefox
 		$('.tipsy').remove();
 		
 	 });
@@ -161,26 +155,25 @@ $(function() {
 		$("#chzn-select").change();
 		$('#startMessage').hide();
 	});
-	// agrego un tooltip elegante para no perder la linea de los filtros
+	// add an elegant tooltip to keep the line of filters
 	$('.search-choice').tipsy({live: true, title: function() { return $(this).text(); }	, delayOut: 400});
 
 	$('.smallButton').live('click', function(){
-		//busco en que lado esta el boton que estoy pulsando
+		//I look for which side is the button I am pressing
 		if($(this).parents('#ocw-all').length > 0){ 
-			//a este elemento le busco el LI y lo muevo de lista de la izquierda
+			//this element will I seek LI and move it left list
 			$(this).parents('li').hide().appendTo('#ocw-join').fadeIn(1000);
-			// le cambio el icomo al boton
+			// change the icon button
 			$(this).text('►');
 		}else{
-			//a este elemento le busco el LI y lo muevo de lista de la derecha
+			//this element will I seek LI and move it right list
 			$(this).parents('li').hide().appendTo('#ocw-all').fadeIn(1000);
-			// le cambio el icomo al boton
+			// change the icon button
 			$(this).text('◄');
 		}
 	});
 	$('.smallButtonSep').live('click', function(){
 		var id = $(this).parents('li').prop("id");
-		//$(this).parents('li').remove();
 		removejoin(id);
 	});
 	 $( "#ocw-info-box" ).dialog({
@@ -205,7 +198,7 @@ $(function() {
 				"Ok": function() {
 					if (jQuery('.dialog').validationEngine('validate')) {
 							if (jQuery('#validate').validationEngine('validate')) {
-								// agregar el encabezado
+								// add to the header
 								addHeader();
 								$( this ).dialog( "close" );					
 							}
@@ -282,7 +275,6 @@ function getJoins(){
 }
 function save(){
 		var data = getJoins();
-		//console.debug(data);
 		var Id = <?php echo $this->Id?>;
 	    $.ajax( {
 	        url: "<?php echo $this->url(array('module'=>'admin', 'controller'=>'ocw', 'action'=> 'saveocwjoin'))?>",
@@ -292,15 +284,12 @@ function save(){
 	        cache:false,
 	        ifModified: false,
 	        processData:true,
-	        success: function(datos) { 
-		        // $.jGrowl('Data saved successfully', { header: 'Success', sticky: false, theme: 'success' });
-	        	// tipo, mensaje, prefrase, url_redirect
+	        success: function(datos) {
 	        	displayMessage( 'success', 'Data saved successfully, redirecting...', 'Success', '<?php echo $this->url( array( 'module'=>'admin', 'controller'=>'ocw', 'action'=>'index') )?>' ); 
 		    },
 	        error: function(request, status, error)
 	        {
 	            var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
-	            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
 	            displayMessage( 'error', mensaje, 'Error', '' );
 	        },
 	        timeout: 20000,
@@ -340,7 +329,7 @@ function viewAll(){
 	$("#chzn-select").change();
 }
 /**
- * Agrega un Header
+ * Add a header
  */
 function addHeader(){
 	var headerTitle = $("#headerTitle").val();
@@ -363,7 +352,6 @@ function addHeader(){
         error: function(request, status, error)
         {
             var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
-            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
             displayMessage( 'error', mensaje, 'Error', '' );
         },
         timeout: 20000,
@@ -371,7 +359,7 @@ function addHeader(){
     } ); 
 }
 /**
- * Agrega un Label
+ * Add a label
  */
 function addLabel(){
 	var labelText = $('#labelText').html()
@@ -384,22 +372,18 @@ function addLabel(){
         ifModified: false,
         processData:true,
         success: function(datos) { 
-			/////
-			
 			var li = $('<li>').attr({ id: datos.id, 'class':'ocwChild', 'style':'width:98%; max-width:512px;' });
 			var h1 = '<h1>Label</h1>';
 			var a = $('<a>').attr({'class': 'smallButtonSep', title: 'Remove', href:"javascript:void(0)" }).html('&nbsp;x&nbsp;');
 			var clear = $('<div>').attr({'class': 'clear'});
 			li.append( $('<div class="topbar label" style="" >').append( h1 ).append( a ).append( clear ) );
 			li.append( $('<div class="inbar" style="padding: 25px 40px 10px 10px;">').append(datos.ocwDescription).append( clear ) );
-			
-			/////
+
         	$('#ocw-join').prepend(li);
         },
         error: function(request, status, error)
         {
             var mensaje = request.responseText != '' ? request.responseText : 'Timed out or interrupted session, you may be having problems in the network' ;
-            //$.jGrowl(mensaje, { header: 'Error', sticky: true, theme: 'error' });
             displayMessage( 'error', mensaje, 'Error', '' );
         },
         timeout: 20000,

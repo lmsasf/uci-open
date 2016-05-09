@@ -15,40 +15,40 @@ class Default_DownloadController extends Zend_Controller_Action
 	public function indexAction(){
 		$this->_helper->layout->disableLayout();
 		$this->_helper->viewRenderer->setNoRender();
-		// obtener el OCW
+		// get OCW
 		$OCW = new Entity_OCW($this->ocwTitleEncode);
-		// verificar si el paquete existe y devolverlo
+		// verify the package exits and return it
 		$root = $_SERVER['DOCUMENT_ROOT'];
 		$packageName= strtolower($OCW->typeName) . '_' . $OCW->titleEncode.".imscc";
 		$zipFile = $root.'/packages/'.$packageName;
 		if( file_exists($zipFile) ){
 			$this->sendheaders($zipFile);
 		}
-		// Crear la carpeta temporal que luego se va a comprimir 
+		// Create a temporary folder then be compressed
 		$tmpFolder = APPLICATION_PATH . '/tmp/';
 		$newFolder = $tmpFolder. $OCW->titleEncode;
 		
 		
-		if(is_dir($newFolder)){ // la carpeta existe, hay que eliminarla
+		if(is_dir($newFolder)){ // the folder exists, it must be delete
 			$this->rrmdir($newFolder);
 		}
 		$result = mkdir($newFolder);
 		$newFolder .= '/'.  $OCW->titleEncode;
-		//d($newFolder); exit();
+
 		$result = mkdir($newFolder);
-		if( $result ){ // se creo con exito
-			// Obtener y copiar los html a la carpeta
-			// Copiar la carpeta frontend que tiene todas las imágenes
+		if( $result ){ // It was created successfully
+			// Get and copy the html to the folder
+			// Copy the frontend folder with all images
 			$source = $root . '/frontend';
 			
 			mkdir($newFolder .'/frontend');
 			$this->full_copy($source, $newFolder . '/frontend' );
 			
-			// Obtengo los archivos de la carpeta frontend
+			// Get files from the frontend folder
 			$dir =array();
-			$this->listDir($source, $dir); // ojo! dir esta pasado por referencia, ver la función mas abajo
+			$this->listDir($source, $dir); // Warning! dir is passed by reference, see the function below
 			
-			// obtener y copiar el Index del curso
+			// get and copy the Course Index
 			$host = $_SERVER['HTTP_HOST'];
 			$resource = strtolower($OCW->typeName). 's/'. $OCW->titleEncode . '.html'; 
 			$index = file_get_contents('http://'. $host .'/'. $resource );
@@ -60,14 +60,14 @@ class Default_DownloadController extends Zend_Controller_Action
 			$fp=fopen($newFolder.'/index.html',"x");
 			fwrite($fp,$index);
 			fclose($fp) ;
-			// Obtener los Joins, crear la carpeta y obtener los archivos
+			// Get the Joins, create the folder and get files
 			foreach ($OCW->joins as $jocw ){
 				if($jocw->type != 5 && $jocw->type !=7 ) {
 					$titleEncode = is_null($jocw->titleEncode) ? codificar_titulo($jocw->title) : $jocw->titleEncode;
 					$target = '';
-					// verifico si la carpeta del Join existe y si no la creo
+					// check if the Join folder exists and if not create it
 					$typeDir = strtolower($jocw->typeName).'s';
-					if(!is_dir($newFolder. '/'. $typeDir)){ // no esta creada, la creo
+					if(!is_dir($newFolder. '/'. $typeDir)){
 						mkdir($newFolder. '/'. $typeDir);
 					}
 					switch ($jocw->type) {
@@ -91,7 +91,7 @@ class Default_DownloadController extends Zend_Controller_Action
 							break;
 					}
 					
-					// si es File hay que obtener el nombre del archivo
+					// get the name of the file
 					if($jocw->type == 2){
 						if($jocw->isAlive($target)){
 							$resource = @file_get_contents($target);
@@ -111,16 +111,12 @@ class Default_DownloadController extends Zend_Controller_Action
 					fclose($fp) ;
 				}				
 			}
-			// generar el manifest y copiarlo a la carpeta
+			// generate the manifest and copy it to the folder
 			$manifest = $this->view->partial("download/imsmanifest.phtml", array( 'ocw'=> $OCW, 'harcodeddir'=> $dir, 'tmpFolder'=> $tmpFolder ));
 			$fp=fopen($tmpFolder. $OCW->titleEncode.'/imsmanifest.xml',"x");
 			fwrite($fp,$manifest);
 			fclose($fp) ;
-			// comprimir
-			//$packageName= strtolower($OCW->typeName) . '_' . $OCW->titleEncode.".imscc";
 			$result = Asf_Zip::zipDir($tmpFolder . $OCW->titleEncode , 'packages/'.$packageName);
-			// devolver el File
-			//$zipFile = $root.'/packages/'.$packageName;
 			$this->sendheaders($zipFile);
 		} else {
 			throw new Exception('Could not create directory');
@@ -128,7 +124,7 @@ class Default_DownloadController extends Zend_Controller_Action
 	}
 	
 	/**
-	 * @param sting $zipFile Path del archivo comprimido
+	 * @param sting $zipFile Path of the zip file
 	 */
 	private function sendheaders($zipFile){
 		
@@ -154,7 +150,7 @@ class Default_DownloadController extends Zend_Controller_Action
 	}
 	
 	/**
-	 * Remueve recursivamente un directorio
+	 * recursively remove a directory
 	 * @param String $dir
 	 */
 	private function rrmdir($dir) {
@@ -171,7 +167,7 @@ class Default_DownloadController extends Zend_Controller_Action
 	}
 	
 	/**
-	 * Obtiene el nombre real de un archivo a través de su URL
+	 * Gets the actual name of a file by its URL
 	 * @param String $url
 	 **/
 	private function getRealFileName($url){
@@ -194,7 +190,7 @@ class Default_DownloadController extends Zend_Controller_Action
 
 	
 	/**
-	 * Copia un directorio completo
+	 * Copy the entire directory
 	 * @param unknown $source
 	 * @param unknown $target
 	 */
@@ -222,26 +218,20 @@ class Default_DownloadController extends Zend_Controller_Action
 	
 
 	/**
-	 * Recorre un directorio y devuelve un array con todos los archivos y su ruta relativa
+	 * Browse a directory and returns an array with all the files and relative path
 	 * @param String $ruta
 	 * @throws Exception
 	 * @return array
 	 */
 	private function listDir($ruta, &$arrayRet)
 	{
-		// comprobamos si lo que nos pasan es un direcotrio
+		// check if is a directory
 		if (is_dir($ruta)){
-			// Abrimos el directorio y comprobamos que
+			// Open the directory
 			if ($aux = opendir($ruta)){
 				while (($archivo = readdir($aux)) !== false){
-					// Si quisieramos mostrar todo el contenido del directorio pondríamos lo siguiente:
-					// echo '<br />' . $file . '<br />';
-					// Pero como lo que queremos es mostrar todos los archivos excepto "." y ".."
 					if ($archivo!="." && $archivo!=".."){
 						$ruta_completa = $ruta . '/' . $archivo;
-						// Comprobamos si la ruta más file es un directorio (es decir, que file es
-						// un directorio), y si lo es, decimos que es un directorio y volvemos a
-						// llamar a la función de manera recursiva.
 						if ( is_dir($ruta_completa) )	{
 							$this->listDir($ruta_completa , $arrayRet);
 						}else{

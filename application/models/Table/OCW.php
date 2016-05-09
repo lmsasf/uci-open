@@ -1,6 +1,6 @@
 <?php
 /**
- * Mapea la tabla OCW
+ * OCW mapping table
  * @author damills
  *
  */
@@ -10,8 +10,8 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 	protected $_primary = 'id';
 	
 	/**
-	 * Obtiene los campos que hay en la tabla OCW
-	 * se usa para hacer los inserts
+	 * Gets the fields in the table OCW
+	 * It used to make inserts
 	 * @return array
 	 */
 	public function getFields(){
@@ -24,18 +24,18 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 		return $campos;
 	}
 	/**
-	 * Obtiene los datos para mostrar en grilla de OCW
-	 * @param string $where cadena a aplicar en el where de la consulta
-	 * @param array $sort array('columna'=>1, 'direccion'=>'ASC')
-	 * @param array $limit array('limit'=>-1, 'offset'=>0)
-	 * @param string $sSearch cadena a buscar
+	 * Gets the data to show grid OCW
+	 * @param string $where - string to apply into the where of the query
+	 * @param array $sort - array('column'=>1, 'direction'=>'ASC')
+	 * @param array $limit - array('limit'=>-1, 'offset'=>0)
+	 * @param string $sSearch - search string
 	 * @throws Exception
-	 * @return array Array que contiene un cursor, cantidad de registros y cantidad de registros filtrados
+	 * @return array - Array containing a cursor, number of records and number of filtered records
 	 */
 	public function getOcwGrid($where = null, $sort=array('columna'=>1, 'direccion'=>'ASC'), $limit = array('limit'=>-1, 'offset'=>0), $sSearch='', $rol = null)
 	{
 			try {
-				//validaciones de parámetros
+				//parameters validation
 				$where       = is_null($where) ? 'AND 1=1 ' : $where;
 				
 				$rolecondition = '';
@@ -45,7 +45,7 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 					$rolecondition = ' and r0.idType in (1,4,6) ';
 				}
 				
-				if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verifico que los argumentos sean validos
+				if( !is_array($sort) || !is_array($limit) || !is_string($sSearch) || !is_string($where)){ // verify valid arguments
 					throw new Exception('Invalid parameters');	
 				} else {
 					if( !array_key_exists('columna', $sort) || !array_key_exists('direccion', $sort) || !array_key_exists('limit', $limit) || !array_key_exists('offset', $limit) ){
@@ -81,8 +81,6 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 										, r1.uniName
 										, r2.schName
 										, r3.depName
-										/* , r0.ocwUrl
-										, r0.ocwBypassUrl */
 										, r0.thumbnail
 										, IF(ocwNotes is not null AND LENGTH(ocwNotes)>0, 'Yes', 'No') hasNote
 								From OCW r0
@@ -126,8 +124,7 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 				} else {
 					$sql .= $where. " ORDER BY $sSort LIMIT $pag OFFSET $start";
 				}					 
-				//$sql .=" $where	ORDER BY $sSort LIMIT $pag OFFSET $start";
-			
+
 				$rs = array('cursor'=>$this->getDefaultAdapter()->query($sql) , 'count'=>$totalCount, 'countWhere'=>$totalCountWhere );
 				return $rs;
 			} catch (Exception $e){
@@ -135,7 +132,7 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 			}
 	}
 	/**
-	 * Obtiene la Info de la tabla OCW, algunos campos 
+	 * Get the info from OCW table, some fields
 	 * @param integer $id
 	 * @return Mixed Zend_Db_Table_Row_Abstract|Zend_Db_Table_Rowset_Abstract
 	 */
@@ -146,7 +143,7 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 				->joinLeft(array('r2'=> 'School'), 'r2.id = r0.idSchool', array('r2.schName'))
 				->joinLeft(array('r3'=> 'Department'), 'r3.id = r0.idDepartment', array('r3.depName'))
 		;
-		if(!is_null($id)){ // añado el where
+		if(!is_null($id)){ // add where
 			$select->where('r0.id = ? ', $id );
 			return $this->fetchRow($select);
 		}else{
@@ -155,7 +152,7 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 		
 	}
 	/**
-	 * Buscador
+	 * Searcher
 	 * @param string $search
 	 * @param string $filter
 	 * @param string $category
@@ -166,7 +163,6 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 		
 		$fieldsearch = "LOWER(r0.ocwTitle), LOWER(r0.ocwKeywords), LOWER(r0.ocwDescription)";
 		$fieldsearchreverse = "LOWER(r0.ocwDescription), LOWER(r0.ocwKeywords), LOWER(r0.ocwTitle)";		
-		//$sSearch = strtolower($search);
 		$sSearch = str_replace(' ', '%', $search);
 		$sSearch = addslashes(strtolower($sSearch));
 		$concat_ws = "CONCAT_WS(' ',".$fieldsearch .','. $fieldsearchreverse .") LIKE '%$sSearch%'" ;
@@ -195,7 +191,6 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 		}
 		if( $category != 'all' ){
 			$select->joinInner(array('r7'=> 'OCWCategory'), 'r7.idOCW = r0.id AND r7.idCat=' . $category , array('r7.idCat'));
-			//$select->where( 'r7.idCat = ?' , $category) ;
 		}
 
 		if( $language != 'all' ){
@@ -205,13 +200,12 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 	
 	}
 	/**
-	 * Remueve un OCW del cache
+	 * remove OCW cache
 	 * @param integer $idOCW
 	 * @throws Exception
 	 * @return boolean
 	 */
 	public function removeFromCache($idOCW){
-		//try {
 			if( is_null($idOCW) || empty($idOCW) ){
 				return false;
 			}
@@ -223,12 +217,12 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 			$output2 = array();
 			$runCommand = 'find ' . CACHE_PUBLIC . ' -type f -name "'.$file.'*" -exec rm -fv {} \;';
 			exec( $runCommand, $output );
-			// eliminar el paquete si ya existe
+			// remove the package if already exists
 			$root = $_SERVER['DOCUMENT_ROOT'];
 			$root = $root.'/packages/';
 			$runCommand = 'find ' . $root . ' -type f -name "*'.$package.'" -exec rm -fv {} \;';
 			exec( $runCommand, $output2 );
-			// Tomar como salida cierta la eliminación del cache no del paquete
+			// Take as some output cache removal no Package
 			if( empty( $output ) ) {
 				return false;
 			}else{
@@ -237,7 +231,7 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 
 	}
 	/**
-	 * Remueve los INDEX del cache
+	 * Remove INDEX from cache
 	 * @param integer $idType
 	 * @return boolean
 	 */
@@ -281,7 +275,7 @@ class Table_OCW extends Zend_Db_Table_Abstract {
 		->joinLeft(array( 'r9' =>'Course'), 'r0.id = r9.idOCW', array('r9.ocwBypassUrlCourse'))
 		->joinLeft(array( 'r10' =>'Lecture'), 'r0.id = r10.idOCW', array('r10.ocwBypassUrlLecture'))
 		->joinLeft(array( 'r11' =>'File'), 'r0.id = r11.idOCW', array('r11.ocwUrlFile'))
-		->where("r0.ocwGolive = ?", 1) // publicadas
+		->where("r0.ocwGolive = ?", 1) // published
 		->group("r0.id")
 		->order('r0.id DESC');
 	

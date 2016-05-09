@@ -1,6 +1,6 @@
 <?php
 /**
- * Mapeo de tabla Author
+ * Resource mapping table
  * @author damills
  *
  */
