@@ -1,7 +1,7 @@
 <?php
 $this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
-	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
-	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor_full/ckeditor.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor_full/adapters/jquery.js')
 	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
 	->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js');
 
@@ -97,6 +97,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 </div>	        
 <script type="text/javascript">
 	$(function() {
+
 		$('#validate').submit(function() {
 			save();
 			return false;

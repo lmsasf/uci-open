@@ -9,7 +9,7 @@ body {background-color: #95AFC9;}
 #content {background-color:#fff; padding-bottom: 30px;}
 #content > h1 {	margin:15px;}
 #content > p {margin:20px;}
-#header {background-color: #768ca3;}
+#header {background-color: #16689F;}
 #header > a > img.logo  {padding:6px;}
 #navi {	z-index:2;}
 #facebook {background: #3B5998;}
@@ -17,7 +17,7 @@ body {background-color: #95AFC9;}
 #twitter {background: #39A9E0;}
 #youtube {background: #CD332D;}
 #itunes {background: #B9BFC1;}
-.navbar .navbar-inner {	background: #ececec; z-index: 1000;}
+.navbar .navbar-inner {	background: #f7eb5f; z-index: 1000;}
 .course {background: rgb(255,175,75);}
 .file {background: rgb(234,0,0);}
 .collection {background: rgb(138,182,107);}

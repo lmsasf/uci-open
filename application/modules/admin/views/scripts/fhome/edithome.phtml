@@ -1,7 +1,7 @@
 <?php
 $this->jQuery()	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/fineuploader/jquery.fineuploader-3.5.0.js')
-	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/ckeditor.js')
-	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor/adapters/jquery.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor_full/ckeditor.js')
+	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ckeditor_full/adapters/jquery.js')
 	->addJavascriptFile( $this->baseUrl() . '/backend/js/plugins/ui/jquery.prettyPhoto.js')
 	->addJavascriptFile( $this->baseUrl() . '/backend/js/ocw/edit.js');
 
@@ -13,6 +13,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 <style>
 	.ui-dialog form { text-align: left; }
 	.ui-dialog .ui-dialog-content { overflow:visible;}
+
 </style>
 <div class="topHeader" style="top: 0;">
 	<div class="titleArea">
@@ -80,16 +81,23 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 										<option value="slide_v" <?php if(!empty($this->home) && $this->home->homeType == 'slide_v'){ echo "selected";}?>>Carousel - Video</option>
 										<option value="slide_i" <?php if(!empty($this->home) && $this->home->homeType == 'slide_i'){ echo "selected";}?>>Carousel - Image</option>
 										<option value="banner" <?php if(!empty($this->home) && $this->home->homeType == 'banner'){ echo "selected";}?>>Banner</option>
+										<option value="rss" <?php if(!empty($this->home) && $this->home->homeType == 'rss'){ echo "selected";}?>>Rss</option>
 									</select>
 								</div>
 								<div class="clear"></div>
 							</div>
 
-							<div id="titleShow" class="show" style="display: <?=(!empty($this->home) && $this->home->homeType == 'text')?'':'none'?>;">
+							<div id="titleShow" class="show" style="display: <?=(!empty($this->home))?'':'none'?>;">
 								<div class="formRow">
 									<label for="title">Title:</label>
 									<div class="formRight">
-										<input type="text" class="clearField" name="homeTitle" id="homeTitle" value="<?php echo is_null($this->home) ? '' : $this->home->homeTitle; ?>"/>
+										<?php if(!empty($this->home) && ($this->home->homeType == 'slide_i' || $this->home->homeType == 'slide_v')){ ?>
+											<div class="editor titles" data-name="homeTitle" style="height: 50px;"><?php if(!empty($this->home->homeTitle)) echo $this->home->homeTitle;?></div>
+										<?php } else{ ?>
+											<input type="text" class="clearField" name="homeTitle" id="homeTitle" value="<?php echo is_null($this->home) ? '' : $this->home->homeTitle; ?>"/>
+											<div class="editor titles" data-name="<?=$this->accion =='add'?'homeTitle':'richTitle'?>" style="height: 50px;display: none;"><?php if(!empty($this->home->homeTitle)) echo $this->home->homeTitle;?></div>
+										<?php }?>
+
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -132,7 +140,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 							</div>
 							<!-- END Image -->
 
-							<div id="urlShow" class="show" style="display: <?=(!empty($this->home) && $this->home->homeType == 'slide_v')?'':'none'?>;">
+							<div id="urlShow" class="show" style="display: <?=(!empty($this->home) && ( $this->home->homeType == 'slide_v' || $this->home->homeType == 'rss'))?'':'none'?>;">
 								<div class="formRow">
 									<label for="title">Url:<span class="req"></span></label>
 									<div class="formRight">
@@ -142,7 +150,7 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 								</div>
 							</div>
 
-							<div id="orderShow" class="show" style="display: <?=(!empty($this->home) && $this->home->homeType != 'text')?'':'none'?>;">
+							<div id="orderShow" class="show" style="display: <?=(!empty($this->home) && $this->home->homeType != 'text' && $this->home->homeType != 'rss')?'':'none'?>;">
 								<div class="formRow">
 									<label for="order">Order<span id="orderComment"></span>:</label>
 									<div class="formRight">
@@ -175,6 +183,8 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 </div>
 <script type="text/javascript">
 	var urlImage = "<?php echo 'http://'.$_SERVER['SERVER_NAME'].'/upload/images/'?>";
+
+
 	$(function() {
 		$('#validate').submit(function() {
 			save();
@@ -183,6 +193,20 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 
 		/*Rich text*/
 		$('.editor').click(function() {
+			var name;
+			for(name in CKEDITOR.instances) {
+				var instance = CKEDITOR.instances[name];
+				if(this && this == instance.element.$) {
+					return;
+				}
+			}
+			$(this).attr('contenteditable', true);
+			CKEDITOR.inline(this);
+		});
+
+
+		$('.editor.titles').click(function() {
+			CKEDITOR.config.customConfig = '<?php echo 'http://'.$_SERVER['SERVER_NAME'].'/backend/js/plugins/ckeditor_full/custom-config/titles.js'?>';
 			var name;
 			for(name in CKEDITOR.instances) {
 				var instance = CKEDITOR.instances[name];
@@ -239,6 +263,23 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 					$('.show').hide();
 					$('#textShow').show();
 					$('#titleShow').show();
+					$('.editor.titles').hide();
+					$('.editor.titles').attr('data-name','richTitle');
+					$('#homeTitle').attr('name','homeTitle');
+					$('#homeTitle').show();
+					$('.clearField').val('');
+					$('#urlimagen-home').attr('src', '/backend/images/not-available.jpg');
+					break;
+				case 'rss':
+					$('.show').hide();
+					$('#textShow').hide();
+					$('#orderShow').hide();
+					$('#urlShow').show();
+					$('#titleShow').show();
+					$('.editor.titles').hide();
+					$('.editor.titles').attr('data-name','richTitle');
+					$('#homeTitle').attr('name','homeTitle');
+					$('#homeTitle').show();
 					$('.clearField').val('');
 					$('#urlimagen-home').attr('src', '/backend/images/not-available.jpg');
 					break;
@@ -247,6 +288,10 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 					$('#urlShow').show();
 					$('#orderShow').show();
 					$('#titleShow').show();
+					$('.editor.titles').show();
+					$('.editor.titles').attr('data-name','homeTitle');
+					$('#homeTitle').removeAttr('name');
+					$('#homeTitle').hide();
 					$('.clearField').val('');
 					$('.editor').each(function(index, element){
 						$(element).html('');
@@ -258,6 +303,10 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 					$('#imageShow').show();
 					$('#orderShow').show();
 					$('#titleShow').show();
+					$('.editor.titles').hide();
+					$('.editor.titles').attr('data-name','richTitle');
+					$('#homeTitle').attr('name','homeTitle');
+					$('#homeTitle').show();
 					$('.clearField').val('');
 					$('.editor').each(function(index, element){
 						$(element).html('');
@@ -268,6 +317,10 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 					$('#imageShow').show();
 					$('#orderShow').show();
 					$('#titleShow').show();
+					$('.editor.titles').show();
+					$('.editor.titles').attr('data-name','homeTitle');
+					$('#homeTitle').removeAttr('name');
+					$('#homeTitle').hide();
 					$('.clearField').val('');
 					$('.editor').each(function(index, element){
 						$(element).html('');
@@ -283,11 +336,13 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 			if(squareSelected==2){
 				$('#homeType_chzn_o_1').hide();
 				$('#homeType_chzn_o_4').hide();
+				$('#homeType_chzn_o_5').hide();
 				$('#homeType_chzn_o_2').show();
 				$('#homeType_chzn_o_3').show();
 			}else{
 				$('#homeType_chzn_o_1').show();
 				$('#homeType_chzn_o_4').show();
+				$('#homeType_chzn_o_5').show();
 				$('#homeType_chzn_o_2').hide();
 				$('#homeType_chzn_o_3').hide();
 			}
@@ -298,11 +353,13 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 			if(squareSelected==2){
 				$('#homeType_chzn_o_1').hide();
 				$('#homeType_chzn_o_4').hide();
+				$('#homeType_chzn_o_5').hide();
 				$('#homeType_chzn_o_2').show();
 				$('#homeType_chzn_o_3').show();
 			}else{
 				$('#homeType_chzn_o_1').show();
 				$('#homeType_chzn_o_4').show();
+				$('#homeType_chzn_o_5').show();
 				$('#homeType_chzn_o_2').hide();
 				$('#homeType_chzn_o_3').hide();
 			}
@@ -340,7 +397,8 @@ $this->headLink() ->appendStylesheet($this->baseUrl().'/backend/js/plugins/fineu
 			});
 
 			$('.editor').each(function(index, element){
-				data.push( { campo:$(element).data('name'), valor: $(element).html()  } );
+				if($(element).data('name')!='richTitle')
+					data.push( { campo:$(element).data('name'), valor: $(element).html()  } );
 			});
 
 			$('#homeSquare').each(function(index, value){

@@ -5,6 +5,7 @@
     }else{
 ?>
 <script type='text/javascript'>
+    var rssURL;
     var slideCount;
     $.ajax({
         url: "/default/frontend/getslidecount",
@@ -110,6 +111,16 @@
                     }
                 }
 
+                if(datos[data]['homeType']=='rss'){
+                    if(datos[data]['homeSquare']=='5'){
+                        homeAdd[datos[data]['homeSquare']] =    '<div class="span4" id="content">'+
+                                                                '   <h2 class="text-center">'+datos[data]['homeTitle']+'</h2>'+
+                                                                '   <div id="rss-blog" style="font-size: 97%"></div>' +
+                                                                '</div>';
+                        rssURL = datos[data]['homeUrl'];
+                    }
+                }
+
                 if(datos[data]['homeType']=='slide_i'||datos[data]['homeType']=='slide_v'){
                     var item_active = '';
                     if(i==0)
@@ -187,6 +198,10 @@
                     break;
             }
 
+			$('#rss-blog').rssfeed(rssURL, {
+				limit: 3,
+				header: false
+			});
 
         },
         error: function (request, status, error) {
@@ -309,7 +324,11 @@
                 }
             }
         });
-    })
+        $('#rss-blog').rssfeed(rssURL, {
+            limit: 3,
+            header: false
+        });
+    });
 
     $(window).resize(function(){
         if ($('#mainCarousel').width() == 414){
@@ -319,6 +338,17 @@
                 $('.carousel-caption').css('position', 'absolute', 'margin-top', '500px');
             }
         }
-    })
+        $('#rss-blog').rssfeed(rssURL, {
+            limit: 3,
+            header: false
+        });
+    });
+
+    $(document).load(function(){
+        $('#rss-blog').rssfeed(rssURL, {
+            limit: 3,
+            header: false
+        });
+    });
 
 </script>

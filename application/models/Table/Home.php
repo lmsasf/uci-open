@@ -46,6 +46,7 @@ class Table_Home extends Zend_Db_Table_Abstract
                                         WHEN 'slide_i' THEN 'Carousel Image'
                                         WHEN 'slide_v' THEN 'Carousel Video'
                                         WHEN 'banner' THEN 'Banner'
+                                        WHEN 'rss' THEN 'Rss'
                                       END homeType
                                     , homeSquare
                                     , homeTitle

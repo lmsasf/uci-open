@@ -35,7 +35,7 @@
             </div>
 
             <!-- Start accordion-body content -->
-            <div id="ocw" class="accordion-body collapse in">
+            <div id="ocw" class="accordion-body collapse in" style="overflow-x:auto;">
                 <div class="accordion-inner">In construction...
                 </div>
             </div>
@@ -66,7 +66,7 @@
         })
 
         $(".nav li #navawards").click(function () {
-            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#termsofuse"><h3><?php echo is_null($this->awards) ? 'Awards' : $this->awards->secTitle; ?></h3></a>');
+            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#awards"><h3><?php echo is_null($this->awards) ? 'Awards' : $this->awards->secTitle; ?></h3></a>');
             $(".accordion-inner").html('<?php echo is_null($this->awards) ? 'Coming soon!' : addslashes($this->awards->secText); ?>');
             $("#nav2 li").removeClass("active");
             $("#nav2 li:nth-child(4)").addClass("active");
@@ -77,13 +77,13 @@
             $("#nav2 li:nth-child(5)").addClass("active");
         })
         $(".nav li #navinfo").click(function(){
-            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#termsofuse"><h3><?php echo is_null($this->faculty) ? 'Information for Faculty' : $this->faculty->secTitle; ?></h3></a>');
+            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#faculty"><h3><?php echo is_null($this->faculty) ? 'Information for Faculty' : $this->faculty->secTitle; ?></h3></a>');
             $(".accordion-inner").html('<?php echo is_null($this->faculty) ? 'Coming soon!' : addslashes($this->faculty->secText); ?>');
             $("#nav2 li").removeClass("active");
             $("#nav2 li:nth-child(6)").addClass("active");
         })
         $(".nav li #navourteam").click(function(){
-            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#termsofuse"><h3><?php echo is_null($this->our_team) ? 'Our Team' : $this->our_team->secTitle; ?></h3></a>');
+            $(".accordion-heading").html('<a class="accordion-toggle" data-toggle="collapse" data-parent="#about-sub" href="#ourteam"><h3><?php echo is_null($this->our_team) ? 'Our Team' : $this->our_team->secTitle; ?></h3></a>');
             $(".accordion-inner").html('<?php echo is_null($this->our_team) ? 'Coming soon!' : addslashes($this->our_team->secText); ?>');
             $("#nav2 li").removeClass("active");
             $("#nav2 li:nth-child(7)").addClass("active");
